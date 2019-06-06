@@ -16,13 +16,13 @@
  * governing permissions and limitations under the License.
 */
 
-#ifndef T6_TENSION_CONTROLLER_H
-#define T6_TENSION_CONTROLLER_H
+#ifndef T6_ZMQ_CONTROLLER_H
+#define T6_ZMQ_CONTROLLER_H
 
 /**
- * @file T6TensionController.h
- * @brief Contains the definition of class T6TensionController.
- * @author Brian Tietz
+ * @file T6ZmqController.h
+ * @brief Contains the definition of class T6ZmqController.
+ * @author Hammond Pearce
  * @version 1.0.0
  * $Id$
  */
@@ -41,26 +41,25 @@ class T6Model;
  * A controller to apply uniform tension to a T6Model. Iterates through
  * all tgLinearString members and calls tensionMinLengthController
  */
-class T6TensionController : public tgObserver<T6Model>
+class T6ZmqController : public tgObserver<T6Model>
 {
 public:
 	
 	/**
-	 * Construct a T6TensionController.
+	 * Construct a T6ZmqController.
 	 * @param[in] tension, a double specifying the desired tension
 	 * throughougt structure. Must be non-negitive
 	 */
-    T6TensionController(const double tension = .01);
+    T6ZmqController(const double tension = .01);
     
     /**
      * Nothing to delete, destructor must be virtual
      */
-    virtual ~T6TensionController();
+    virtual ~T6ZmqController();
     
+    virtual void onSetup(T6Model& subject);
 
     virtual void onTeardown(T6Model& subject);
-
-    virtual void onSetup(T6Model& subject);
     
     /**
      * Apply the tension controller. Called my notifyStep(dt) of its
@@ -79,6 +78,8 @@ private:
 	 * in the constructor
 	 */
     const double m_tension;
+
+    double lifetime;
     
     std::vector<tgTensionController*> m_controllers;
 };

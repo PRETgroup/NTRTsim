@@ -17,15 +17,15 @@
 */
 
 /**
- * @file T6TensionController.cpp
- * @brief Implementation of six strut tensegrity.
- * @author Brian Tietz
+ * @file T6ZmqController.cpp
+ * @brief Implementation of six strut tensegrity robot with commands via 0MQ.
+ * @author Hammond Pearce
  * @version 1.0.0
  * $Id$
  */
 
 // This module
-#include "T6TensionController.h"
+#include "T6ZmqController.h"
 // This application
 #include "../T6Model.h"
 // This library
@@ -34,8 +34,11 @@
 #include <cassert>
 #include <stdexcept>
 
-T6TensionController::T6TensionController(const double tension) :
-    m_tension(tension)
+#include <math.h>
+
+T6ZmqController::T6ZmqController(const double tension) :
+    m_tension(tension),
+    lifetime(0)
 {
     if (tension < 0.0)
     {
@@ -43,12 +46,12 @@ T6TensionController::T6TensionController(const double tension) :
     }
 }
 
-T6TensionController::~T6TensionController()
+T6ZmqController::~T6ZmqController()
 {
-
+	
 }	
 
-void T6TensionController::onTeardown(T6Model& subject)
+void T6ZmqController::onTeardown(T6Model& subject)
 {
     std::size_t n = m_controllers.size();
     for(std::size_t i = 0; i < n; i++)
@@ -58,7 +61,7 @@ void T6TensionController::onTeardown(T6Model& subject)
     m_controllers.clear();
 }
 
-void T6TensionController::onSetup(T6Model& subject)
+void T6ZmqController::onSetup(T6Model& subject)
 {
     const std::vector<tgBasicActuator*> actuators = subject.getAllActuators();
     for (size_t i = 0; i < actuators.size(); ++i)
@@ -71,7 +74,7 @@ void T6TensionController::onSetup(T6Model& subject)
 
 }
 
-void T6TensionController::onStep(T6Model& subject, double dt)
+void T6ZmqController::onStep(T6Model& subject, double dt)
 {
 	if (dt <= 0.0)
     {
@@ -79,10 +82,12 @@ void T6TensionController::onStep(T6Model& subject, double dt)
     }
     else
     {
+        double tr = sin(2*M_PI*(1/4)*lifetime)+1.0;
         std::size_t n = m_controllers.size();
 		for(std::size_t i = 0; i < n; i++)
         {
-            m_controllers[i]->control(dt, m_tension);
+            m_controllers[i]->control(dt, m_tension*tr);
         }
+        lifetime += dt;
 	}
 }

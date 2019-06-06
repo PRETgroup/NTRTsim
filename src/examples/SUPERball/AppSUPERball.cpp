@@ -36,6 +36,9 @@
 // The C++ Standard Library
 #include <iostream>
 
+#include "controllers/T6ZmqController.h"
+#include "controllers/T6TensionController.h"
+
 /**
  * The entry point.
  * @param[in] argc the number of command-line arguments
@@ -76,9 +79,10 @@ int main(int argc, char** argv)
     T6Model* const myModel = new T6Model();
 
     // Fifth, select the controller to use, and attach it to the model.
-    // For example, you could run the following to use the T6TensionController:
-    //T6TensionController* const pTC = new T6TensionController(10000);
-    //myModel->attach(pTC);
+    // For example, you could run the following to use the T6ZmqController:
+    
+    T6ZmqController* const pTC = new T6ZmqController(10000);
+    myModel->attach(pTC);
 
     // Finally, add out model to the simulation
     simulation.addModel(myModel);
