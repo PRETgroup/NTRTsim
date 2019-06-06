@@ -9,6 +9,7 @@ src/DoxyDocs
 
 .project
 
+.vscode
 .idea
 
 **/CMakeFiles
