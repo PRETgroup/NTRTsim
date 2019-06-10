@@ -34,16 +34,21 @@
 #include <cassert>
 #include <stdexcept>
 
+#include <string>
+#include <sstream>
+
 #include <math.h>
 
-T6ZmqController::T6ZmqController(const double tension) :
-    m_tension(tension),
-    lifetime(0)
+T6ZmqController::T6ZmqController(zmq::socket_t* socket, const double tension) :
+    m_tension(tension)
 {
+    zmq_rx_sock = socket;
+
     if (tension < 0.0)
     {
         throw std::invalid_argument("Negative tension");
     }
+    //TODO: Throw exception if context is null?
 }
 
 T6ZmqController::~T6ZmqController()
@@ -63,15 +68,18 @@ void T6ZmqController::onTeardown(T6Model& subject)
 
 void T6ZmqController::onSetup(T6Model& subject)
 {
+    //create the internal actuators
     const std::vector<tgBasicActuator*> actuators = subject.getAllActuators();
     for (size_t i = 0; i < actuators.size(); ++i)
     {
         tgBasicActuator * const pActuator = actuators[i];
         assert(pActuator != NULL);
-        tgTensionController* m_tensController = new tgTensionController(pActuator, m_tension);
-        m_controllers.push_back(m_tensController);
+        tgTensionController* m_tController = new tgTensionController(pActuator, m_tension);
+        m_controllers.push_back(m_tController);
     }
+    std::cout << "There are " << m_controllers.size() << " controllers." << std::endl;
 
+    //create the socket to listen on
 }
 
 void T6ZmqController::onStep(T6Model& subject, double dt)
@@ -82,12 +90,40 @@ void T6ZmqController::onStep(T6Model& subject, double dt)
     }
     else
     {
-        double tr = sin(2*M_PI*(1/4)*lifetime)+1.0;
+        //receive a message on the socket
+        zmq::message_t req;
+        zmq_rx_sock->recv(&req);
+        std::cout << "recieved '" << (char*)req.data() << "'" << std::endl;
+
+        std::stringstream ss((char*)req.data());
+
+        //convert the message into requests for each controller
+        int i;
+        std::vector<double> commands;
+        while (ss >> i) 
+        {
+            commands.push_back(i);
+            if(ss.peek() == ',') {
+                ss.ignore();
+            }
+        }
+
+        //send the requests
+
         std::size_t n = m_controllers.size();
+        
+        if(n != commands.size()) {
+            throw "mismatched size of received commands vs tensegrity controllers";
+        }
+
 		for(std::size_t i = 0; i < n; i++)
         {
-            m_controllers[i]->control(dt, m_tension*tr);
+            m_controllers[i]->control(dt, commands[i]);
         }
-        lifetime += dt;
+
+        //report a response
+        zmq::message_t resp(3);
+        memcpy(resp.data(), "ack", 3);
+        zmq_rx_sock->send(resp);
 	}
 }

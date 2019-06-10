@@ -34,6 +34,8 @@
 // The C++ Standard Library
 #include <vector>
 
+
+#include <zmq.hpp>
 // Forward declarations
 class T6Model;
 
@@ -50,7 +52,7 @@ public:
 	 * @param[in] tension, a double specifying the desired tension
 	 * throughougt structure. Must be non-negitive
 	 */
-    T6ZmqController(const double tension = .01);
+    T6ZmqController(zmq::socket_t* context, const double tension);
     
     /**
      * Nothing to delete, destructor must be virtual
@@ -78,8 +80,11 @@ private:
 	 * in the constructor
 	 */
     const double m_tension;
+    
+	
+    //std::reference_wrapper<zmq::context_t> zmq_context;
 
-    double lifetime;
+    zmq::socket_t* zmq_rx_sock;
     
     std::vector<tgTensionController*> m_controllers;
 };

@@ -39,6 +39,9 @@
 #include "controllers/T6ZmqController.h"
 #include "controllers/T6TensionController.h"
 
+#include <zmq.hpp>
+
+
 /**
  * The entry point.
  * @param[in] argc the number of command-line arguments
@@ -80,8 +83,10 @@ int main(int argc, char** argv)
 
     // Fifth, select the controller to use, and attach it to the model.
     // For example, you could run the following to use the T6ZmqController:
-    
-    T6ZmqController* const pTC = new T6ZmqController(10000);
+    zmq::context_t zmq_ctx(1);
+    zmq::socket_t zmq_sock(zmq_ctx, ZMQ_REP);
+    zmq_sock.bind("tcp://*:5555");
+    T6ZmqController* const pTC = new T6ZmqController(&zmq_sock, 10000);
     myModel->attach(pTC);
 
     // Finally, add out model to the simulation

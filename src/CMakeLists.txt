@@ -12,9 +12,9 @@ subdirs(
     tgcreator
     models
     controllers
-    dev
+    #dev
     examples
-    yamlbuilder
+    #yamlbuilder
 )
 
 # To turn off verbose compiling, comment out

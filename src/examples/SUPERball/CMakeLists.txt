@@ -1,4 +1,4 @@
-link_libraries(tgcreator controllers core)
+link_libraries(tgcreator controllers core zmq)
 set(CMAKE_BUILD_TYPE Debug)
 
 add_executable(AppSUPERball
@@ -7,6 +7,10 @@ add_executable(AppSUPERball
     controllers/T6ZmqController.cpp
     controllers/T6TensionController.cpp
 ) 
+
+add_executable(AppSUPERSend
+    AppSUPERSend.cpp
+)
 
 # To compile a controller, add a line like the
 # following inside add_executable:
