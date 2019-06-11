@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string>
 #include <iostream>
+#include <sstream>
 
 #include <zmq.hpp>
 #include <unistd.h>
