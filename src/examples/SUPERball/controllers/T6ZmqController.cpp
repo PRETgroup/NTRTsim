@@ -98,9 +98,9 @@ void T6ZmqController::onStep(T6Model& subject, double dt)
 
         std::string req_message(static_cast<char*>(req.data()), req.size());
         std::istringstream iss(req_message);
-        
+
         //convert the message into requests for each controller
-        int i;
+        double i;
         std::vector<double> commands;
         while (iss >> i) 
         {

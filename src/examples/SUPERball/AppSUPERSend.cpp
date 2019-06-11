@@ -6,6 +6,8 @@
 #include <zmq.hpp>
 #include <unistd.h>
 
+#include <math.h>
+
 int main() {
     zmq::context_t context(1);
     zmq::socket_t socket(context, ZMQ_REQ);
@@ -17,12 +19,18 @@ int main() {
 
     int num_actuators = 25;
 
+    double lifetime = 0.0;
+    
     for(;;) {
+        //compute the behaviour
+
+        double tr = sin(2*M_PI*((double)1/4)*lifetime)+1.0;
+
         std::stringbuf buffer;
         std::ostream msg (&buffer);
 
-        for (int i = 0; i < 25; i++) {
-            msg << "10000" << ",";
+        for (int i = 0; i < num_actuators; i++) {
+            msg << 10000*tr << ",";
         }
 
         std::string msg_str(buffer.str());
@@ -40,8 +48,6 @@ int main() {
 
         std::string reply_message(static_cast<char*>(reply.data()), reply.size());
         std::istringstream reply_ss(reply_message);
-        
-        double lifetime;
         reply_ss >> lifetime;
 
         std::cout << "Lifetime:" << lifetime << std::endl;
