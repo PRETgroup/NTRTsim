@@ -81,8 +81,7 @@ private:
 	 */
     const double m_tension;
     
-	
-    //std::reference_wrapper<zmq::context_t> zmq_context;
+	double lifetime;
 
     zmq::socket_t* zmq_rx_sock;
     
