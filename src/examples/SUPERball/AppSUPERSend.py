@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import zmq
 import time
 import numpy as np
@@ -14,7 +16,7 @@ def main():
 
 #     for _ in range(200):
     while True:
-        socket.send(msg)
+        socket.send_string(msg)
         message = socket.recv()
         print(message)
 
