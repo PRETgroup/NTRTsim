@@ -43,6 +43,7 @@ T6ZmqController::T6ZmqController(zmq::socket_t* socket, const double tension) :
     m_tension(tension)
 {
     zmq_rx_sock = socket;
+    lifetime = 0;
 
     if (tension < 0.0)
     {
@@ -64,6 +65,7 @@ void T6ZmqController::onTeardown(T6Model& subject)
         delete m_controllers[i];
     }
     m_controllers.clear();
+    lifetime = 0;
 }
 
 void T6ZmqController::onSetup(T6Model& subject)
@@ -78,8 +80,7 @@ void T6ZmqController::onSetup(T6Model& subject)
         m_controllers.push_back(m_tController);
     }
     std::cout << "There are " << m_controllers.size() << " controllers." << std::endl;
-
-    //create the socket to listen on
+    lifetime = 0;
 }
 
 void T6ZmqController::onStep(T6Model& subject, double dt)
@@ -92,21 +93,24 @@ void T6ZmqController::onStep(T6Model& subject, double dt)
     {
         //receive a message on the socket
         zmq::message_t req;
-        zmq_rx_sock->recv(&req);
-        std::cout << "recieved '" << (char*)req.data() << "'" << std::endl;
 
-        std::stringstream ss((char*)req.data());
+        zmq_rx_sock->recv(&req);
+
+        std::string req_message(static_cast<char*>(req.data()), req.size());
+        std::istringstream iss(req_message);
 
         //convert the message into requests for each controller
-        int i;
+        double i;
         std::vector<double> commands;
-        while (ss >> i) 
+        while (iss >> i) 
         {
             commands.push_back(i);
-            if(ss.peek() == ',') {
-                ss.ignore();
+            if(iss.peek() == ',') {
+                iss.ignore();
             }
         }
+
+        std::cout << "received " << commands.size() << " commands " << std::endl;
 
         //send the requests
 
@@ -121,9 +125,22 @@ void T6ZmqController::onStep(T6Model& subject, double dt)
             m_controllers[i]->control(dt, commands[i]);
         }
 
-        //report a response
-        zmq::message_t resp(3);
-        memcpy(resp.data(), "ack", 3);
+        //increment lifetime
+        lifetime += dt;
+
+        //report a response - at some point this will be sensor data, for now it is just the internal time of 
+        //  the simulator (useful for synchronisation purposes)
+        std::stringbuf buffer;
+        std::ostream msg (&buffer);
+
+        msg << lifetime;
+
+        std::string msg_str(buffer.str());
+        buffer.str(""); //reset the buffer
+
+        zmq::message_t resp(msg_str.length());
+        memcpy(resp.data(), &msg_str[0], msg_str.length());
         zmq_rx_sock->send(resp);
+
 	}
 }

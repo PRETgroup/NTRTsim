@@ -6,6 +6,8 @@
 #include <zmq.hpp>
 #include <unistd.h>
 
+#include <math.h>
+
 int main() {
     zmq::context_t context(1);
     zmq::socket_t socket(context, ZMQ_REQ);
@@ -17,28 +19,40 @@ int main() {
 
     int num_actuators = 25;
 
+    double lifetime = 0.0;
+    
     for(;;) {
+        //compute the behaviour
+
+        double tr = sin(2*M_PI*((double)1/4)*lifetime)+1.0;
+
         std::stringbuf buffer;
         std::ostream msg (&buffer);
 
-        for (int i = 0; i < 25; i++) {
-            msg << "10000" << ",";
+        for (int i = 0; i < num_actuators; i++) {
+            msg << 10000*tr << ",";
         }
 
         std::string msg_str(buffer.str());
-        buffer.str("");
+        buffer.str(""); //reset the buffer
         zmq::message_t req(msg_str.length());
         memcpy(req.data(), &msg_str[0], msg_str.length());
-        std::cout << "sending request " << std::endl;
+        std::cout << "sending request " << (char*)req.data() << std::endl;
+        msg_str = "";
 
         socket.send(req);
 
-        std::cout << "waiting for response (sensor data)" << std::endl;
+        std::cout << "waiting for response (simulator time)" << std::endl;
         zmq::message_t reply;
         socket.recv(&reply);
-        std::cout << "okay." << std::endl;
 
-        usleep(10000);
+        std::string reply_message(static_cast<char*>(reply.data()), reply.size());
+        std::istringstream reply_ss(reply_message);
+        reply_ss >> lifetime;
+
+        std::cout << "Lifetime:" << lifetime << std::endl;
+
+        usleep(1000);
     }
 
 }
