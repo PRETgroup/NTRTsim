@@ -31,6 +31,7 @@
 // This library
 #include "core/tgBasicActuator.h"
 #include "core/tgRod.h"
+#include "LinearMath/btVector3.h"
 // The C++ Standard Library
 #include <cassert>
 #include <stdexcept>
@@ -111,7 +112,7 @@ void T6ZmqController::onStep(T6Model& subject, double dt)
             }
         }
 
-        std::cout << "received " << commands.size() << " commands " << std::endl;
+//         std::cout << "received " << commands.size() << " commands " << std::endl;
 
         //send the requests
 
@@ -133,8 +134,9 @@ void T6ZmqController::onStep(T6Model& subject, double dt)
 				btVector3 ball_com(0,0,0);
 
 				std::vector<tgRod*> found_rods  = subject.find<tgRod>("superball_rod");
+				std::cout << "Found " << found_rods.size() << " rods" << std::endl;
 				double ball_mass = 0.0;
-				for( unsigned int = 0; i < found_rods.size(); ++i){
+				for( unsigned int i = 0; i < found_rods.size(); ++i){
 					const tgRod* const rod = found_rods[i];
 					assert(rod != NULL);
 
