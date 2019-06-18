@@ -30,6 +30,7 @@
 #include "../T6Model.h"
 // This library
 #include "core/tgBasicActuator.h"
+#include "core/tgRod.h"
 // The C++ Standard Library
 #include <cassert>
 #include <stdexcept>
