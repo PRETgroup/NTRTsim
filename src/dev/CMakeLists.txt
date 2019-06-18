@@ -17,6 +17,9 @@ subdirs(
     eajung
     ezhu
     mcdaly
-	bgigous
+    bgigous
+    # FILL IN FOR 4.1
+    introWorkspace
+    mleroy
 )
 

@@ -148,6 +148,7 @@ void tgSimView::run(int steps)
             m_pSimulation->step(m_stepSize);    
             m_renderTime += m_stepSize;
             totalTime += m_stepSize;
+            //std::cout << "totalTime=" << totalTime << std::endl;
             
             if (m_renderTime >= m_renderRate) {
                 render();

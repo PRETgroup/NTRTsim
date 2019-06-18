@@ -64,8 +64,8 @@ int main(int argc, char** argv)
     tgWorld *world = createWorld();
 
     // Second create the view
-    //tgSimViewGraphics *view = createGraphicsView(world); // For visual experimenting on one tensegrity
-    tgSimView       *view = createView(world);         // For running multiple episodes
+    tgSimViewGraphics *view = createGraphicsView(world); // For visual experimenting on one tensegrity
+    //tgSimView       *view = createView(world);         // For running multiple episodes
 
     // Third create the simulation
     tgSimulation *simulation = new tgSimulation(*view);
@@ -91,8 +91,8 @@ int main(int argc, char** argv)
 
     //Seventh add crater to simulation
     btVector3 originCrater = btVector3(0,0,0);
-    //tgCraterShallow* crater = new tgCraterShallow(originCrater);
-    tgCraterDeep* crater = new tgCraterDeep(originCrater);
+    tgCraterShallow* crater = new tgCraterShallow(originCrater);
+    //tgCraterDeep* crater = new tgCraterDeep(originCrater);
     simulation->addModel(crater);
 
     simulate(simulation);
@@ -143,8 +143,8 @@ tgSimView *createView(tgWorld *world) {
 
 /** Run a series of episodes for nSteps each */
 void simulate(tgSimulation *simulation) {
-    int nEpisodes = 1; // Number of episodes ("trial runs")
-    int nSteps = 60000; // Number of steps in each episode, 60k is 100 seconds (timestep_physics*nSteps)
+    int nEpisodes = 20; // Number of episodes ("trial runs")
+    int nSteps = 10000; // Number of steps in each episode, 60k is 100 seconds (timestep_physics*nSteps)
     for (int i=0; i<nEpisodes; i++) {
         simulation->run(nSteps);
         simulation->reset();
