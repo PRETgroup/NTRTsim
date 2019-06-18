@@ -30,6 +30,8 @@
 #include "../T6Model.h"
 // This library
 #include "core/tgBasicActuator.h"
+#include "core/tgRod.h"
+#include "LinearMath/btVector3.h"
 // The C++ Standard Library
 #include <cassert>
 #include <stdexcept>
@@ -110,7 +112,7 @@ void T6ZmqController::onStep(T6Model& subject, double dt)
             }
         }
 
-        std::cout << "received " << commands.size() << " commands " << std::endl;
+//         std::cout << "received " << commands.size() << " commands " << std::endl;
 
         //send the requests
 
@@ -128,12 +130,30 @@ void T6ZmqController::onStep(T6Model& subject, double dt)
         //increment lifetime
         lifetime += dt;
 
+				// Compute SUPERBall CoM
+				btVector3 ball_com(0,0,0);
+
+				std::vector<tgRod*> found_rods  = subject.find<tgRod>("rod");
+				assert(found_rods.size() > 0);
+				double ball_mass = 0.0;
+				for( unsigned int i = 0; i < found_rods.size(); ++i){
+					const tgRod* const rod = found_rods[i];
+					assert(rod != NULL);
+
+					const double rod_mass = rod->mass();
+					const btVector3 rod_com = rod->centerOfMass();
+					ball_com += rod_com*rod_mass;
+					ball_mass += rod_mass;
+				}
+				ball_com /= ball_mass;
+
+
         //report a response - at some point this will be sensor data, for now it is just the internal time of 
         //  the simulator (useful for synchronisation purposes)
         std::stringbuf buffer;
         std::ostream msg (&buffer);
 
-        msg << lifetime;
+        msg << lifetime << " " << ball_com[0] << " " << ball_com[1] << " " << ball_com[2];
 
         std::string msg_str(buffer.str());
         buffer.str(""); //reset the buffer
