@@ -133,8 +133,8 @@ void T6ZmqController::onStep(T6Model& subject, double dt)
 				// Compute SUPERBall CoM
 				btVector3 ball_com(0,0,0);
 
-				std::vector<tgRod*> found_rods  = subject.find<tgRod>("superball_rod");
-				std::cout << "Found " << found_rods.size() << " rods" << std::endl;
+				std::vector<tgRod*> found_rods  = subject.find<tgRod>("rod");
+				assert(found_rods.size() > 0);
 				double ball_mass = 0.0;
 				for( unsigned int i = 0; i < found_rods.size(); ++i){
 					const tgRod* const rod = found_rods[i];
@@ -153,7 +153,7 @@ void T6ZmqController::onStep(T6Model& subject, double dt)
         std::stringbuf buffer;
         std::ostream msg (&buffer);
 
-        msg << lifetime << ball_com[0] << ball_com[1] << ball_com[2];
+        msg << lifetime << " " << ball_com[0] << " " << ball_com[1] << " " << ball_com[2];
 
         std::string msg_str(buffer.str());
         buffer.str(""); //reset the buffer
