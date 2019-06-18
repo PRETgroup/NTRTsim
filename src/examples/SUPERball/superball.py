@@ -31,8 +31,9 @@ class SUPERBall:
                 }
 
         def to_tension(d):
-            return 1000000. * (1. + 0.5 * d)
+            return 10000. * (1. + 0.5 * d)
 
+#         print([to_tension(d) for d in data])
         cmds = np.zeros((25,))
         for (d_idx, d) in enumerate(data):
             for (cable_idx, cable_no) in enumerate(tri_to_string[d_idx]):
