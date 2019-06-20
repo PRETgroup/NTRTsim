@@ -12,7 +12,8 @@ link_libraries(tgcreator
                 terrain 
                 tgOpenGLSupport
 		yaml-cpp
-		TensegrityModel)
+		TensegrityModel
+        zmq)
 
 add_executable(AppSUPERballChainZmq
     HopfControllerML.cpp

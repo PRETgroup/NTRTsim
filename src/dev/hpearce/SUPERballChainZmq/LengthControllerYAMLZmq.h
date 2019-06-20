@@ -36,6 +36,8 @@
 #include <vector>
 #include <map>
 
+
+#include <zmq.hpp>
 // Forward declarations
 class TensegrityModel;
 class tgBasicActuator;
@@ -63,7 +65,7 @@ public:
    * will be acted upon by this controller.
    */
   LengthControllerYAMLZmq(double startTime, double minLength, double rate,
-			    std::vector<std::string> tagsToControl);
+			    std::vector<std::string> tagsToControl, zmq::socket_t* zmq_socket);
     
   /**
    * Nothing to delete, destructor must be virtual
@@ -87,7 +89,8 @@ public:
   virtual void onStep(TensegrityModel& subject, double dt);
 
   virtual void resetTimePassed();
-  virtual void getBallCOM(TensegrityModel& subject, int color);
+  virtual std::vector<double> getBallCOM(TensegrityModel& subject);
+  virtual void printBallCOM(TensegrityModel& subject, int color);
 
 protected:
 
@@ -108,6 +111,9 @@ private:
   double m_minLength;
   double m_rate;
   std::vector<std::string> m_tagsToControl;
+
+
+  zmq::socket_t* zmq_rx_sock;
 
   /**
    * Need an accumulator variable to determine when to start the controller.

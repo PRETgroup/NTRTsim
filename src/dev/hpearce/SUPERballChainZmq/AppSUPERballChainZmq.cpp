@@ -51,6 +51,8 @@
 #include <string>
 #include <vector>
 
+#include <zmq.hpp>
+
 #define NOSCILLATORS 4
 #define NSTATES 8
 #define USEGRAPHICS 1
@@ -186,7 +188,11 @@ int main(int argc, char** argv)
         double startTime = 35.0;
         double minLength = 0.7;
         double rate = 1.5; //0.25
-        LengthControllerYAMLZmq* myController = new LengthControllerYAMLZmq(startTime, minLength, rate, tagsToControl);
+
+        zmq::context_t zmq_ctx(1);
+        zmq::socket_t zmq_sock(zmq_ctx, ZMQ_REP);
+        zmq_sock.bind("tcp://*:5555");
+        LengthControllerYAMLZmq* myController = new LengthControllerYAMLZmq(startTime, minLength, rate, tagsToControl, &zmq_sock);
     #endif
 
     #if(USEPHASEOSCCTLR)
