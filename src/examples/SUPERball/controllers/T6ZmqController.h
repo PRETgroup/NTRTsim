@@ -85,7 +85,9 @@ private:
 
     zmq::socket_t* zmq_rx_sock;
     
-    std::vector<tgTensionController*> m_controllers;
+    std::vector<tgBasicController*> m_controllers;
+
+    std::vector<tgBasicActuator*> actuators;
 };
 
 #endif // T6_TENSION_CONTROLLER_H

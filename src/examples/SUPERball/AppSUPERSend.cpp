@@ -30,7 +30,7 @@ int main() {
         std::ostream msg (&buffer);
 
         for (int i = 0; i < num_actuators; i++) {
-            msg << 10000*tr << ",";
+            msg << 1*tr << ",";
         }
 
         std::string msg_str(buffer.str());

@@ -67,18 +67,23 @@ void T6ZmqController::onTeardown(T6Model& subject)
         delete m_controllers[i];
     }
     m_controllers.clear();
+    actuators.clear();
     lifetime = 0;
 }
 
 void T6ZmqController::onSetup(T6Model& subject)
 {
+    m_controllers.clear();
+    actuators.clear();
+
     //create the internal actuators
-    const std::vector<tgBasicActuator*> actuators = subject.getAllActuators();
+    actuators = subject.getAllActuators();
     for (size_t i = 0; i < actuators.size(); ++i)
     {
         tgBasicActuator * const pActuator = actuators[i];
         assert(pActuator != NULL);
-        tgTensionController* m_tController = new tgTensionController(pActuator, m_tension);
+        //tgTensionController* m_tController = new tgTensionController(pActuator, m_tension);
+        tgBasicController* m_tController = new tgBasicController(pActuator, 1);
         m_controllers.push_back(m_tController);
     }
     std::cout << "There are " << m_controllers.size() << " controllers." << std::endl;
@@ -125,6 +130,7 @@ void T6ZmqController::onStep(T6Model& subject, double dt)
 		for(std::size_t i = 0; i < n; i++)
         {
             m_controllers[i]->control(dt, commands[i]);
+            actuators[i]->moveMotors(dt);
         }
 
         //increment lifetime

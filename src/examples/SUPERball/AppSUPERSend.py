@@ -16,14 +16,16 @@ def main():
 
 #     for _ in range(200):
     while True:
-        tr = math.sin(2*math.pi*(0.25)*lifetime)+1.0
+        tr = (math.sin(2*math.pi*(0.2)*lifetime)+1.0) / 2
 
-        msg = ','.join([str(tr*10000) for _ in range(25)])
-
+        msg = ','.join([str(tr * (math.sin(2*math.pi*i/25)+1.0)/2) for i in range(25)])
+        print(msg)
         socket.send_string(msg)
         message = socket.recv()
         
-        lifetime = float(message)
+        lifetime = float(message.split()[0])
+
+        #lifetime = float(message)
         print(lifetime)
         
 
