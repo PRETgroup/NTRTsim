@@ -5,6 +5,8 @@ import time
 import numpy as np
 import math
 
+from time import sleep
+
 def main():
 
     string_names = [
@@ -35,7 +37,7 @@ def main():
     ]
 
     commands = [
-        0.0 for _ in range(24)
+        1.0 for _ in range(24)
     ]
 
     triangles = {
@@ -93,37 +95,55 @@ def main():
 #     for _ in range(200):
     while True:
         #reset command list
-        commands = [0.65 for _ in range(24)] #0.5 is a nice neutral number
+        commands = [1 for _ in range(24)] 
+        # when sending in a number, it is a percentage of the original rest length. 
+        # So, 0.5 = 50% of the original length, 2 = 200% of the original length
 
-        tr1 = math.sin(2*math.pi*(0.15)*(lifetime) + 0 * math.pi) * 0.25
-        tr2 = math.sin(2*math.pi*(0.15)*(lifetime) + 0.5 * math.pi) * 0.25
-        tr3 = math.sin(2*math.pi*(0.15)*(lifetime) + 1 * math.pi) * 0.25
-        tr4 = math.sin(2*math.pi*(0.15)*(lifetime) + 1.5 * math.pi) * 0.25
+        print(lifetime)
+
+        trAmp = 0.4
+        trOffs = 0.8
+        sTime = (0.05 * lifetime)
+        nwp = trOffs + math.sin(2*math.pi*sTime + 0.0 * math.pi) * trAmp
+        nwd = trOffs + math.sin(2*math.pi*sTime - 1/4 * math.pi) * trAmp
+        swp = trOffs + math.sin(2*math.pi*sTime - 1/2 * math.pi) * trAmp
+        swd = trOffs + math.sin(2*math.pi*sTime + 1/2 * math.pi) * trAmp
+        sep = trOffs + math.sin(2*math.pi*sTime + 1/4 * math.pi) * trAmp
+        sed = trOffs + math.sin(2*math.pi*sTime - 3/4 * math.pi) * trAmp
+        nep = sep
+        ned = swp
+        # tr3 = trOffs + math.sin(2*math.pi*(0.15)*(lifetime) + 1 * math.pi) * trAmp
+        # tr4 = trOffs + math.sin(2*math.pi*(0.15)*(lifetime) + 1.5 * math.pi) * trAmp
 
         if lifetime > 1:
-            for string_name in triangles['NWD']:
-                commands[string_names.index(string_name)] += tr2
-
+            
+            
             for string_name in triangles['SWD']:
-                commands[string_names.index(string_name)] += tr4
-        
-            for string_name in triangles['SED']:
-                commands[string_names.index(string_name)] += tr2
+                commands[string_names.index(string_name)] = swd
+
+            for string_name in triangles['SEP']:
+                commands[string_names.index(string_name)] = sep
 
             for string_name in triangles['NED']:
-                commands[string_names.index(string_name)] += tr4
+                commands[string_names.index(string_name)] = ned
 
             for string_name in triangles['NWP']:
-                commands[string_names.index(string_name)] += tr1
+                commands[string_names.index(string_name)] = nwp
             
             for string_name in triangles['SWP']:
-                commands[string_names.index(string_name)] += tr3
+                commands[string_names.index(string_name)] = swp
             
-            for string_name in triangles['SEP']:
-                commands[string_names.index(string_name)] += tr1
+            for string_name in triangles['SED']:
+                commands[string_names.index(string_name)] = sed
             
             for string_name in triangles['NEP']:
-                commands[string_names.index(string_name)] += tr3
+                commands[string_names.index(string_name)] = nep
+
+            for string_name in triangles['NWD']:
+                commands[string_names.index(string_name)] = nwd
+            
+
+            #commands[21 - 1] = 0.5 + (tr1*2)
     
 
         #transmitting a 0.6 gives a nice round SUPERball. Ideally transmit numbers between 0 and 1.
@@ -132,12 +152,13 @@ def main():
         msg =  ' '.join([string_names[i]+":"+str(commands[i]) for i in range(24)])
         print(msg)
         socket.send_string(msg)
-        message = socket.recv()
         
+        message = socket.recv()
+        print(message)
         lifetime = float(message.split()[0])
+        sleep(0.005) #sleep 5ms so Hammond's laptop can multitask
 
         #lifetime = float(message)
-        print(lifetime)
         
 
 

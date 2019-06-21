@@ -193,11 +193,11 @@ void LengthControllerYAMLZmq::onStep(TensegrityModel& subject, double dt)
 
       // Calculate the minimum rest length for this cable.
       // Remember that m_minLength is a percent.
-      double minRestLength = initialRL[cablesWithTags[str_i]->getTags()] * m_minLength;
+      double minRestLength = initialRL[cablesWithTags[str_i]->getTags()]; // * m_minLength;
 
       double currRestLength = cablesWithTags[str_i]->getRestLength();
 
-      double setRestLength = command*minRestLength*2;
+      double setRestLength = command*minRestLength;
 
       // if(setRestLength > (currRestLength - m_rate)) {
       //   double nextRestLength = currRestLength + m_rate * dt;
@@ -206,7 +206,7 @@ void LengthControllerYAMLZmq::onStep(TensegrityModel& subject, double dt)
       //   double nextRestLength = currRestLength - m_rate * dt;
       //    cablesWithTags[i]->setControlInput(nextRestLength,dt);
       // }
-      cablesWithTags[i]->setControlInput(setRestLength,dt);
+      cablesWithTags[str_i]->setControlInput(setRestLength,dt);
       
   }
   //report a response - at some point this will be sensor data, for now it is just the internal time of 
@@ -217,6 +217,11 @@ void LengthControllerYAMLZmq::onStep(TensegrityModel& subject, double dt)
   std::vector<double> ball_com = getBallCOM(subject);
 
   msg << m_timePassed << " " << ball_com[0] << " " << ball_com[1] << " " << ball_com[2];
+
+  //get the tensions for each cable in order
+  for(size_t i = 0; i < cablesWithTags.size(); i++) {
+    msg << " " << cablesWithTags[i]->getTagStr() << ":" << cablesWithTags[i]->getTension();
+  }
 
   std::string msg_str(buffer.str());
   buffer.str(""); //reset the buffer
