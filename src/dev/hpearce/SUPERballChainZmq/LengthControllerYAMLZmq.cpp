@@ -199,13 +199,14 @@ void LengthControllerYAMLZmq::onStep(TensegrityModel& subject, double dt)
 
       double setRestLength = command*minRestLength*2;
 
-      if(setRestLength > (currRestLength - m_rate)) {
-        double nextRestLength = currRestLength + m_rate * dt;
-         cablesWithTags[i]->setControlInput(nextRestLength,dt);
-      } else if(setRestLength < (currRestLength + m_rate)) {
-        double nextRestLength = currRestLength - m_rate * dt;
-         cablesWithTags[i]->setControlInput(nextRestLength,dt);
-      }
+      // if(setRestLength > (currRestLength - m_rate)) {
+      //   double nextRestLength = currRestLength + m_rate * dt;
+      //    cablesWithTags[i]->setControlInput(nextRestLength,dt);
+      // } else if(setRestLength < (currRestLength + m_rate)) {
+      //   double nextRestLength = currRestLength - m_rate * dt;
+      //    cablesWithTags[i]->setControlInput(nextRestLength,dt);
+      // }
+      cablesWithTags[i]->setControlInput(setRestLength,dt);
       
   }
   //report a response - at some point this will be sensor data, for now it is just the internal time of 
