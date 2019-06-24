@@ -104,12 +104,12 @@ def main():
         trAmp = 0.4
         trOffs = 0.8
         sTime = (0.05 * lifetime)
-        nwp = trOffs + math.sin(2*math.pi*sTime + 0.0 * math.pi) * trAmp
-        nwd = trOffs + math.sin(2*math.pi*sTime - 1/4 * math.pi) * trAmp
-        swp = trOffs + math.sin(2*math.pi*sTime - 1/2 * math.pi) * trAmp
-        swd = trOffs + math.sin(2*math.pi*sTime + 1/2 * math.pi) * trAmp
-        sep = trOffs + math.sin(2*math.pi*sTime + 1/4 * math.pi) * trAmp
-        sed = trOffs + math.sin(2*math.pi*sTime - 3/4 * math.pi) * trAmp
+        nwp = trOffs - math.sin(2*math.pi*sTime + 0.0 * math.pi) * trAmp
+        nwd = trOffs - math.sin(2*math.pi*sTime - 1/4 * math.pi) * trAmp
+        swp = trOffs - math.sin(2*math.pi*sTime - 1/2 * math.pi) * trAmp
+        swd = trOffs - math.sin(2*math.pi*sTime + 1/2 * math.pi) * trAmp
+        sep = trOffs - math.sin(2*math.pi*sTime + 1/4 * math.pi) * trAmp
+        sed = trOffs - math.sin(2*math.pi*sTime - 3/4 * math.pi) * trAmp
         nep = sep
         ned = swp
         # tr3 = trOffs + math.sin(2*math.pi*(0.15)*(lifetime) + 1 * math.pi) * trAmp
@@ -156,7 +156,7 @@ def main():
         message = socket.recv()
         print(message)
         lifetime = float(message.split()[0])
-        sleep(0.005) #sleep 5ms so Hammond's laptop can multitask
+        sleep(0.001) #sleep 1ms so Hammond's laptop can multitask
 
         #lifetime = float(message)
         
