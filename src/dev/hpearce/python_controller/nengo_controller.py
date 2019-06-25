@@ -208,14 +208,14 @@ def main():
         nengo.Connection(osc8, osc1, function=enforce_func, synapse=tau_synapse)
     
         # Readout connections:
-        nengo.Connection(osc1[0],readout[0], synapse=0.01)
-        nengo.Connection(osc2[0],readout[1], synapse=0.02)
-        nengo.Connection(osc3[0],readout[2], synapse=0.03)
-        nengo.Connection(osc4[0],readout[3], synapse=0.04)
-        nengo.Connection(osc5[0],readout[4], synapse=0.01)
-        nengo.Connection(osc6[0],readout[5], synapse=0.02)
-        nengo.Connection(osc7[0],readout[6], synapse=0.03)
-        nengo.Connection(osc8[0],readout[7], synapse=0.04)
+        nengo.Connection(osc1[0],readout[0])
+        nengo.Connection(osc2[0],readout[1])
+        nengo.Connection(osc3[0],readout[2])
+        nengo.Connection(osc4[0],readout[3])
+        nengo.Connection(osc5[0],readout[4])
+        nengo.Connection(osc6[0],readout[5])
+        nengo.Connection(osc7[0],readout[6])
+        nengo.Connection(osc8[0],readout[7])
     
  
 
@@ -229,9 +229,10 @@ def main():
 #     fig = plt.figure()
 #     ax = fig.add_subplot(111)
 #     line1, = ax.plot([0],[0],'b-')
-    with nengo.Simulator(model) as sim:
+    with nengo.Simulator(model, dt=0.0001) as sim:
 #         while True:
-        sim.run(10)
+
+        sim.run(2)
         plt.subplot(2, 1, 1)
         plt.plot(sim.trange(), sim.data[p_arm][:,:])
         

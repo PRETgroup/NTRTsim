@@ -197,7 +197,7 @@ void LengthControllerYAMLZmq::onStep(TensegrityModel& subject, double dt)
 
       double currRestLength = cablesWithTags[str_i]->getRestLength();
 
-      double setRestLength = command*1.5 + minRestLength;
+      double setRestLength = command*2 + minRestLength;
 
       // if(setRestLength > (currRestLength - m_rate)) {
       //   double nextRestLength = currRestLength + m_rate * dt;
