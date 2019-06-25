@@ -12,6 +12,7 @@ class SUPERBall:
         self.socket = self.context.socket(zmq.REQ)
         self.socket.connect('tcp://localhost:%d' % self.port)
         self.lifetime = 0.0
+        self.com_history = []
         self.string_names = [
             'SUPERball_string01',
             'SUPERball_string02',
@@ -96,23 +97,23 @@ class SUPERBall:
 
         def to_pos(val):
             #val is between -1 and 1, make it between 0.1 and 1
-            return val/2.1 + 1
+            return val #1 * max(min(1 + val,1),0)
 
         if self.lifetime > 1:
             
-            for string_name in self.triangles['SWD']:
+            for string_name in self.triangles['NWP']:
                 commands[self.string_names.index(string_name)] = to_pos(data[0])
 
-            for string_name in self.triangles['SEP']:
+            for string_name in self.triangles['NWD']:
                 commands[self.string_names.index(string_name)] = to_pos(data[1])
 
-            for string_name in self.triangles['NED']:
+            for string_name in self.triangles['SWP']:
                 commands[self.string_names.index(string_name)] = to_pos(data[2])
 
-            for string_name in self.triangles['NWP']:
+            for string_name in self.triangles['SWD']:
                 commands[self.string_names.index(string_name)] = to_pos(data[3])
             
-            for string_name in self.triangles['SWP']:
+            for string_name in self.triangles['SEP']:
                 commands[self.string_names.index(string_name)] = to_pos(data[4])
             
             for string_name in self.triangles['SED']:
@@ -121,17 +122,46 @@ class SUPERBall:
             for string_name in self.triangles['NEP']:
                 commands[self.string_names.index(string_name)] = to_pos(data[6])
 
-            for string_name in self.triangles['NWD']:
+            for string_name in self.triangles['NED']:
                 commands[self.string_names.index(string_name)] = to_pos(data[7])
                 
+        #the following causes a walking motion, it's fun but not very useful
+            # for string_name in self.triangles['SWD']:
+            #     commands[self.string_names.index(string_name)] = to_pos(data[0])
+
+            # for string_name in self.triangles['SEP']:
+            #     commands[self.string_names.index(string_name)] = to_pos(data[3])
+
+            # for string_name in self.triangles['NED']:
+            #     commands[self.string_names.index(string_name)] = to_pos(data[6])
+
+            # for string_name in self.triangles['NWP']:
+            #     commands[self.string_names.index(string_name)] = to_pos(data[1])
+            
+            # for string_name in self.triangles['SWP']:
+            #     commands[self.string_names.index(string_name)] = to_pos(data[4])
+            
+            # for string_name in self.triangles['SED']:
+            #     commands[self.string_names.index(string_name)] = to_pos(data[7])
+            
+            # for string_name in self.triangles['NEP']:
+            #     commands[self.string_names.index(string_name)] = to_pos(data[2])
+
+            # for string_name in self.triangles['NWD']:
+            #     commands[self.string_names.index(string_name)] = to_pos(data[5])
+
 
         msg =  ' '.join([self.string_names[i]+":"+str(commands[i]) for i in range(24)])
         print(msg)
         self.socket.send_string(msg)
         
-        message = self.socket.recv()
-        print(message)
-        self.lifetime = float(message.split()[0])
+        reply = self.socket.recv()
+        #print(reply)
+        reply_components = reply.split() 
+        self.lifetime = float(reply_components[0])
+        pos = (float(reply_components[1]), float(reply_components[2]), float(reply_components[3])) #x, y, z coordinates
+        self.com_history.append(pos)
+
         #sleep(0.001) #sleep 1ms so Hammond's laptop can multitask
 
         #lifetime = float(message)

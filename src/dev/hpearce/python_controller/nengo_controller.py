@@ -208,14 +208,15 @@ def main():
         nengo.Connection(osc8, osc1, function=enforce_func, synapse=tau_synapse)
     
         # Readout connections:
-        nengo.Connection(osc1[0],readout[0])
-        nengo.Connection(osc2[0],readout[1])
-        nengo.Connection(osc3[0],readout[2])
-        nengo.Connection(osc4[0],readout[3])
-        nengo.Connection(osc5[0],readout[4])
-        nengo.Connection(osc6[0],readout[5])
-        nengo.Connection(osc7[0],readout[6])
-        nengo.Connection(osc8[0],readout[7])
+        nengo.Connection(osc1[0],readout[0], synapse=0.01)
+        nengo.Connection(osc2[0],readout[1], synapse=0.02)
+        nengo.Connection(osc3[0],readout[2], synapse=0.03)
+        nengo.Connection(osc4[0],readout[3], synapse=0.04)
+        nengo.Connection(osc5[0],readout[4], synapse=0.01)
+        nengo.Connection(osc6[0],readout[5], synapse=0.02)
+        nengo.Connection(osc7[0],readout[6], synapse=0.03)
+        nengo.Connection(osc8[0],readout[7], synapse=0.04)
+    
  
 
         # Connect to the robot
@@ -231,13 +232,19 @@ def main():
     with nengo.Simulator(model) as sim:
 #         while True:
         sim.run(10)
+        plt.subplot(2, 1, 1)
         plt.plot(sim.trange(), sim.data[p_arm][:,:])
+        
+        plt.subplot(2, 1, 2)
+        positions = ([pos[::2] for pos in robot.com_history])
+        plt.scatter(*zip(*positions))
         plt.show()
-#             line1.set_xdata(sim.trange())
+
+#        line1.set_xdata(sim.trange())
 #             (rows, cols) = sim.data[p_arm].shape
 #             for c in range(cols):
 #                 line1.set_ydata(sim.data[p_arm][:,c])
-#             fig.canvas.draw()
+#             fig.canvas.draw():3
             
     ### end with
 ### end main

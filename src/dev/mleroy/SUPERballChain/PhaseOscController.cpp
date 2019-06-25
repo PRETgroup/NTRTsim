@@ -773,7 +773,7 @@ void PhaseOscController::hopfOscillator(TensegrityModel& subject, double dt, dou
       bufferVar = xPO[selectedOscillator];
     #endif
     //std::cout << i << " " << selectedOscillator << " " << hopfMu[selectedOscillator] << std::endl;
-    //std::cout << "Cable " << cablesWithTags[i]->getTags() << ", control: " << ((cablesWithTags[i]->getHistory()).restLengths[0])*(1+HOPF_AMPLIFIER*cos(bufferVar+phaseOffset)) << std::endl;
+    std::cout << "Cable " << cablesWithTags[i]->getTags() << ", min: " << (cablesWithTags[i]->getHistory()).restLengths[0] << ", control: " << ((cablesWithTags[i]->getHistory()).restLengths[0])*(1+hopfMu[selectedOscillator]*cos(bufferVar+phaseOffset)) << std::endl;
     //cablesWithTags[i]->setControlInput(((cablesWithTags[i]->getHistory()).restLengths[0])*(1+HOPF_AMPLIFIER*cos(bufferVar+phaseOffset)), dt);
     cablesWithTags[i]->setControlInput(((cablesWithTags[i]->getHistory()).restLengths[0])*(1+hopfMu[selectedOscillator]*cos(bufferVar+phaseOffset)), dt);
   }
