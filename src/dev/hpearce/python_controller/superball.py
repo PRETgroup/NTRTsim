@@ -97,11 +97,11 @@ class SUPERBall:
 
         def to_pos(val):
             #val is between -1 and 1, make it between 0.1 and 1
-            return min(max(val*2.1,-2),2) #1 * max(min(1 + val,1),0)
+            return min(max(val*2,-1.75),1.75) #1 * max(min(1 + val,1),0)
 
         if self.lifetime > 1:
 
-            base_mod = 1.2 #by using this variable we introduce assymetry to the system causing it to roll
+            base_mod = 2 #by using this variable we introduce assymetry to the system causing it to roll
 
             first_mod = base_mod
             for string_name in self.triangles['NWP']:
