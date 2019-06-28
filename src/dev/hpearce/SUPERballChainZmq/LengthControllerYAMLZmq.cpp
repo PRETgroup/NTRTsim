@@ -52,7 +52,7 @@ LengthControllerYAMLZmq::LengthControllerYAMLZmq(double startTime,
 					   double minLength,
 					   double rate,
 					   std::vector<std::string> tagsToControl,
-             zmq::socket_t* zmq_socket) :
+             zmq::socket_t* zmq_socket, tgSimulation* simulation) :
   m_startTime(startTime),
   m_minLength(minLength),
   m_rate(rate),
@@ -60,6 +60,7 @@ LengthControllerYAMLZmq::LengthControllerYAMLZmq(double startTime,
   m_timePassed(0.0)
 {
   zmq_rx_sock = zmq_socket;
+  m_simulation = simulation;
   // start time must be greater than or equal to zero
   if( m_startTime < 0.0 ) {
     throw std::invalid_argument("Start time must be greater than or equal to zero.");
@@ -140,6 +141,14 @@ void LengthControllerYAMLZmq::onStep(TensegrityModel& subject, double dt)
   zmq_rx_sock->recv(&req);
 
   std::string req_message(static_cast<char*>(req.data()), req.size());
+  if(req_message == "reset") {
+    std::string msg_str("reset");
+    zmq::message_t resp(msg_str.length());
+    memcpy(resp.data(), &msg_str[0], msg_str.length());
+    zmq_rx_sock->send(resp);
+    m_simulation->reset();
+    return;
+  }
   std::istringstream iss(req_message);
 
   std::size_t n = cablesWithTags.size();

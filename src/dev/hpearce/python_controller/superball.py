@@ -12,6 +12,11 @@ class SUPERBall:
         self.socket = self.context.socket(zmq.REQ)
         self.socket.connect('tcp://localhost:%d' % self.port)
         self.lifetime = 0.0
+
+        #we'll use these numbers to reduce our memory impact when graphing history
+        self.append_every = 2
+        self.append_at_count = self.append_every
+
         self.com_history = []
         self.string_names = [
             'SUPERball_string01',
@@ -99,7 +104,7 @@ class SUPERBall:
             #val is between -1 and 1, make it between 0.1 and 1
             return min(max(val*2,-1.75),1.75) #1 * max(min(1 + val,1),0)
 
-        if self.lifetime > 1:
+        if self.lifetime > 0.5:
 
             base_mod = 2 #by using this variable we introduce assymetry to the system causing it to roll
 
@@ -178,7 +183,11 @@ class SUPERBall:
         reply_components = reply.split() 
         self.lifetime = float(reply_components[0])
         pos = (float(reply_components[1]), float(reply_components[2]), float(reply_components[3])) #x, y, z coordinates
-        self.com_history.append(pos)
+        if self.append_at_count == self.append_every:
+            self.com_history.append(pos)
+            self.append_at_count = 0
+        else:
+            self.append_at_count += 1
 
         #sleep(0.001) #sleep 1ms so Hammond's laptop can multitask
 
@@ -186,4 +195,11 @@ class SUPERBall:
         
         return 0,0
 
+    def reset(self):
 
+        self.socket.send_string("reset") #send reset request to NTRTsim
+        self.socket.recv() #throw away response
+
+        self.lifetime = 0
+        self.append_at_count = self.append_every
+        self.com_history = []

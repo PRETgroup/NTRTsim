@@ -192,7 +192,7 @@ int main(int argc, char** argv)
         zmq::context_t zmq_ctx(1);
         zmq::socket_t zmq_sock(zmq_ctx, ZMQ_REP);
         zmq_sock.bind("tcp://*:5555");
-        LengthControllerYAMLZmq* myController = new LengthControllerYAMLZmq(startTime, minLength, rate, tagsToControl, &zmq_sock);
+        LengthControllerYAMLZmq* myController = new LengthControllerYAMLZmq(startTime, minLength, rate, tagsToControl, &zmq_sock, simulation);
     #endif
 
     #if(USEPHASEOSCCTLR)

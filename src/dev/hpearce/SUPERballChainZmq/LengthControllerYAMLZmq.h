@@ -30,6 +30,7 @@
 #include "core/tgObserver.h"
 #include "core/tgSubject.h"
 #include "core/tgTags.h"
+#include "core/tgSimulation.h"
 
 // The C++ standard library
 #include <string>
@@ -65,7 +66,7 @@ public:
    * will be acted upon by this controller.
    */
   LengthControllerYAMLZmq(double startTime, double minLength, double rate,
-			    std::vector<std::string> tagsToControl, zmq::socket_t* zmq_socket);
+			    std::vector<std::string> tagsToControl, zmq::socket_t* zmq_socket, tgSimulation* simulation);
     
   /**
    * Nothing to delete, destructor must be virtual
@@ -133,6 +134,9 @@ private:
    * by using m_tagsToControl.
    */
   std::vector<tgBasicActuator*> cablesWithTags;
+
+  //we need a pointer to the simulation so that we can call the reset function
+  tgSimulation* m_simulation;
 
 };
 
