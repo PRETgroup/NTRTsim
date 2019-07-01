@@ -102,7 +102,7 @@ class SUPERBall:
 
         def to_pos(val):
             #val is between -1 and 1, make it between 0.1 and 1
-            return min(max(val*2.4,-1.9),1.9) #1 * max(min(1 + val,1),0)
+            return 2*val #min(max(val*2.4,-1.9),1.9) #1 * max(min(1 + val,1),0)
 
         if self.lifetime > 0.5:
 
