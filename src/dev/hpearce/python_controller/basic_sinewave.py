@@ -25,13 +25,13 @@ def main():
     robot = superball.SUPERBall()
     print('Robot created')
     results = []
-    for w_set in [1]: #0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]:
+    for w_set in [1.25]: #0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]:
         robot.reset()
 
 
         master_osc = [0] * 8        
 
-        while robot.lifetime < 20:
+        while robot.lifetime < 60:
             print(robot.lifetime)
             sTime = (w_set / 10 * robot.lifetime)
             osc = math.sin(2*math.pi*sTime)

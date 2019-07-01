@@ -88,7 +88,7 @@ class SUPERBall:
             ],
         }
 
-    def __call__(self, time, data):
+    def __call__(self, dt, data):
 
         #reset command list
         commands = [0 for _ in range(24)] 
@@ -102,51 +102,52 @@ class SUPERBall:
 
         def to_pos(val):
             #val is between -1 and 1, make it between 0.1 and 1
-            return min(max(val*2,-1.75),1.75) #1 * max(min(1 + val,1),0)
+            return min(max(val*2.4,-1.9),1.9) #1 * max(min(1 + val,1),0)
 
         if self.lifetime > 0.5:
 
-            base_mod = 2 #by using this variable we introduce assymetry to the system causing it to roll
+            base_mod = 1 #by using this variable we introduce assymetry to the system causing it to roll
+            other_mod = 1
 
             first_mod = base_mod
             for string_name in self.triangles['NWP']:
                 commands[self.string_names.index(string_name)] = to_pos(data[0])*first_mod
-                first_mod = 1
+                first_mod = other_mod
 
             first_mod = base_mod
             for string_name in self.triangles['NWD']:
                 commands[self.string_names.index(string_name)] = to_pos(data[1])*first_mod
-                first_mod = 1
+                first_mod = other_mod
 
             first_mod = base_mod
             for string_name in self.triangles['SWP']:
                 commands[self.string_names.index(string_name)] = to_pos(data[2])*first_mod
-                first_mod = 1
+                first_mod = other_mod
 
             first_mod = base_mod
             for string_name in self.triangles['SWD']:
                 commands[self.string_names.index(string_name)] = to_pos(data[3])*first_mod
-                first_mod = 1
+                first_mod = other_mod
             
             first_mod = base_mod
             for string_name in self.triangles['SEP']:
                 commands[self.string_names.index(string_name)] = to_pos(data[4])*first_mod
-                first_mod = 1
+                first_mod = other_mod
             
             first_mod = base_mod
             for string_name in self.triangles['SED']:
                 commands[self.string_names.index(string_name)] = to_pos(data[5])*first_mod
-                first_mod = 1
+                first_mod = other_mod
             
             first_mod = base_mod
             for string_name in self.triangles['NEP']:
                 commands[self.string_names.index(string_name)] = to_pos(data[6])*first_mod
-                first_mod = 1
+                first_mod = other_mod
 
             first_mod = base_mod
             for string_name in self.triangles['NED']:
                 commands[self.string_names.index(string_name)] = to_pos(data[7])*first_mod
-                first_mod = 1
+                first_mod = other_mod
                 
         #the following causes a walking motion, it's fun but not very useful
             # for string_name in self.triangles['SWD']:
