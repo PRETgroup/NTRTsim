@@ -53,11 +53,6 @@ with nengo.Network() as model:
         M_i = np.array([[1, 0],[0, 0]])
         return tau_synapse*np.dot(M_i, x)
     
-    def kick_func2(x):
-        M_i = np.array([[-1, 0],[0, 0]])
-#             M_i = np.array([[np.cos(np.pi/4), 0],[0, np.sin(np.pi/4)]])
-        return tau_synapse*np.dot(M_i, x)
-    
     def enforce_func(x):
         r_2 = x[0]*x[0] + x[1]*x[1]
         M_d = np.array([[mu-r_2, -w],[w, mu-r_2]])
@@ -74,12 +69,13 @@ with nengo.Network() as model:
     
     master_osc = nengo.Ensemble(n_neurons=num_neurons, 
             dimensions=2, radius=osc_radius, 
-            noise = white_noise, neuron_type=type_of_neuron(),
+            #noise = white_noise, 
+            neuron_type=nengo.LIFRate(),
             )
     
-    readout = nengo.Ensemble(n_neurons=400, dimensions=8,
+    readout = nengo.Ensemble(n_neurons=200, dimensions=8,
                             radius=readout_radius,
-                            neuron_type=type_of_neuron(),
+                            neuron_type=nengo.LIFRate(),
                             )
 
     # Feedback Connections
@@ -91,13 +87,13 @@ with nengo.Network() as model:
             function=kick_func1)
             
     # Readout connections:
-    nengo.Connection(master_osc[0],readout[0], transform=1)
-    nengo.Connection(master_osc[0],readout[1], transform=-1)
-    nengo.Connection(master_osc[0],readout[2], transform=-1)
-    nengo.Connection(master_osc[0],readout[3], transform=1)
-    nengo.Connection(master_osc[0],readout[4], transform=1)
-    nengo.Connection(master_osc[0],readout[5], transform=-1)
-    nengo.Connection(master_osc[0],readout[6], transform=-1)
-    nengo.Connection(master_osc[0],readout[7], transform=1)
+    nengo.Connection(master_osc[0],readout[0], transform=1, synapse=tau_synapse)
+    nengo.Connection(master_osc[0],readout[1], transform=-1, synapse=tau_synapse)
+    nengo.Connection(master_osc[0],readout[2], transform=-1, synapse=tau_synapse)
+    nengo.Connection(master_osc[0],readout[3], transform=1, synapse=tau_synapse)
+    nengo.Connection(master_osc[0],readout[4], transform=1, synapse=tau_synapse)
+    nengo.Connection(master_osc[0],readout[5], transform=-1, synapse=tau_synapse)
+    nengo.Connection(master_osc[0],readout[6], transform=-1, synapse=tau_synapse)
+    nengo.Connection(master_osc[0],readout[7], transform=1, synapse=tau_synapse)
     
     

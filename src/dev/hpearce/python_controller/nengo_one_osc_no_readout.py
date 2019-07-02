@@ -26,20 +26,19 @@ def main():
     robot = superball.SUPERBall()
     print('Robot created')
     results = []
-    for w_set in [0.8, 0.8, 0.9, 0.9, 1, 1]:
+    for w_set in [0.8, 0.8, 0.9, 0.9, 1, 1, 1.1, 1.1, 1.2, 1.2]:
         robot.reset()
         with nengo.Network() as model:
             gauss_dist = nengo.dists.Gaussian(mean=0,std=0.01)
             white_noise = nengo.processes.WhiteNoise(dist=gauss_dist)
 
-            #type_of_neuron = nengo.LIF
-            type_of_neuron = nengo.LIFRate
+            type_of_neuron = nengo.LIF
+            #type_of_neuron = nengo.LIFRate
             
             w = w_set
             mu = 1
             tau_synapse = 0.25
             num_neurons = 400
-            readout_radius = 1 ##1.*np.sqrt(6)
             osc_radius = 1
             
             def feedback_func(x):
@@ -54,21 +53,6 @@ def main():
             def kick_func1(x):
                 M_i = np.array([[1, 0],[0, 0]])
                 return tau_synapse*np.dot(M_i, x)
-            
-            def kick_func2(x):
-                M_i = np.array([[-1, 0],[0, 0]])
-        #             M_i = np.array([[np.cos(np.pi/4), 0],[0, np.sin(np.pi/4)]])
-                return tau_synapse*np.dot(M_i, x)
-            
-            def enforce_func(x):
-                r_2 = x[0]*x[0] + x[1]*x[1]
-                M_d = np.array([[mu-r_2, -w],[w, mu-r_2]])
-                return tau_synapse*np.dot(M_d,x)
-
-            def suppress_func(x):
-                r_2 = x[0]*x[0] + x[1]*x[1]
-                M_d = np.array([[-mu+r_2, w],[-w, -mu+r_2]])
-                return tau_synapse*np.dot(M_d,x)
 
             # Nodes and Ensembles
             # Nodes and Ensembles
@@ -76,15 +60,9 @@ def main():
             
             master_osc = nengo.Ensemble(n_neurons=num_neurons, 
                     dimensions=2, radius=osc_radius, 
-                    #noise = white_noise, 
+                    noise = white_noise, 
                     neuron_type=type_of_neuron(),
                     )
-            
-            readout = nengo.Ensemble(n_neurons=400, dimensions=8,
-                                    radius=readout_radius,
-                                    neuron_type=type_of_neuron(),
-                                    #noise = white_noise,
-                                    )
 
             # Feedback Connections
             nengo.Connection(master_osc, master_osc, 
@@ -94,21 +72,23 @@ def main():
             nengo.Connection(kick, master_osc, synapse=tau_synapse, 
                     function=kick_func1)
                     
-            # Readout connections:
-            nengo.Connection(master_osc[0],readout[0], transform=1.1)
-            nengo.Connection(master_osc[0],readout[1], transform=-1.1)
-            nengo.Connection(master_osc[0],readout[2], transform=-1.1)
-            nengo.Connection(master_osc[0],readout[3], transform=1.1)
-            nengo.Connection(master_osc[0],readout[4], transform=1.1)
-            nengo.Connection(master_osc[0],readout[5], transform=-1.1)
-            nengo.Connection(master_osc[0],readout[6], transform=-1.1)
-            nengo.Connection(master_osc[0],readout[7], transform=1.1)
-            
-    
+            # Readout connections:    
+            def config_transform(v):
+                osc = [0] * 8   
+                mp = 1.1
+                osc[0] = mp * v[0]
+                osc[1] = -mp * v[0]
+                osc[2] = -mp * v[0]
+                osc[3] = mp * v[0]
+                osc[4] = mp * v[0]
+                osc[5] = -mp * v[0]
+                osc[6] = -mp * v[0]
+                osc[7] = mp * v[0]
+                return osc
 
             # Connect to the robot
             arm_out = nengo.Node(output=robot, size_in=8, size_out=0)
-            nengo.Connection(readout, arm_out, transform=1.6, synapse=0.3)
+            nengo.Connection(master_osc, arm_out, function=config_transform)
             #p_arm = nengo.Probe(readout, synapse = 0.01)
         ### end with nengo.Network() as model
 
@@ -117,7 +97,7 @@ def main():
     #     ax = fig.add_subplot(111)
     #     line1, = ax.plot([0],[0],'b-')
         with nengo.Simulator(model) as sim:
-            sim.run(61)
+            sim.run(62)
             results.append( (w_set, [pos[::2] for pos in robot.com_history]), )
 
     ### end for
@@ -147,7 +127,7 @@ def main():
     
     i = 0
     for result in results:
-        with open('results'+str(i)+'_w=' + str(result[0])+"_at_" + dt_string + '.csv', 'w') as file:
+        with open(dt_string + '_results'+str(i)+'_w=' + str(result[0])+'.csv', 'w') as file:
             file.write('row,col\n')
             positions = result[1]
             for position in positions:

@@ -104,7 +104,7 @@ class SUPERBall:
             #val is between -1 and 1, make it between 0.1 and 1
             return 2*val #min(max(val*2.4,-1.9),1.9) #1 * max(min(1 + val,1),0)
 
-        if self.lifetime > 0.5:
+        if self.lifetime > 2:
 
             base_mod = 1 #by using this variable we introduce assymetry to the system causing it to roll
             other_mod = 1
