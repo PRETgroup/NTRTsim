@@ -12,6 +12,8 @@ import superball
 import matplotlib.pyplot as plt
 import math
 
+from datetime import datetime
+
 def stim_func(t):
     if t < 1.0:
         return 1
@@ -22,33 +24,45 @@ def stim_func(t):
 
 def main():
 
+    now = datetime.now()
+    dt_string = now.strftime("%Y_%m_%d__%H_%M_%S")
+
     robot = superball.SUPERBall()
     print('Robot created')
     results = []
-    for w_set in [1.25]: #0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]:
+    exp_count = 0
+    for w_set in [0.8]*9 + [1]*9 + [1.2] * 9:
         robot.reset()
-
 
         master_osc = [0] * 8        
 
-        while robot.lifetime < 60:
+        while robot.lifetime < 62:
             print(robot.lifetime)
             sTime = (w_set / 10 * robot.lifetime)
             osc = math.sin(2*math.pi*sTime)
                 
-            master_osc[0] = 1 * osc
-            master_osc[1] = -1 * osc
-            master_osc[2] = -1 * osc
-            master_osc[3] = 1 * osc
-            master_osc[4] = 1 * osc
-            master_osc[5] = -1 * osc
-            master_osc[6] = -1 * osc
-            master_osc[7] = 1 * osc
+            master_osc[0] = 1.1 * osc
+            master_osc[1] = -1.1 * osc
+            master_osc[2] = -1.1 * osc
+            master_osc[3] = 1.1 * osc
+            master_osc[4] = 1.1 * osc
+            master_osc[5] = -1.1 * osc
+            master_osc[6] = -1.1 * osc
+            master_osc[7] = 1.1 * osc
             
             robot.__call__(0.001, master_osc)
         
         
-        results.append( (w_set, [pos[::2] for pos in robot.com_history]), )
+        result = (w_set, [pos[::2] for pos in robot.com_history])
+        results.append( result, )
+
+        with open('./results/' + dt_string + '_results'+str(exp_count)+'_w=' + str(result[0])+'.csv', 'w') as file:
+            file.write('row,col\n')
+            positions = result[1]
+            for position in positions:
+                file.write(str(position[0]) + ","  + str(position[1]) + "\n")
+        
+        exp_count += 1
 
     ### end for
 

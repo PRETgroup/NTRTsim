@@ -6,12 +6,13 @@ import numpy as np
 import math
 
 class SUPERBall:
-    def __init__(self,port = 5555):
+    def __init__(self,port = 5555,stabilise_time = 2):
         self.port = port
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.REQ)
         self.socket.connect('tcp://localhost:%d' % self.port)
         self.lifetime = 0.0
+        self.stabilise_time = stabilise_time
 
         #we'll use these numbers to reduce our memory impact when graphing history
         self.append_every = 2
@@ -104,7 +105,7 @@ class SUPERBall:
             #val is between -1 and 1, make it between 0.1 and 1
             return 2*val #min(max(val*2.4,-1.9),1.9) #1 * max(min(1 + val,1),0)
 
-        if self.lifetime > 2:
+        if self.lifetime > self.stabilise_time:
 
             base_mod = 1 #by using this variable we introduce assymetry to the system causing it to roll
             other_mod = 1
