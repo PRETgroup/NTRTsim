@@ -56,7 +56,7 @@
 #define NOSCILLATORS 4
 #define NSTATES 8
 #define USEGRAPHICS 1
-#define LOGDATA 1
+#define LOGDATA 0
 #define USEHOPFCTLR 0
 #define USELENGTHCTLR 0
 #define USELENGTHZMQCTLR 1
@@ -420,29 +420,19 @@ void simulate(tgSimulation *simulation, LengthControllerYAML* myController) {
 }
 
 void simulate(tgSimulation *simulation, LengthControllerYAMLZmq* myController) {
-    int nEpisodes = 10;  // Number of episodes ("trial runs")
-    int nSteps = 30001; // Number of steps in each episode, 60k is 60 seconds (timestep_physics*nSteps)
-    for (int i=1; i<=nEpisodes; i++)
+    int nSteps = 60002; // Number of steps in each episode, 60k is 60 seconds (timestep_physics*nSteps)
+    int i = 1;
+    std::cout << "Running episode with ZMQ Controller, waiting for ZMQ connection" << std::endl;
+    try
     {
-        std::cout << "Running episode " << i << " of " << nEpisodes << " with non-CPG" << std::endl;
-        try
-        {
-            if(i!=1)
-            {
-                std::cout << "RESET" << std::endl;
-                simulation->reset();
-                myController->resetTimePassed();
-            }
-
-            //std::cout << "Starting new run" << std::endl;
-            simulation->run(nSteps);
-            //std::cout << "End of run" << std::endl;
-        }
-        catch(const std::invalid_argument& msg)
-        {
-            std::cout << "\e[1;31mError occured due to: " << msg.what() << "\e[0m" << std::endl << std::endl;
-        }
+        simulation->run(nSteps);
+        //simulation->run();
     }
+    catch(const std::invalid_argument& msg)
+    {
+        std::cout << "\e[1;31mError occured due to: " << msg.what() << "\e[0m" << std::endl << std::endl;
+    }
+    
     simulation->reset(); //so that the last episode may be saved in scores.csv
 } 
 

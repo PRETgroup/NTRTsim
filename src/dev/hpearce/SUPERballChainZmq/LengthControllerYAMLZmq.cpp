@@ -215,7 +215,7 @@ void LengthControllerYAMLZmq::onStep(TensegrityModel& subject, double dt)
       //   double nextRestLength = currRestLength - m_rate * dt;
       //    cablesWithTags[i]->setControlInput(nextRestLength,dt);
       // }
-      std::cout << "Cable " << cablesWithTags[i]->getTagStr() << ", min: " << minRestLength << ", control: " << setRestLength << std::endl;
+      //std::cout << "Cable " << cablesWithTags[i]->getTagStr() << ", min: " << minRestLength << ", control: " << setRestLength << std::endl;
       cablesWithTags[str_i]->setControlInput(setRestLength,dt);
       
   }
