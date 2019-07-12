@@ -21,7 +21,7 @@ def stim_func(t):
     ### end if
 ### end stim_func
 
-def get_model(robot, w_set, noisy = True, gauss_std = 0.01):
+def get_model(robot, w = 1, noisy = True, gauss_std = 0.01, osc_mult = 1.1, mu = 1, tau_synapse = 0.25, num_neurons = 400, osc_radius = 1, feedback_control = 1.3):
 
     with nengo.Network() as model:
         gauss_dist = nengo.dists.Gaussian(mean=0,std=gauss_std)
@@ -33,17 +33,17 @@ def get_model(robot, w_set, noisy = True, gauss_std = 0.01):
         else:
             type_of_neuron = nengo.LIFRate
         
-        w = w_set
-        mu = 1
-        tau_synapse = 0.25
-        num_neurons = 400
-        osc_radius = 1
+        #w = w_set
+        #mu = 1
+        #tau_synapse = 0.25
+        #num_neurons = 400
+        #osc_radius = 1
         
         def feedback_func(x):
             r_2 = x[0]*x[0] + x[1]*x[1]
             M_d = np.array([[mu-r_2, -w],[w,mu-r_2]])
             dx = np.dot(M_d,x)
-            return tau_synapse*dx + 1.3*x
+            return tau_synapse*dx + feedback_control*x
 
         def stim_func(t):
             return np.array([1, 1]) if t < 1.0 else np.array([0, 0])
@@ -80,7 +80,7 @@ def get_model(robot, w_set, noisy = True, gauss_std = 0.01):
         # Readout connections:    
         def config_transform(v):
             osc = [0] * 8   
-            mp = 1.1
+            mp = osc_mult
             osc[0] = mp * v[0]
             osc[1] = -mp * v[0]
             osc[2] = -mp * v[0]
