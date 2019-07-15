@@ -50,6 +50,7 @@ def get_robot_score(x, *args):
     
     aborted = False #set to true if the system aborts due to too much inconsistency
     
+    final_exp_iter = 0
     for exp_iter in range(num_sim_iter):
         robot.reset()
         
@@ -97,15 +98,22 @@ def get_robot_score(x, *args):
 
         final_angles.append(final_angle)
         final_displs.append(final_displ)
+        final_exp_iter = exp_iter
 
         if aborted:
             break
 
     avg_final_displ /= num_sim_iter
-    max_angle_diff = (10*(max(final_angles) - min(final_angles)))**2
+    max_angle_diff = (2 * (max(final_angles) - min(final_angles)))**2
+    if aborted: # if we aborted then assume the angle difference could have been up to 2* worse than we saw
+        max_angle_diff *= 2
+
+    max_angle_diff = max_angle_diff**2 #square it again to make it quite big.
+
     max_displ_diff = (max(final_displs) - min(final_displs))**2
 
-    score = -(avg_final_displ/(1+max_displ_diff+max_angle_diff))
+    #score = -(avg_final_displ/(1+max_displ_diff+max_angle_diff))
+    score = -( min(final_displs)**2 / (0.01 + max_angle_diff))
     #if aborted: #penalty to score if we aborted early (probably the score will already be terrible)
     #    score = score / 2
 
@@ -126,7 +134,7 @@ def main():
     display_graph = True
     #baseline_sine = True
     #noisy_sine = True
-    simulation_time = 42
+    simulation_time = 32
     stabilise_time = 2
     num_sim_iter = 5
     #exp_count = 0
@@ -146,14 +154,17 @@ def main():
         pso_lb = [0.7, 0.8]
         pso_ub = [2, 1.5]
     if mode == 'nengo_lif': #format: [w_set, osc_mult, mu, tau_synapse, osc_radius, feedback_control]
-        pso_lb = [0.9, 0.9, 0.9, 0.1, 0.8, 0.8]
-        pso_ub = [1.7, 1.5, 1.3, 0.35, 1.2, 1.8] 
+        #pso_lb = [0.9, 0.9, 0.9, 0.1, 0.8, 0.8]
+        #pso_ub = [1.7, 1.5, 1.3, 0.35, 1.2, 1.8] 
+        pso_lb = [0.91, 1.1, 1.2, 0.18, 0.9, 1]
+        pso_ub = [1.01, 1.3, 1.3, 0.26, 1.1, 1.2] 
+        
         def no_negative_control_value(x, *args): #make sure that osc_mult * radius doesn't exceed 1.65
             return 1.65 - x[1] * x[4]
         constraints = [no_negative_control_value]
 
-    pso_maxiter = 40
-    pso_swarmsize = 30
+    pso_maxiter = 30
+    pso_swarmsize = 15
 
     approx_runs = num_sim_iter * pso_maxiter * pso_swarmsize
 
