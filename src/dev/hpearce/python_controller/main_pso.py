@@ -37,17 +37,22 @@ def get_robot_score(x, *args):
     w_set = x[0]
     osc_mult = x[1]
 
-    mode, robot, simulation_time, num_sim_iter, save_csv, csv_file_name, gauss_std, abort_tolerance, min_req_displ = args
+    mode, robot, simulation_time, num_sim_iter, save_csv, csv_file_name, gauss_std, abort_tolerance, min_req_displ, num_neurons, use_params = args
     
      
     avg_final_displ = 0 
     final_angles = []
     final_displs = []
 
+    target_angle = 0
+
     lif_model = None
     if mode == 'nengo_lif':
-        lif_model = nengo_one_osc_no_readout.get_model(robot, w = x[0], noisy = True, osc_mult = x[1], mu = x[2], tau_synapse = x[3], num_neurons = 400, osc_radius = x[4], feedback_control = x[5])
+        lif_model = nengo_one_osc_no_readout.get_model(robot, w = x[0], noisy = True, osc_mult = x[1], mu = x[2], tau_synapse = x[3], num_neurons = num_neurons, osc_radius = x[4], feedback_control = x[5], gauss_std=gauss_std)
+    if mode == 'nengo_lif_target_trajectory':
+        lif_model = nengo_one_osc_no_readout.get_model(robot, w = use_params[0], noisy = True, osc_mult = use_params[1], mu = use_params[2], tau_synapse = use_params[3], num_neurons = num_neurons, osc_radius = use_params[4], feedback_control = use_params[5], gauss_std=gauss_std, triangle_control=x)
     
+
     aborted = False #set to true if the system aborts due to too much inconsistency
     
     final_exp_iter = 0
@@ -58,7 +63,7 @@ def get_robot_score(x, *args):
             lead_str = "Run " + str(exp_count) + "["+str(exp_iter)+"] (w_set = " + str(w_set) + ", osc_mult = " + str(osc_mult) + "):"
             print(lead_str + " sine simulation time: 0", end='')
             pure_sine_simulation(robot, w_set, osc_mult, simulation_time, lead_str)
-        elif mode == 'nengo_lif':
+        elif mode == 'nengo_lif' or mode == 'nengo_lif_target_trajectory':
             lead_str = "Nengo Run " + str(exp_count) + "["+str(exp_iter)+"]"
             print(lead_str)
             with nengo.Simulator(lif_model) as sim:
@@ -85,12 +90,20 @@ def get_robot_score(x, *args):
                     line = str(exp_count) + "," + str(exp_iter) + "," + str(w_set) + "," + str(osc_mult) + "," + str(final_pos[0][0])+ ","+ str(final_pos[0][2]) + "," + str(final_displ) + "," + str(final_angle) + ","
                 elif mode == 'nengo_lif':
                     line = str(exp_count) + "," + str(exp_iter) + "," + str(x[0]) + "," + str(x[1]) + "," + str(x[2]) + "," + str(x[3]) + "," + str(x[4]) + "," + str(x[5]) + "," + str(final_pos[0][0])+ ","+ str(final_pos[0][2]) + "," + str(final_displ) + "," + str(final_angle) + ","
+                elif mode == 'nengo_lif_target_trajectory':
+                    line = str(exp_count) + "," + str(exp_iter) + "," + str(x[0]) + "," + str(x[1]) + "," + str(x[2]) + "," + str(x[3]) + "," + str(x[4]) + "," + str(x[5]) + "," + str(x[6]) + "," + str(x[7]) + "," + str(final_pos[0][0])+ ","+ str(final_pos[0][2]) + "," + str(final_displ) + "," + str(final_angle) + ","
+                
                 file.write(line)
 
-        #check if we want to abort
-        for prev_final_angle in final_angles:
-            if abs(prev_final_angle - final_angle) > abort_tolerance:
+        if mode == 'nengo_lif_target_trajectory':
+            if abs(final_angle - target_angle) > abort_tolerance:
                 aborted = True
+
+        if mode == 'nengo_lif':
+            #check if we want to abort
+            for prev_final_angle in final_angles:
+                if abs(prev_final_angle - final_angle) > abort_tolerance:
+                    aborted = True
         
         if final_displs: #if it's at least the second run, then check if the distance is acceptable compared with the minimum required
             if final_displ < min_req_displ:
@@ -103,19 +116,37 @@ def get_robot_score(x, *args):
         if aborted:
             break
 
-    avg_final_displ /= num_sim_iter
-    max_angle_diff = (2 * (max(final_angles) - min(final_angles)))**2
-    if aborted: # if we aborted then assume the angle difference could have been up to 2* worse than we saw
-        max_angle_diff *= 2
+    score = None
+    if mode == 'pure_sine' or mode == 'nengo_lif':
+        avg_final_displ /= num_sim_iter
+        max_angle_diff = ((max(final_angles) - min(final_angles)))
+        
+        #if aborted: 
+        # # if we aborted then assume the angle difference could have been worse based on the time before this went wrong
+        max_angle_diff *= (100 * (num_sim_iter - final_exp_iter))
+        
+        max_angle_diff = max_angle_diff**2 #square so it's continuous and non-negative
 
-    max_angle_diff = max_angle_diff**2 #square it again to make it quite big.
+        max_displ_diff = (max(final_displs) - min(final_displs))**2
 
-    max_displ_diff = (max(final_displs) - min(final_displs))**2
+        #score = -(avg_final_displ/(1+max_displ_diff+max_angle_diff))
+    
+        score = -( min(final_displs)**2 / (0.01 + max_angle_diff))
+        #if aborted: #penalty to score if we aborted early (probably the score will already be terrible)
+        #    score = score / 2
+    
+    if mode == 'nengo_lif_target_trajectory':
+        #assume for now the target trajectory is angle 0
+        avg_final_displ /= num_sim_iter
+        max_angle_diff = 0
+        for angle in final_angles:
+            if abs(angle - target_angle) > max_angle_diff:
+                max_angle_diff = abs(angle - target_angle)
+        
+        max_angle_diff *= (100 * (num_sim_iter - final_exp_iter))
 
-    #score = -(avg_final_displ/(1+max_displ_diff+max_angle_diff))
-    score = -( min(final_displs)**2 / (0.01 + max_angle_diff))
-    #if aborted: #penalty to score if we aborted early (probably the score will already be terrible)
-    #    score = score / 2
+        score = -( min(final_displs)**2 / (0.01 + max_angle_diff))
+
 
     if save_csv:
         with open(csv_file_name, 'a') as file:
@@ -134,21 +165,24 @@ def main():
     display_graph = True
     #baseline_sine = True
     #noisy_sine = True
-    simulation_time = 32
+    simulation_time = 47
     stabilise_time = 2
-    num_sim_iter = 5
+    num_sim_iter = 9
     #exp_count = 0
     #results = []
     gauss_std = 0.1
     abort_tolerance = 0.1
     min_req_displ = 20
+    num_neurons = 500
 
     #mode = 'pure_sine'
-    mode = 'nengo_lif'
+    #mode = 'nengo_lif'
+    mode = 'nengo_lif_target_trajectory'
 
     pso_lb = None
     pso_ub = None
-    constraints = None
+    constraints = []
+    use_params = None
 
     if mode == 'pure_sine': #format: [w_set, osc_mult]
         pso_lb = [0.7, 0.8]
@@ -158,18 +192,23 @@ def main():
         #pso_ub = [1.7, 1.5, 1.3, 0.35, 1.2, 1.8] 
         pso_lb = [0.91, 1.1, 1.2, 0.18, 0.9, 1]
         pso_ub = [1.01, 1.3, 1.3, 0.26, 1.1, 1.2] 
-        
+    
         def no_negative_control_value(x, *args): #make sure that osc_mult * radius doesn't exceed 1.65
             return 1.65 - x[1] * x[4]
         constraints = [no_negative_control_value]
 
+    if mode == 'nengo_lif_target_trajectory':
+        pso_lb = [-1, -1, -1, -1, -1, -1, -1, -1]
+        pso_ub = [1, 1, 1, 1, 1, 1, 1, 1]
+        use_params = [0.943409155447694, 1.1362360516795893, 1.2498347185225787, 0.24354977039092154, 1.0820318501593955, 1.0]
+
     pso_maxiter = 30
-    pso_swarmsize = 15
+    pso_swarmsize = 60
 
     approx_runs = num_sim_iter * pso_maxiter * pso_swarmsize
 
     robot = superball.SUPERBall(stabilise_time = stabilise_time)
-    args = (mode, robot, simulation_time, num_sim_iter, save_csv, csv_file_name, gauss_std, abort_tolerance, min_req_displ)
+    args = (mode, robot, simulation_time, num_sim_iter, save_csv, csv_file_name, gauss_std, abort_tolerance, min_req_displ, num_neurons, use_params)
     print("PSO commence")
 
     if save_csv:
@@ -178,6 +217,8 @@ def main():
                 file.write('run,run_iter,w_set,osc_mult,final_x,final_z,final_displ,final_angle,score')
             elif mode == 'nengo_lif':
                 file.write('run,run_iter,w_set,osc_mult,mu,tau_synapse,osc_radius,feedback_control,final_x,final_z,final_displ,final_angle,score')
+            elif mode == 'nengo_lif_target_trajectory':
+                file.write('run,run_iter,triangles[0],triangles[1],triangles[2],triangles[3],triangles[4],triangles[5],triangles[6],triangles[7],final_x,final_z,final_displ,final_angle,score')
 
         with open(log_file_name, 'w') as file:
             file.write('PSO run with the following params:\n')
@@ -186,7 +227,8 @@ def main():
             file.write('stabilise_time: ' + str(stabilise_time) + '\n')
             file.write('num_sim_iter: ' + str(num_sim_iter) + '\n')
             file.write('gauss_std: ' + str(gauss_std) + '\n')
-            file.write('abort_tolerance: ' + str(abort_tolerance))
+            file.write('num_neurons: ' + str(num_neurons) + '\n')
+            file.write('abort_tolerance: ' + str(abort_tolerance) + '\n')
             file.write('pso_lb: ' + str(pso_lb) + '\n')
             file.write('pso_ub: ' + str(pso_ub) + '\n')
             file.write('pso_maxiter: ' + str(pso_maxiter) + '\n')

@@ -21,7 +21,7 @@ def stim_func(t):
     ### end if
 ### end stim_func
 
-def get_model(robot, w = 1, noisy = True, gauss_std = 0.01, osc_mult = 1.1, mu = 1, tau_synapse = 0.25, num_neurons = 400, osc_radius = 1, feedback_control = 1.3):
+def get_model(robot, w = 1, noisy = True, gauss_std = 0.01, osc_mult = 1.1, mu = 1, tau_synapse = 0.25, num_neurons = 400, osc_radius = 1, feedback_control = 1.3, triangle_control = None):
 
     with nengo.Network() as model:
         gauss_dist = nengo.dists.Gaussian(mean=0,std=gauss_std)
@@ -81,14 +81,25 @@ def get_model(robot, w = 1, noisy = True, gauss_std = 0.01, osc_mult = 1.1, mu =
         def config_transform(v):
             osc = [0] * 8   
             mp = osc_mult
-            osc[0] = mp * v[0]
-            osc[1] = -mp * v[0]
-            osc[2] = -mp * v[0]
-            osc[3] = mp * v[0]
-            osc[4] = mp * v[0]
-            osc[5] = -mp * v[0]
-            osc[6] = -mp * v[0]
-            osc[7] = mp * v[0]
+            if triangle_control is None:
+                osc[0] = mp * v[0]
+                osc[1] = -mp * v[0]
+                osc[2] = -mp * v[0]
+                osc[3] = mp * v[0]
+                osc[4] = mp * v[0]
+                osc[5] = -mp * v[0]
+                osc[6] = -mp * v[0]
+                osc[7] = mp * v[0]
+            else:
+                osc[0] = mp * triangle_control[0] * v[0]
+                osc[1] = mp * triangle_control[1] * v[0]
+                osc[2] = mp * triangle_control[2] * v[0]
+                osc[3] = mp * triangle_control[3] * v[0]
+                osc[4] = mp * triangle_control[4] * v[0]
+                osc[5] = mp * triangle_control[5] * v[0]
+                osc[6] = mp * triangle_control[6] * v[0]
+                osc[7] = mp * triangle_control[7] * v[0]
+            
             return osc
 
         # Connect to the robot
