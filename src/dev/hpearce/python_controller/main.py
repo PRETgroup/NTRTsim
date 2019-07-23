@@ -12,11 +12,11 @@ def main():
     now = datetime.now()
     dt_string = now.strftime("%Y_%m_%d__%H_%M_%S")
 
-    save_csv = True
-    display_graph = True
-    baseline_sine = False
+    save_csv = False
+    display_graph = False
+    baseline_sine = True
     noisy_sine = False
-    simulation_time = 42
+    simulation_time = 47
     stabilise_time = 2
     exp_count = 0
     results = []
@@ -40,7 +40,7 @@ def main():
     triangles = [-0.999038822727864,	0.704050660830525,	-0.137401491330594,	0.896980485840124,	0.265608147117395,	-0.493456121508137,	-1,	1]
 
     robot = superball.SUPERBall(stabilise_time = stabilise_time)
-    lif_model = nengo_one_osc_no_readout.get_model(robot, w = x[0], noisy = True, osc_mult = x[1], mu = x[2], tau_synapse = x[3], num_neurons = num_neurons, osc_radius = x[4], feedback_control = x[5], gauss_std=gauss_std, triangle_control=triangles)
+    lif_model = nengo_one_osc_no_readout.get_model(robot, w = x[0], noisy = True, osc_mult = x[1], mu = x[2], tau_synapse = x[3], num_neurons = num_neurons, osc_radius = x[4], feedback_control = x[5], gauss_std=gauss_std) #, triangle_control=triangles)
     
     # lif_model_1 = nengo_one_osc_no_readout.get_model(robot, w = res_1[0], noisy = True, osc_mult = res_1[1], mu = res_1[2], tau_synapse = res_1[3], num_neurons = 500, osc_radius = res_1[4], feedback_control = res_1[5], gauss_std=gauss_std)
     # lif_model_2 = nengo_one_osc_no_readout.get_model(robot, w = res_2[0], noisy = True, osc_mult = res_2[1], mu = res_2[2], tau_synapse = res_2[3], num_neurons = 400, osc_radius = res_2[4], feedback_control = res_2[5], gauss_std=gauss_std)
@@ -54,7 +54,7 @@ def main():
     print('Robot created')
 
     experiments = [
-        ("Triangle model", lif_model),
+        #("Marc YAML", lif_model),
         #("Nengo LIFRate", lifrate_model),
     ]
 

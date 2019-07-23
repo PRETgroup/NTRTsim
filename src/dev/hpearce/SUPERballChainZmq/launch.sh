@@ -1,2 +1,1 @@
-#use this to launch the program until I can work out what all these extra arguments do
-../../../../build/dev/hpearce/SUPERballChainZmq/AppSUPERballChainZmq ../../../../resources/YamlStructures/mleroy/rot2SUPERballV2.yaml
+../../../../build/dev/hpearce/SUPERballChainZmq/AppSUPERballChainZmq ../../jbruce/SBv2/SBv2_model_rotate_x-z.yaml

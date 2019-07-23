@@ -32,7 +32,6 @@
 #include "core/tgSpringCableActuator.h"
 #include "core/tgString.h"
 #include "core/tgTags.h"
-#include "core/tgRod.h"
 
 //#include "sensors/tgDataObserver.h"
 // The C++ Standard Library
@@ -42,8 +41,6 @@
 #include <iostream>
 #include "helpers/FileHelpers.h"
 #include <stdexcept>
-
-int ctr = 0;
 
 // Constructor assigns variables, does some simple sanity checks.
 // Also, initializes the accumulator variable timePassed so that it can
@@ -84,20 +81,20 @@ LengthControllerYAML::LengthControllerYAML(double startTime,
 void LengthControllerYAML::initializeActuators(TensegrityModel& subject,
 					       std::string tag) {
   //DEBUGGING
-  //std::cout << "Finding cables with the tag: " << tag << std::endl;
+  std::cout << "Finding cables with the tag: " << tag << std::endl;
   // Pick out the actuators with the specified tag
   std::vector<tgBasicActuator*> foundActuators = subject.find<tgBasicActuator>(tag);
-  //std::cout << "The following cables were found and will be controlled: "
-	  //  << std::endl;
+  std::cout << "The following cables were found and will be controlled: "
+	    << std::endl;
   //Iterate through array and output strings to command line
   for (std::size_t i = 0; i < foundActuators.size(); i ++) {	
-    //std::cout << foundActuators[i]->getTags() << std::endl;
+    std::cout << foundActuators[i]->getTags() << std::endl;
     // Also, add the rest length of the actuator at this time
     // to the list of all initial rest lengths.
     initialRL[foundActuators[i]->getTags()] = foundActuators[i]->getRestLength();
     //DEBUGGING:
-    //std::cout << "Cable rest length at t=0 is "
-	    //  << initialRL[foundActuators[i]->getTags()] << std::endl;
+    std::cout << "Cable rest length at t=0 is "
+	      << initialRL[foundActuators[i]->getTags()] << std::endl;
   }
   // Add this list of actuators to the full list. Thanks to:
   // http://stackoverflow.com/questions/201718/concatenating-two-stdvectors
@@ -112,7 +109,7 @@ void LengthControllerYAML::initializeActuators(TensegrityModel& subject,
  */
 void LengthControllerYAML::onSetup(TensegrityModel& subject)
 {
-  //std::cout << "Setting up the LengthControllerYAML controller." << std::endl;
+  std::cout << "Setting up the LengthControllerYAML controller." << std::endl;
   //	    << "Finding cables with tags: " << m_tagsToControl
   //	    << std::endl;
   cablesWithTags = {};
@@ -122,9 +119,7 @@ void LengthControllerYAML::onSetup(TensegrityModel& subject)
     // Call the helper for this tag.
     initializeActuators(subject, *it);
   }
-  //std::cout << "Finished setting up the controller." << std::endl;
-  resetTimePassed();
-  //getBallCOM(subject,31);    
+  std::cout << "Finished setting up the controller." << std::endl;    
 }
 
 void LengthControllerYAML::onStep(TensegrityModel& subject, double dt)
@@ -135,69 +130,24 @@ void LengthControllerYAML::onStep(TensegrityModel& subject, double dt)
   if( m_timePassed > m_startTime ) {
     // For each cable, check if its rest length is past the minimum,
     // otherwise adjust its length according to m_rate and dt.
-    //for (std::size_t i = 0; i < cablesWithTags.size()/3; i ++) {	
-    for (std::size_t i = 0; i < 2; i ++) {  
+    for (std::size_t i = 0; i < cablesWithTags.size(); i ++) {	
       double currRestLength = cablesWithTags[i]->getRestLength();
       // Calculate the minimum rest length for this cable.
       // Remember that m_minLength is a percent.
       double minRestLength = initialRL[cablesWithTags[i]->getTags()] * m_minLength;
-      // If the current rest length is still greater than the minimum,qqq
+      // If the current rest length is still greater than the minimum,
       if( currRestLength > minRestLength ) {
 	// output a progress bar for the controller, to track when control occurs.
-	//std::cout << "." << i;
-	
-  //std::cout << "Rest Length = " << currRestLength << std::endl;  
-  
-  // Then, adjust the rest length of the actuator itself, according to
+	std::cout << "." << i;
+	// Then, adjust the rest length of the actuator itself, according to
 	// m_rate and dt.
 	double nextRestLength = currRestLength - m_rate * dt;
 	//DEBUGGING
 	//std::cout << "Next Rest Length: " << nextRestLength << std::endl;
 	cablesWithTags[i]->setControlInput(nextRestLength,dt);
       }
-      else if(ctr==0){
-        std::cout << "Done at t=" << m_timePassed << std::endl;
-        ctr++;
-        getBallCOM(subject,32);
-      }
     }   
   }
 }
-
-void LengthControllerYAML::resetTimePassed()
-{
-  ctr = 0;
-  m_timePassed = 0;
-}
-
-void LengthControllerYAML::getBallCOM(TensegrityModel& subject, int color) 
-{   
-    //std::vector <tgRod*> rods = find<tgRod>("tgRodInfo");
-    //assert(!rods.empty());
-
-    btVector3 ballCenterOfMass(0, 0, 0);
-
-    std::vector<tgRod*> foundRods = subject.find<tgRod>("prism_rod");
-  
-    double ballMass = 0.0; 
-    for (std::size_t i = 0; i < foundRods.size(); i++) {
-        const tgRod* const rod = foundRods[i];
-        const double rodMass = rod->mass();
-        const btVector3 rodCenterOfMass = rod->centerOfMass();
-        //std::cout << i << ", " << rodCenterOfMass << ", ";
-        ballCenterOfMass += rodCenterOfMass * rodMass;
-        ballMass += rodMass;
-    }
-    //std::cout << std::endl;
-
-    //assert(ballMass > 0.0);
-    ballCenterOfMass /= ballMass;
-
-    // Copy to the result std::vector
-    std::vector<double> result(3);
-    for (size_t i = 0; i < 3; ++i) 
-    { 
-      result[i] = ballCenterOfMass[i]; 
-    }
-    std::cout << "\e[1;" << color << "mX=" << result[0] << ", Y=" << result[1] << ", Z=" << result[2] << "\e[0m" << std::endl;
-}
+	
+ 

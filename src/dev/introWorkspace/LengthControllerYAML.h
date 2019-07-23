@@ -85,8 +85,6 @@ public:
    * @param[in] dt, current timestep must be positive
    */
   virtual void onStep(TensegrityModel& subject, double dt);
-  virtual void resetTimePassed();
-  virtual void getBallCOM(TensegrityModel& subject,int color);
 
 protected:
 

@@ -32,7 +32,6 @@
 #include "core/tgModel.h"
 #include "core/tgSimulation.h"
 #include "core/tgSimViewGraphics.h"
-#include "core/tgSimView.h"
 #include "core/tgWorld.h"
 // Bullet Physics
 #include "LinearMath/btVector3.h"
@@ -40,12 +39,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "sensors/tgDataLogger2.h"
-#include "sensors/tgRodSensorInfo.h"
-#include "sensors/tgSpringCableActuatorSensorInfo.h"
-
-#define USEGRAPHICS 1
-#define LOGDATA 0
 
 /**
  * The entry point.
@@ -62,7 +55,7 @@ int main(int argc, char** argv)
     {
       throw std::invalid_argument("No arguments passed in to the application. You need to specify which YAML file you wouldd like to build.");
     }
- 
+  
     // create the ground and world. Specify ground rotation in radians
     const double yaw = 0.0;
     const double pitch = 0.0;
@@ -75,14 +68,10 @@ int main(int argc, char** argv)
     tgWorld world(config, ground);
 
     // create the view
-    //const double timestep_physics = 0.0001; // seconds
-    const double timestep_physics = 0.001;
+    const double timestep_physics = 0.0001; // seconds
+    //const double timestep_physics = 0.001;
     const double timestep_graphics = 1.f/60.f; // seconds
-    #if(USEGRAPHICS)
-        tgSimViewGraphics view(world, timestep_physics, timestep_graphics);
-    #else
-        tgSimView view(world, timestep_physics, timestep_graphics);
-    #endif
+    tgSimViewGraphics view(world, timestep_physics, timestep_graphics);
 
     // create the simulation
     tgSimulation simulation(view);
@@ -100,66 +89,22 @@ int main(int argc, char** argv)
     // repeated here:
     double startTime = 5.0;
     double minLength = 0.7;
-    double rate = 1.5; //0.25
+    double rate = 0.25;
     std::vector<std::string> tagsToControl;
     // See the threeBarModel.YAML file to see where "vertical_string" is used.
     tagsToControl.push_back("horizontal_string");
     
     // Create the controller
     // FILL IN 6.6 HERE
-    LengthControllerYAML* const myController = new LengthControllerYAML(startTime, minLength, rate, tagsToControl);
+    LengthControllerYAML* const myController = new LengthControllerYAML (startTime, minLength, rate, tagsToControl);
     
     // Attach the controller to the model
     // FILL IN 6.7 HERE
-    myModel->attach(myController);
 
     // Add the model to the world
     simulation.addModel(myModel);
-    
-    #if(LOGDATA)
-        // Add sensors using the new sensing framework
-        // A string prefix for the filename
-        std::string log_filename = "~/projects/tg_shared/App3BarYAML";
-        // The time interval between sensor readings:
-        double timeInterval = 0.2;
-        // First, create the data manager
-        tgDataLogger2* myDataLogger = new tgDataLogger2(log_filename,timeInterval);
-        //std::cout << myDataLogger->toString() << std::endl;
-        // Then, add the model to the data logger
-        myDataLogger->addSenseable(myModel);
-        // Create sensor infos for all the types of sensors that the data logger
-        // will create.
-        tgRodSensorInfo* myRodSensorInfo = new tgRodSensorInfo();
-        tgSpringCableActuatorSensorInfo* mySCASensorInfo =
-          new tgSpringCableActuatorSensorInfo();
-        // Attach the sensor infos to the data logger
-        myDataLogger->addSensorInfo(myRodSensorInfo);
-        myDataLogger->addSensorInfo(mySCASensorInfo);
-        // Next, attach it to the simulation
-        simulation.addDataManager(myDataLogger);
-    #endif
 
-
-    #if(USEGRAPHICS)
-        simulation.run();
-    
-    #else
-    {
-        int nEpisodes = 100;  // Number of episodes ("trial runs")
-        int nSteps = 10001; // Number of steps in each episode, 60k is 60 seconds (timestep_physics*nSteps)
-        for (int i=1; i<=nEpisodes; i++)
-        {
-            std::cout << "Running episode " << i << " of " << nEpisodes << std::endl;
-            if(i!=1)
-            {
-                std::cout << "RESET" << std::endl;
-                simulation.reset();
-                myController->resetTimePassed();
-            }
-            simulation.run(nSteps);
-        }
-    }    
-    #endif
+    simulation.run();
 
     // teardown is handled by delete
     return 0;

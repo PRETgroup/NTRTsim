@@ -25,6 +25,8 @@
  */
 
 // This application
+#include "config.h"
+
 #include "yamlbuilder/TensegrityModel.h"
 
 #include "LengthControllerYAML.h"
@@ -52,15 +54,6 @@
 #include <vector>
 
 #include <zmq.hpp>
-
-#define NOSCILLATORS 4
-#define NSTATES 8
-#define USEGRAPHICS 1
-#define LOGDATA 0
-#define USEHOPFCTLR 0
-#define USELENGTHCTLR 0
-#define USELENGTHZMQCTLR 1
-#define USEPHASEOSCCTLR 0
 
 // Function prototypes
 tgBoxGround *createGround();
@@ -508,7 +501,7 @@ std::vector<std::string> selectControlledStrings(std::vector<std::string> tagsTo
         }
     }*/
     
-
+    #if(USEMARCYAML)   
     //NWP triangle
     tagsToControl.push_back("SUPERball_string03");
     tagsToControl.push_back("SUPERball_string18");
@@ -548,6 +541,45 @@ std::vector<std::string> selectControlledStrings(std::vector<std::string> tagsTo
     tagsToControl.push_back("SUPERball_string08");
     tagsToControl.push_back("SUPERball_string24");
     tagsToControl.push_back("SUPERball_string16");
+
+    #else 
+
+    /* nominally the arrangement is follows:
+    [ 2, 9, 4], # Handedness -1. 
+    [ 1, 7,10], # Handedness  1. 
+    [ 6, 1, 8], # Handedness -1. 
+    [ 2, 5,11], # Handedness  1. 
+    [ 5, 0,10], # Handedness -1. 
+    [ 3, 6, 9], # Handedness  1. 
+    [11, 7, 3], # Handedness -1. 
+    [ 8, 0, 4], # Handedness  1.  */
+
+    tagsToControl.push_back("m01");
+    tagsToControl.push_back("m02");
+    tagsToControl.push_back("m03");
+    tagsToControl.push_back("m04");
+    tagsToControl.push_back("m05");
+    tagsToControl.push_back("m06");
+    tagsToControl.push_back("m07");
+    tagsToControl.push_back("m08");
+    tagsToControl.push_back("m09");
+    tagsToControl.push_back("m10");
+    tagsToControl.push_back("m11");
+    tagsToControl.push_back("m12");
+    tagsToControl.push_back("m13");
+    tagsToControl.push_back("m14");
+    tagsToControl.push_back("m15");
+    tagsToControl.push_back("m16");
+    tagsToControl.push_back("m17");
+    tagsToControl.push_back("m18");
+    tagsToControl.push_back("m19");
+    tagsToControl.push_back("m20");
+    tagsToControl.push_back("m21");
+    tagsToControl.push_back("m22");
+    tagsToControl.push_back("m23");
+    tagsToControl.push_back("m24");
+
+    #endif
 
     std::copy(tagsToControl.begin(), tagsToControl.end(), std::ostream_iterator<std::string>(std::cout, "\n"));
 

@@ -22,9 +22,3 @@ add_executable(App3BarYAML
     LengthControllerYAML.cpp
     App3BarYAML.cpp
 ) 
-
-add_executable(AppTestSUPERballML
-    HopfControllerML.cpp
-    #LengthControllerML.cpp
-    AppTestSUPERballML.cpp
-) 

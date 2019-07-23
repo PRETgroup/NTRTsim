@@ -24,6 +24,8 @@
  */
 
 // This module
+#include "config.h"
+
 #include "LengthControllerYAMLZmq.h"
 // This application
 #include "yamlbuilder/TensegrityModel.h"
@@ -87,11 +89,10 @@ LengthControllerYAMLZmq::LengthControllerYAMLZmq(double startTime,
 void LengthControllerYAMLZmq::initializeActuators(TensegrityModel& subject,
 					       std::string tag) {
   //DEBUGGING
-  //std::cout << "Finding cables with the tag: " << tag << std::endl;
+  std::cout << "Finding cables with the tag: " << tag << std::endl;
   // Pick out the actuators with the specified tag
   std::vector<tgBasicActuator*> foundActuators = subject.find<tgBasicActuator>(tag);
-  //std::cout << "The following cables were found and will be controlled: "
-	  //  << std::endl;
+  std::cout << "The following cables were found and will be controlled: " << std::endl;
   //Iterate through array and output strings to command line
   for (std::size_t i = 0; i < foundActuators.size(); i ++) {	
     std::cout << foundActuators[i]->getTags() << std::endl;
@@ -126,8 +127,10 @@ void LengthControllerYAMLZmq::onSetup(TensegrityModel& subject)
     initializeActuators(subject, *it);
   }
   std::cout << "Finished setting up the controller. There are " << cablesWithTags.size() << " cablesWithTags to control." << std::endl;
+  
   printBallCOM(subject,31);    
   resetTimePassed();
+  
 }
 
 void LengthControllerYAMLZmq::onStep(TensegrityModel& subject, double dt)
@@ -190,7 +193,7 @@ void LengthControllerYAMLZmq::onStep(TensegrityModel& subject, double dt)
       //find the string which matches this name
       std::size_t str_i;
       for(str_i = 0; str_i < cablesWithTags.size(); str_i++) {
-        if(cablesWithTags[str_i]->getTagStr() == name) {
+        if(cablesWithTags[str_i]->getTagStr().find(name) != std::string::npos) {
           break;
         }
       }
@@ -215,7 +218,7 @@ void LengthControllerYAMLZmq::onStep(TensegrityModel& subject, double dt)
       //   double nextRestLength = currRestLength - m_rate * dt;
       //    cablesWithTags[i]->setControlInput(nextRestLength,dt);
       // }
-      //std::cout << "Cable " << cablesWithTags[i]->getTagStr() << ", min: " << minRestLength << ", control: " << setRestLength << std::endl;
+      std::cout << "Cable " << cablesWithTags[i]->getTagStr() << ", min: " << minRestLength << ", control: " << setRestLength << std::endl;
       cablesWithTags[str_i]->setControlInput(setRestLength,dt);
       
   }
@@ -335,8 +338,14 @@ std::vector<double> LengthControllerYAMLZmq::getBallCOM(TensegrityModel& subject
 
     btVector3 ballCenterOfMass(0, 0, 0);
 
+    #if(USEMARCYAML)
     std::vector<tgRod*> foundRods = subject.find<tgRod>("superball_rod");
-  
+    //std::cout << "Found " << foundRods.size() << " rods" << std::endl;
+    #else
+    //std::cout << subject.toString() << std::endl;
+    std::vector<tgRod*> foundRods = subject.find<tgRod>("alu_rod");
+    //std::cout << "Found " << foundRods.size() << " rods" << std::endl;
+    #endif
     double ballMass = 0.0; 
     for (std::size_t i = 0; i < foundRods.size(); i++) {
         const tgRod* const rod = foundRods[i];

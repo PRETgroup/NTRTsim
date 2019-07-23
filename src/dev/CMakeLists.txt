@@ -22,5 +22,7 @@ subdirs(
     introWorkspace
     mleroy
     hpearce
+    #ezhu
+    #mcdaly
+    laika
 )
-
