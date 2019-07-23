@@ -6,13 +6,14 @@ import numpy as np
 import math
 
 class SUPERBall:
-    def __init__(self,port = 5555,stabilise_time = 2):
+    def __init__(self,port = 5555,stabilise_time = 2, record_wait=0):
         self.port = port
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.REQ)
         self.socket.connect('tcp://localhost:%d' % self.port)
         self.lifetime = 0.0
         self.stabilise_time = stabilise_time
+        self.record_wait = record_wait
 
         #we'll use these numbers to reduce our memory impact when graphing history
         self.append_every = 2
@@ -184,11 +185,12 @@ class SUPERBall:
         reply_components = reply.split() 
         self.lifetime = float(reply_components[0])
         pos = (float(reply_components[1]), float(reply_components[2]), float(reply_components[3])) #x, y, z coordinates
-        if self.append_at_count == self.append_every:
-            self.com_history.append(pos)
-            self.append_at_count = 0
-        else:
-            self.append_at_count += 1
+        if self.record_wait < self.lifetime: 
+            if self.append_at_count == self.append_every:
+                self.com_history.append(pos)
+                self.append_at_count = 0
+            else:
+                self.append_at_count += 1
 
         #sleep(0.001) #sleep 1ms so Hammond's laptop can multitask
 

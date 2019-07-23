@@ -37,7 +37,7 @@ def main():
     x = [0.9474544882406742, 1.148655161542617, 1.2506711965679593, 0.24089870662009338, 1.0837109130359142, 1.0] #-92
     x = [0.943409155447694, 1.1362360516795893, 1.2498347185225787, 0.24354977039092154, 1.0820318501593955, 1.0] #-62
     num_neurons = 500
-    triangles = [-0.5972768649880715, 0.9076627847085686, -0.2239288148877891, -0.9777065006457473, 0.8304542538981087, -1.0, -0.42446773149213574, 0.8835349893441794]
+    triangles = [-0.999038822727864,	0.704050660830525,	-0.137401491330594,	0.896980485840124,	0.265608147117395,	-0.493456121508137,	-1,	1]
 
     robot = superball.SUPERBall(stabilise_time = stabilise_time)
     lif_model = nengo_one_osc_no_readout.get_model(robot, w = x[0], noisy = True, osc_mult = x[1], mu = x[2], tau_synapse = x[3], num_neurons = num_neurons, osc_radius = x[4], feedback_control = x[5], gauss_std=gauss_std, triangle_control=triangles)

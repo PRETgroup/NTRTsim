@@ -75,10 +75,14 @@ def get_robot_score(x, *args):
         #     results.append( result, )
 
         #get the distance and angle
+        start_pos = robot.com_history[0]
         final_pos = robot.com_history[-1:]
+        final_x_displ = final_pos[0][0] - start_pos[0]
+        final_z_displ = final_pos[0][2] - start_pos[2]
+
         #format is x,y,z where y is height
-        final_displ = math.sqrt(final_pos[0][0]**2 + final_pos[0][2]**2)
-        final_angle = math.atan(final_pos[0][0] / final_pos[0][2])
+        final_displ = math.sqrt(final_x_displ**2 + final_z_displ**2)
+        final_angle = math.atan(final_x_displ / final_z_displ)
 
         print("\r" + lead_str + " final_displ: " + "("+str(final_pos[0][0])+","+str(final_pos[0][2])+") " + str(final_displ) + ", final_angle: " + str(final_angle))
         avg_final_displ += final_displ
@@ -143,8 +147,8 @@ def get_robot_score(x, *args):
             if abs(angle - target_angle) > max_angle_diff:
                 max_angle_diff = abs(angle - target_angle)
         
-        max_angle_diff *= (100 * (num_sim_iter - final_exp_iter))
-
+        #max_angle_diff *= 1
+        
         score = -( min(final_displs)**2 / (0.01 + max_angle_diff))
 
 
@@ -174,6 +178,7 @@ def main():
     abort_tolerance = 0.1
     min_req_displ = 20
     num_neurons = 500
+    record_wait = 15
 
     #mode = 'pure_sine'
     #mode = 'nengo_lif'
@@ -207,7 +212,7 @@ def main():
 
     approx_runs = num_sim_iter * pso_maxiter * pso_swarmsize
 
-    robot = superball.SUPERBall(stabilise_time = stabilise_time)
+    robot = superball.SUPERBall(stabilise_time = stabilise_time, record_wait=record_wait)
     args = (mode, robot, simulation_time, num_sim_iter, save_csv, csv_file_name, gauss_std, abort_tolerance, min_req_displ, num_neurons, use_params)
     print("PSO commence")
 
