@@ -184,6 +184,13 @@ void LengthControllerYAMLZmq::onStep(TensegrityModel& subject, double dt)
   //Strings that are not provided will not be controlled.
   //duplicated string names will have both commands applied to them (thus the last one will take precedence)
 
+  for(std::size_t i = 0; i < cablesWithTags.size(); i++) 
+  {
+    double currRestLength = cablesWithTags[i]->getRestLength();
+    std::cout << "Cable " << cablesWithTags[i]->getTagStr() << ", currRestLength: " << currRestLength << std::endl;
+      
+  }
+
   for(std::size_t i = 0; i < commands.size(); i++)
   {
       //break command into its parts
@@ -207,7 +214,7 @@ void LengthControllerYAMLZmq::onStep(TensegrityModel& subject, double dt)
       // Remember that m_minLength is a percent.
       double minRestLength = initialRL[cablesWithTags[str_i]->getTags()]; // * m_minLength;
 
-      double currRestLength = cablesWithTags[str_i]->getRestLength();
+      
 
       double setRestLength = command*2 + minRestLength;
 
