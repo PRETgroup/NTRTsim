@@ -6,7 +6,7 @@ import numpy as np
 import math
 
 class SUPERBall:
-    def __init__(self,port = 5555,stabilise_time = 2, record_wait=0, marc_config = False):
+    def __init__(self,port = 5555,stabilise_time = 2, record_wait=0, marc_config = True):
         self.port = port
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.REQ)
@@ -118,7 +118,7 @@ class SUPERBall:
                 'm24',
             ]
             self.triangles = {
-                'NWD': [ 
+                'NWD': [
                     "m19",
                     "m10",
                     "m05",
@@ -174,33 +174,33 @@ class SUPERBall:
         #transmitting a 0.6 gives a nice round SUPERball. Ideally transmit numbers between 0 and 1.
 
         def to_pos(val):
-            return 0 #0.2*min(max(val*2,-3.3),3.3) #outside the range -3.3 to 3.3 the simulator might crash
+            return min(max(val*2,-3.3),3.3) #outside the range -3.3 to 3.3 the simulator might crash
 
-        # if self.lifetime > self.stabilise_time:
+        if self.lifetime > self.stabilise_time:
 
-        #     for string_name in self.triangles['NWP']:
-        #         commands[self.string_names.index(string_name)] = to_pos(data[0])
+            for string_name in self.triangles['NWP']:
+                commands[self.string_names.index(string_name)] = to_pos(data[0])
 
-        #     for string_name in self.triangles['NWD']:
-        #         commands[self.string_names.index(string_name)] = to_pos(data[1])
+            for string_name in self.triangles['NWD']:
+                commands[self.string_names.index(string_name)] = to_pos(data[1])
 
-        #     for string_name in self.triangles['SWP']:
-        #         commands[self.string_names.index(string_name)] = to_pos(data[2])
+            for string_name in self.triangles['SWP']:
+                commands[self.string_names.index(string_name)] = to_pos(data[2])
 
-        #     for string_name in self.triangles['SWD']:
-        #         commands[self.string_names.index(string_name)] = to_pos(data[3])
+            for string_name in self.triangles['SWD']:
+                commands[self.string_names.index(string_name)] = to_pos(data[3])
             
-        #     for string_name in self.triangles['SEP']:
-        #         commands[self.string_names.index(string_name)] = to_pos(data[4])
+            for string_name in self.triangles['SEP']:
+                commands[self.string_names.index(string_name)] = to_pos(data[4])
             
-        #     for string_name in self.triangles['SED']:
-        #         commands[self.string_names.index(string_name)] = to_pos(data[5])
+            for string_name in self.triangles['SED']:
+                commands[self.string_names.index(string_name)] = to_pos(data[5])
             
-        #     for string_name in self.triangles['NEP']:
-        #         commands[self.string_names.index(string_name)] = to_pos(data[6])
+            for string_name in self.triangles['NEP']:
+                commands[self.string_names.index(string_name)] = to_pos(data[6])
 
-        #     for string_name in self.triangles['NED']:
-        #         commands[self.string_names.index(string_name)] = to_pos(data[7])
+            for string_name in self.triangles['NED']:
+                commands[self.string_names.index(string_name)] = to_pos(data[7])
 
         #the following causes a walking motion, it's fun but not very useful
             # for string_name in self.triangles['SWD']:
@@ -228,8 +228,8 @@ class SUPERBall:
             #     commands[self.string_names.index(string_name)] = to_pos(data[5])
 
 
-        msg =  ' '.join([self.string_names[i]+"asdsad:"+str(commands[i]) for i in range(24)])
-        print(msg)
+        msg =  ' '.join([self.string_names[i]+":"+str(commands[i]) for i in range(24)])
+        #print(msg)
         self.socket.send_string(msg)
         
         reply = self.socket.recv()

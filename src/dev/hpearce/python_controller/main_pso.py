@@ -43,6 +43,7 @@ def get_robot_score(x, *args):
     avg_final_displ = 0 
     final_angles = []
     final_displs = []
+    avg_angles = []
 
     target_angle = 0
 
@@ -68,7 +69,7 @@ def get_robot_score(x, *args):
             print(lead_str)
             with nengo.Simulator(lif_model) as sim:
                 sim.run(simulation_time)
-    
+
         # result = ('Pure Sinusoid', [pos[::2] for pos in robot.com_history])
         
         # if display_graph:
@@ -76,26 +77,36 @@ def get_robot_score(x, *args):
 
         #get the distance and angle
         start_pos = robot.com_history[0]
-        final_pos = robot.com_history[-1:]
-        final_x_displ = final_pos[0][0] - start_pos[0]
-        final_z_displ = final_pos[0][2] - start_pos[2]
+        final_pos = robot.com_history[-1]
+        final_x_displ = final_pos[0] - start_pos[0]
+        final_z_displ = final_pos[2] - start_pos[2]
 
         #format is x,y,z where y is height
         final_displ = math.sqrt(final_x_displ**2 + final_z_displ**2)
         final_angle = math.atan(final_x_displ / final_z_displ)
 
-        print("\r" + lead_str + " final_displ: " + "("+str(final_pos[0][0])+","+str(final_pos[0][2])+") " + str(final_displ) + ", final_angle: " + str(final_angle))
+        #get the average angle
+        avg_angle = 0
+        for pos in robot.com_history:
+            pos_x_displ = pos[0] - start_pos[0]
+            pos_z_displ = pos[2] - start_pos[2]
+            if pos_z_displ == 0: #prevent divide by zero errors
+                pos_z_displ = 0.0001
+            avg_angle += math.atan(pos_x_displ / pos_z_displ)
+        avg_angle /= len(robot.com_history)
+
+        print("\r" + lead_str + " final_displ: " + "("+str(final_pos[0])+","+str(final_pos[2])+") " + str(final_displ) + ", avg_angle: " + str(avg_angle))
         avg_final_displ += final_displ
 
         if save_csv:
             with open(csv_file_name, 'a') as file:
                 file.write("\n") #we start the write with a newline character so the end of a set can have a score appended
                 if mode == 'pure_sine':
-                    line = str(exp_count) + "," + str(exp_iter) + "," + str(w_set) + "," + str(osc_mult) + "," + str(final_pos[0][0])+ ","+ str(final_pos[0][2]) + "," + str(final_displ) + "," + str(final_angle) + ","
+                    line = str(exp_count) + "," + str(exp_iter) + "," + str(w_set) + "," + str(osc_mult) + "," + str(final_pos[0])+ ","+ str(final_pos[2]) + "," + str(final_displ) + "," + str(final_angle) + "," + str(avg_angle) + ","
                 elif mode == 'nengo_lif':
-                    line = str(exp_count) + "," + str(exp_iter) + "," + str(x[0]) + "," + str(x[1]) + "," + str(x[2]) + "," + str(x[3]) + "," + str(x[4]) + "," + str(x[5]) + "," + str(final_pos[0][0])+ ","+ str(final_pos[0][2]) + "," + str(final_displ) + "," + str(final_angle) + ","
+                    line = str(exp_count) + "," + str(exp_iter) + "," + str(x[0]) + "," + str(x[1]) + "," + str(x[2]) + "," + str(x[3]) + "," + str(x[4]) + "," + str(x[5]) + "," + str(final_pos[0])+ ","+ str(final_pos[2]) + "," + str(final_displ) + "," + str(final_angle) + "," + str(avg_angle) + ","
                 elif mode == 'nengo_lif_target_trajectory':
-                    line = str(exp_count) + "," + str(exp_iter) + "," + str(x[0]) + "," + str(x[1]) + "," + str(x[2]) + "," + str(x[3]) + "," + str(x[4]) + "," + str(x[5]) + "," + str(x[6]) + "," + str(x[7]) + "," + str(final_pos[0][0])+ ","+ str(final_pos[0][2]) + "," + str(final_displ) + "," + str(final_angle) + ","
+                    line = str(exp_count) + "," + str(exp_iter) + "," + str(x[0]) + "," + str(x[1]) + "," + str(x[2]) + "," + str(x[3]) + "," + str(x[4]) + "," + str(x[5]) + "," + str(x[6]) + "," + str(x[7]) + "," + str(final_pos[0])+ ","+ str(final_pos[2]) + "," + str(final_displ) + "," + str(final_angle) + "," + str(avg_angle) + ","
                 
                 file.write(line)
 
@@ -115,10 +126,13 @@ def get_robot_score(x, *args):
 
         final_angles.append(final_angle)
         final_displs.append(final_displ)
+        avg_angles.append(avg_angle)
         final_exp_iter = exp_iter
 
-        if aborted:
-            break
+        #if aborted:
+        break
+
+    #endfor
 
     score = None
     if mode == 'pure_sine' or mode == 'nengo_lif':
@@ -143,13 +157,13 @@ def get_robot_score(x, *args):
         #assume for now the target trajectory is angle 0
         avg_final_displ /= num_sim_iter
         max_angle_diff = 0
-        for angle in final_angles:
+        for angle in avg_angles:
             if abs(angle - target_angle) > max_angle_diff:
                 max_angle_diff = abs(angle - target_angle)
         
         #max_angle_diff *= 1
         
-        score = -( min(final_displs)**2 / (0.01 + max_angle_diff))
+        score = -( min(final_displs * 2)**2 / (0.05 + max_angle_diff))
 
 
     if save_csv:
@@ -169,7 +183,7 @@ def main():
     display_graph = True
     #baseline_sine = True
     #noisy_sine = True
-    simulation_time = 47
+    simulation_time = 62
     stabilise_time = 2
     num_sim_iter = 9
     #exp_count = 0
@@ -178,7 +192,7 @@ def main():
     abort_tolerance = 0.1
     min_req_displ = 20
     num_neurons = 500
-    record_wait = 15
+    record_wait = 20
 
     #mode = 'pure_sine'
     #mode = 'nengo_lif'
@@ -219,11 +233,11 @@ def main():
     if save_csv:
         with open(csv_file_name, 'w') as file:
             if mode == 'pure_sine':
-                file.write('run,run_iter,w_set,osc_mult,final_x,final_z,final_displ,final_angle,score')
+                file.write('run,run_iter,w_set,osc_mult,final_x,final_z,final_displ,final_angle,avg_angle,score')
             elif mode == 'nengo_lif':
-                file.write('run,run_iter,w_set,osc_mult,mu,tau_synapse,osc_radius,feedback_control,final_x,final_z,final_displ,final_angle,score')
+                file.write('run,run_iter,w_set,osc_mult,mu,tau_synapse,osc_radius,feedback_control,final_x,final_z,final_displ,final_angle,avg_angle,score')
             elif mode == 'nengo_lif_target_trajectory':
-                file.write('run,run_iter,triangles[0],triangles[1],triangles[2],triangles[3],triangles[4],triangles[5],triangles[6],triangles[7],final_x,final_z,final_displ,final_angle,score')
+                file.write('run,run_iter,triangles[0],triangles[1],triangles[2],triangles[3],triangles[4],triangles[5],triangles[6],triangles[7],final_x,final_z,final_displ,final_angle,avg_angle,score')
 
         with open(log_file_name, 'w') as file:
             file.write('PSO run with the following params:\n')

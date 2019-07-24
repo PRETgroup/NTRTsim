@@ -10,6 +10,6 @@
 #define USELENGTHZMQCTLR 1
 #define USEPHASEOSCCTLR 0
 
-#define USEMARCYAML 0
+#define USEMARCYAML 1
 
 #endif

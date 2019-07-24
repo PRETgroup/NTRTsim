@@ -69,6 +69,7 @@ def main():
         master_osc = [0] * 8        
 
         print("Experiment " + str(exp_count) + ": Sine simulation time: 0", end='')
+        
         while robot.lifetime < simulation_time:
             print("\rExperiment " + str(exp_count) + ": Sine simulation time: " + str(robot.lifetime), end='')
             sTime = (sine_w/6 * robot.lifetime)
@@ -84,6 +85,7 @@ def main():
             master_osc[7] = sine_osc_mult * osc
             
             robot.__call__(0.001, master_osc)
+            input()
             
         print("\nExperiment " + str(exp_count) + ": Sine simulation done.")
 

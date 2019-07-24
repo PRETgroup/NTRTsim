@@ -184,12 +184,7 @@ void LengthControllerYAMLZmq::onStep(TensegrityModel& subject, double dt)
   //Strings that are not provided will not be controlled.
   //duplicated string names will have both commands applied to them (thus the last one will take precedence)
 
-  for(std::size_t i = 0; i < cablesWithTags.size(); i++) 
-  {
-    double currRestLength = cablesWithTags[i]->getRestLength();
-    std::cout << "Cable " << cablesWithTags[i]->getTagStr() << ", currRestLength: " << currRestLength << std::endl;
-      
-  }
+  
 
   for(std::size_t i = 0; i < commands.size(); i++)
   {
@@ -225,9 +220,16 @@ void LengthControllerYAMLZmq::onStep(TensegrityModel& subject, double dt)
       //   double nextRestLength = currRestLength - m_rate * dt;
       //    cablesWithTags[i]->setControlInput(nextRestLength,dt);
       // }
-      std::cout << "Cable " << cablesWithTags[i]->getTagStr() << ", min: " << minRestLength << ", control: " << setRestLength << std::endl;
-      cablesWithTags[str_i]->setControlInput(setRestLength,dt);
+      //std::cout << "Cable " << cablesWithTags[i]->getTagStr() << ", min: " << minRestLength << ", control: " << setRestLength << std::endl;
+      cablesWithTags[str_i]->setControlInput(setRestLength);
       
+  }
+
+  for(std::size_t i = 0; i < cablesWithTags.size(); i++) 
+  {
+    //double currRestLength = cablesWithTags[i]->getRestLength();
+    //std::cout << "Cable " << cablesWithTags[i]->getTagStr() << ", currRestLength: " << currRestLength << std::endl;
+    cablesWithTags[i]->moveMotors(dt);  
   }
   //report a response - at some point this will be sensor data, for now it is just the internal time of 
   //  the simulator (useful for synchronisation purposes)

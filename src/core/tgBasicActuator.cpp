@@ -235,7 +235,7 @@ void tgBasicActuator::moveMotors(double dt)
 	       << "RL: " << m_restLength
 	       << " Vel: " << (m_restLength  -m_springCable->getRestLength()) / dt 
 	       << " prev Vel: " << prevVel
-	       << " force " << (actualLength - m_restLength)*stiffness << std::endl;
+	       << " force " << (actualLength - m_restLength)*stiffness << std::endl << std::endl;
      prevVel = (m_restLength  -m_springCable->getRestLength()) / dt ;
      #endif
      m_springCable->setRestLength(m_restLength);
