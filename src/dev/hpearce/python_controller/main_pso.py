@@ -129,8 +129,8 @@ def get_robot_score(x, *args):
         avg_angles.append(avg_angle)
         final_exp_iter = exp_iter
 
-        #if aborted:
-        break
+        if aborted:
+            break
 
     #endfor
 
@@ -185,7 +185,7 @@ def main():
     #noisy_sine = True
     simulation_time = 62
     stabilise_time = 2
-    num_sim_iter = 9
+    num_sim_iter = 1
     #exp_count = 0
     #results = []
     gauss_std = 0.1
