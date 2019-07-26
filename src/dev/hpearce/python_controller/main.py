@@ -13,11 +13,11 @@ def main():
     dt_string = now.strftime("%Y_%m_%d__%H_%M_%S")
 
     save_csv = False
-    display_graph = False
-    baseline_sine = True
+    display_graph = True
+    baseline_sine = False
     noisy_sine = False
-    simulation_time = 47
-    stabilise_time = 2
+    simulation_time = 16
+    stabilise_time = 1
     exp_count = 0
     results = []
     gauss_std = 0.1
@@ -37,10 +37,10 @@ def main():
     x = [0.9474544882406742, 1.148655161542617, 1.2506711965679593, 0.24089870662009338, 1.0837109130359142, 1.0] #-92
     x = [0.943409155447694, 1.1362360516795893, 1.2498347185225787, 0.24354977039092154, 1.0820318501593955, 1.0] #-62
     num_neurons = 500
-    triangles = [-0.999038822727864,	0.704050660830525,	-0.137401491330594,	0.896980485840124,	0.265608147117395,	-0.493456121508137,	-1,	1]
+    triangles = [-1.0,-0.08677292283855402,0.10115765463505927,-1.0,0.9976762774352624,0.20130460649247867,1.0,-0.8537795405564718]
 
     robot = superball.SUPERBall(stabilise_time = stabilise_time)
-    lif_model = nengo_one_osc_no_readout.get_model(robot, w = x[0], noisy = True, osc_mult = x[1], mu = x[2], tau_synapse = x[3], num_neurons = num_neurons, osc_radius = x[4], feedback_control = x[5], gauss_std=gauss_std) #, triangle_control=triangles)
+    lif_model = nengo_one_osc_no_readout.get_model(robot, w = x[0], noisy = True, osc_mult = x[1], mu = x[2], tau_synapse = x[3], num_neurons = num_neurons, osc_radius = x[4], feedback_control = x[5], gauss_std=gauss_std, triangle_control=triangles)
     
     # lif_model_1 = nengo_one_osc_no_readout.get_model(robot, w = res_1[0], noisy = True, osc_mult = res_1[1], mu = res_1[2], tau_synapse = res_1[3], num_neurons = 500, osc_radius = res_1[4], feedback_control = res_1[5], gauss_std=gauss_std)
     # lif_model_2 = nengo_one_osc_no_readout.get_model(robot, w = res_2[0], noisy = True, osc_mult = res_2[1], mu = res_2[2], tau_synapse = res_2[3], num_neurons = 400, osc_radius = res_2[4], feedback_control = res_2[5], gauss_std=gauss_std)
@@ -56,58 +56,60 @@ def main():
     experiments = [
         #("Marc YAML", lif_model),
         #("Nengo LIFRate", lifrate_model),
+        ("Triangle Model (Average Angle Optimised)", lif_model),
+        ("Triangle Model (Average Angle Optimised)", lif_model)
     ]
 
-    sine_w = 0.9
-    sine_osc_mult = 1.1
+    sine_w = 1.1
+    sine_osc_mult = 0.7
     sine_osc_radius = 1
 
     # baseline_sine gives us an idea of our performance
     if baseline_sine:
-        robot.reset()
+        for _ in range(2):
+            robot.reset()
 
-        master_osc = [0] * 8        
+            master_osc = [0] * 8        
 
-        print("Experiment " + str(exp_count) + ": Sine simulation time: 0", end='')
-        
-        while robot.lifetime < simulation_time:
-            print("\rExperiment " + str(exp_count) + ": Sine simulation time: " + str(robot.lifetime), end='')
-            sTime = (sine_w/6 * robot.lifetime)
-            osc = sine_osc_radius * math.sin(2*math.pi*sTime)
+            print("Experiment " + str(exp_count) + ": Sine simulation time: 0", end='')
+            
+            while robot.lifetime < simulation_time:
+                print("\rExperiment " + str(exp_count) + ": Sine simulation time: " + str(robot.lifetime), end='')
+                sTime = (sine_w/6 * robot.lifetime)
+                osc = sine_osc_radius * math.sin(2*math.pi*sTime)
+                    
+                master_osc[0] = sine_osc_mult * osc
+                master_osc[1] = -sine_osc_mult * osc
+                master_osc[2] = -sine_osc_mult * osc
+                master_osc[3] = sine_osc_mult * osc
+                master_osc[4] = sine_osc_mult * osc
+                master_osc[5] = -sine_osc_mult * osc
+                master_osc[6] = -sine_osc_mult * osc
+                master_osc[7] = sine_osc_mult * osc
                 
-            master_osc[0] = sine_osc_mult * osc
-            master_osc[1] = -sine_osc_mult * osc
-            master_osc[2] = -sine_osc_mult * osc
-            master_osc[3] = sine_osc_mult * osc
-            master_osc[4] = sine_osc_mult * osc
-            master_osc[5] = -sine_osc_mult * osc
-            master_osc[6] = -sine_osc_mult * osc
-            master_osc[7] = sine_osc_mult * osc
+                robot.__call__(0.001, master_osc)
+                
+            print("\nExperiment " + str(exp_count) + ": Sine simulation done.")
+
+            final_pos = robot.com_history[-1:]
+            #format is x,y,z where y is height
+            final_displ = math.sqrt(final_pos[0][0]**2 + final_pos[0][2]**2)
+            final_angle = math.atan(final_pos[0][0] / final_pos[0][2])
+            print("final_displ: " + "("+str(final_pos[0][0])+","+str(final_pos[0][2])+") " + str(final_displ) + ", final_angle: " + str(final_angle))
+            exp_name = 'Pure Sinusoid'
+
+            result = (exp_name, [pos[::2] for pos in robot.com_history])
+            if save_csv:
+                with open('results/' + dt_string + '_results'+str(exp_count)+'_'+exp_name+'.csv', 'w') as file:
+                    file.write('row,col\n')
+                    positions = result[1]
+                    for position in positions:
+                        file.write(str(position[0]) + ","  + str(position[1]) + "\n")
             
-            robot.__call__(0.001, master_osc)
-            input()
-            
-        print("\nExperiment " + str(exp_count) + ": Sine simulation done.")
+            if display_graph:
+                results.append( result, )
 
-        final_pos = robot.com_history[-1:]
-        #format is x,y,z where y is height
-        final_displ = math.sqrt(final_pos[0][0]**2 + final_pos[0][2]**2)
-        final_angle = math.atan(final_pos[0][0] / final_pos[0][2])
-        print("final_displ: " + "("+str(final_pos[0][0])+","+str(final_pos[0][2])+") " + str(final_displ) + ", final_angle: " + str(final_angle))
-        exp_name = 'Pure Sinusoid'
-
-        result = (exp_name, [pos[::2] for pos in robot.com_history])
-        if save_csv:
-            with open('results/' + dt_string + '_results'+str(exp_count)+'_'+exp_name+'.csv', 'w') as file:
-                file.write('row,col\n')
-                positions = result[1]
-                for position in positions:
-                    file.write(str(position[0]) + ","  + str(position[1]) + "\n")
-        
-        if display_graph:
-            results.append( result, )
-
-        exp_count += 1
+            exp_count += 1
 
     if noisy_sine:
         robot.reset()

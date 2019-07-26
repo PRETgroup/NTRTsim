@@ -50,7 +50,7 @@ def get_robot_score(x, *args):
     lif_model = None
     if mode == 'nengo_lif':
         lif_model = nengo_one_osc_no_readout.get_model(robot, w = x[0], noisy = True, osc_mult = x[1], mu = x[2], tau_synapse = x[3], num_neurons = num_neurons, osc_radius = x[4], feedback_control = x[5], gauss_std=gauss_std)
-    if mode == 'nengo_lif_target_trajectory':
+    if mode == 'nengo_lif_target_trajectory' or mode == 'nengo_lif_maximum_displacement':
         lif_model = nengo_one_osc_no_readout.get_model(robot, w = use_params[0], noisy = True, osc_mult = use_params[1], mu = use_params[2], tau_synapse = use_params[3], num_neurons = num_neurons, osc_radius = use_params[4], feedback_control = use_params[5], gauss_std=gauss_std, triangle_control=x)
     
 
@@ -64,7 +64,7 @@ def get_robot_score(x, *args):
             lead_str = "Run " + str(exp_count) + "["+str(exp_iter)+"] (w_set = " + str(w_set) + ", osc_mult = " + str(osc_mult) + "):"
             print(lead_str + " sine simulation time: 0", end='')
             pure_sine_simulation(robot, w_set, osc_mult, simulation_time, lead_str)
-        elif mode == 'nengo_lif' or mode == 'nengo_lif_target_trajectory':
+        elif mode == 'nengo_lif' or mode == 'nengo_lif_target_trajectory' or mode == 'nengo_lif_maximum_displacement':
             lead_str = "Nengo Run " + str(exp_count) + "["+str(exp_iter)+"]"
             print(lead_str)
             with nengo.Simulator(lif_model) as sim:
@@ -105,7 +105,7 @@ def get_robot_score(x, *args):
                     line = str(exp_count) + "," + str(exp_iter) + "," + str(w_set) + "," + str(osc_mult) + "," + str(final_pos[0])+ ","+ str(final_pos[2]) + "," + str(final_displ) + "," + str(final_angle) + "," + str(avg_angle) + ","
                 elif mode == 'nengo_lif':
                     line = str(exp_count) + "," + str(exp_iter) + "," + str(x[0]) + "," + str(x[1]) + "," + str(x[2]) + "," + str(x[3]) + "," + str(x[4]) + "," + str(x[5]) + "," + str(final_pos[0])+ ","+ str(final_pos[2]) + "," + str(final_displ) + "," + str(final_angle) + "," + str(avg_angle) + ","
-                elif mode == 'nengo_lif_target_trajectory':
+                elif mode == 'nengo_lif_target_trajectory' or mode == 'nengo_lif_maximum_displacement':
                     line = str(exp_count) + "," + str(exp_iter) + "," + str(x[0]) + "," + str(x[1]) + "," + str(x[2]) + "," + str(x[3]) + "," + str(x[4]) + "," + str(x[5]) + "," + str(x[6]) + "," + str(x[7]) + "," + str(final_pos[0])+ ","+ str(final_pos[2]) + "," + str(final_displ) + "," + str(final_angle) + "," + str(avg_angle) + ","
                 
                 file.write(line)
@@ -114,7 +114,7 @@ def get_robot_score(x, *args):
             if abs(final_angle - target_angle) > abort_tolerance:
                 aborted = True
 
-        if mode == 'nengo_lif':
+        if mode == 'nengo_lif' or mode == 'pure_sine' or mode == 'nengo_lif_maximum_displacement':
             #check if we want to abort
             for prev_final_angle in final_angles:
                 if abs(prev_final_angle - final_angle) > abort_tolerance:
@@ -135,21 +135,21 @@ def get_robot_score(x, *args):
     #endfor
 
     score = None
-    if mode == 'pure_sine' or mode == 'nengo_lif':
+    if mode == 'pure_sine' or mode == 'nengo_lif' or mode == 'nengo_lif_maximum_displacement':
         avg_final_displ /= num_sim_iter
-        max_angle_diff = ((max(final_angles) - min(final_angles)))
+        max_angle_diff = abs((max(final_angles) - min(final_angles)))
         
         #if aborted: 
         # # if we aborted then assume the angle difference could have been worse based on the time before this went wrong
-        max_angle_diff *= (100 * (num_sim_iter - final_exp_iter))
+        max_angle_diff *= ((num_sim_iter - final_exp_iter))
         
-        max_angle_diff = max_angle_diff**2 #square so it's continuous and non-negative
+        #max_angle_diff = max_angle_diff**2 #square so it's continuous and non-negative
 
-        max_displ_diff = (max(final_displs) - min(final_displs))**2
+        #max_displ_diff = (max(final_displs) - min(final_displs))**2
 
         #score = -(avg_final_displ/(1+max_displ_diff+max_angle_diff))
     
-        score = -( min(final_displs)**2 / (0.01 + max_angle_diff))
+        score = -( (5 * min(final_displs))**2 / (0.08 + max_angle_diff))
         #if aborted: #penalty to score if we aborted early (probably the score will already be terrible)
         #    score = score / 2
     
@@ -163,7 +163,7 @@ def get_robot_score(x, *args):
         
         #max_angle_diff *= 1
         
-        score = -( min(final_displs * 2)**2 / (0.05 + max_angle_diff))
+        score = -( (2 * min(final_displs))**2 / (0.05 + max_angle_diff))
 
 
     if save_csv:
@@ -183,20 +183,20 @@ def main():
     display_graph = True
     #baseline_sine = True
     #noisy_sine = True
-    simulation_time = 62
-    stabilise_time = 2
-    num_sim_iter = 1
+    simulation_time = 46
+    stabilise_time = 1
+    num_sim_iter = 5
     #exp_count = 0
     #results = []
     gauss_std = 0.1
     abort_tolerance = 0.1
     min_req_displ = 20
     num_neurons = 500
-    record_wait = 20
+    record_wait = 0
 
     #mode = 'pure_sine'
     #mode = 'nengo_lif'
-    mode = 'nengo_lif_target_trajectory'
+    mode = 'nengo_lif_maximum_displacement'
 
     pso_lb = None
     pso_ub = None
@@ -205,7 +205,7 @@ def main():
 
     if mode == 'pure_sine': #format: [w_set, osc_mult]
         pso_lb = [0.7, 0.8]
-        pso_ub = [2, 1.5]
+        pso_ub = [1.5, 1.7]
     if mode == 'nengo_lif': #format: [w_set, osc_mult, mu, tau_synapse, osc_radius, feedback_control]
         #pso_lb = [0.9, 0.9, 0.9, 0.1, 0.8, 0.8]
         #pso_ub = [1.7, 1.5, 1.3, 0.35, 1.2, 1.8] 
@@ -215,6 +215,11 @@ def main():
         def no_negative_control_value(x, *args): #make sure that osc_mult * radius doesn't exceed 1.65
             return 1.65 - x[1] * x[4]
         constraints = [no_negative_control_value]
+    
+    if mode == 'nengo_lif_maximum_displacement':
+        pso_lb = [-1, -1, -1, -1, -1, -1, -1, -1]
+        pso_ub = [1, 1, 1, 1, 1, 1, 1, 1]
+        use_params = [0.943409155447694, 1.1362360516795893, 1.2498347185225787, 0.24354977039092154, 1.0820318501593955, 1.0]
 
     if mode == 'nengo_lif_target_trajectory':
         pso_lb = [-1, -1, -1, -1, -1, -1, -1, -1]
@@ -222,7 +227,7 @@ def main():
         use_params = [0.943409155447694, 1.1362360516795893, 1.2498347185225787, 0.24354977039092154, 1.0820318501593955, 1.0]
 
     pso_maxiter = 30
-    pso_swarmsize = 60
+    pso_swarmsize = 30
 
     approx_runs = num_sim_iter * pso_maxiter * pso_swarmsize
 
@@ -236,7 +241,7 @@ def main():
                 file.write('run,run_iter,w_set,osc_mult,final_x,final_z,final_displ,final_angle,avg_angle,score')
             elif mode == 'nengo_lif':
                 file.write('run,run_iter,w_set,osc_mult,mu,tau_synapse,osc_radius,feedback_control,final_x,final_z,final_displ,final_angle,avg_angle,score')
-            elif mode == 'nengo_lif_target_trajectory':
+            elif mode == 'nengo_lif_target_trajectory' or mode == 'nengo_lif_maximum_displacement':
                 file.write('run,run_iter,triangles[0],triangles[1],triangles[2],triangles[3],triangles[4],triangles[5],triangles[6],triangles[7],final_x,final_z,final_displ,final_angle,avg_angle,score')
 
         with open(log_file_name, 'w') as file:

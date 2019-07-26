@@ -18,148 +18,92 @@ class SUPERBall:
         #we'll use these numbers to reduce our memory impact when graphing history
         self.append_every = 2
         self.append_at_count = self.append_every
+        self.marc_config = marc_config
 
         self.com_history = []
+        
+        prefix = 'm'
         if marc_config:
-            self.string_names = [
-                'SUPERball_string01',
-                'SUPERball_string02',
-                'SUPERball_string03',
-                'SUPERball_string04',
-                'SUPERball_string05',
-                'SUPERball_string06',
-                'SUPERball_string07',
-                'SUPERball_string08',
-                'SUPERball_string09',
-                'SUPERball_string10',
-                'SUPERball_string11',
-                'SUPERball_string12',
-                'SUPERball_string13',
-                'SUPERball_string14',
-                'SUPERball_string15',
-                'SUPERball_string16',
-                'SUPERball_string17',
-                'SUPERball_string18',
-                'SUPERball_string19',
-                'SUPERball_string20',
-                'SUPERball_string21',
-                'SUPERball_string22',
-                'SUPERball_string23',
-                'SUPERball_string24',
-            ]
-            self.triangles = {
-                'NWD': [ 
-                    'SUPERball_string04',
-                    'SUPERball_string22',
-                    'SUPERball_string15',
-                ],
-                'SWD': [
-                    'SUPERball_string21',
-                    'SUPERball_string02',
-                    'SUPERball_string11',
-                ],
-                'SED': [ 
-                    'SUPERball_string06',
-                    'SUPERball_string23',
-                    'SUPERball_string12',
-                ],
-                'NED': [ 
-                    'SUPERball_string24',
-                    'SUPERball_string08',
-                    'SUPERball_string16',
-                ],
+            prefix = 'SUPERball_string' #marc's YAML uses a different naming style
 
-                'NWP': [
-                    'SUPERball_string03',
-                    'SUPERball_string18',
-                    'SUPERball_string13',
-                ],
-                'SWP': [ 
-                    'SUPERball_string17',
-                    'SUPERball_string01',
-                    'SUPERball_string09',
-                ],
-                'SEP': [ 
-                    'SUPERball_string05',
-                    'SUPERball_string19',
-                    'SUPERball_string10',
-                ],
-                'NEP': [
-                    'SUPERball_string20',
-                    'SUPERball_string07',
-                    'SUPERball_string14',
-                ],
-            }
-        else:
-            self.string_names = [
-                'm01',
-                'm02',
-                'm03',
-                'm04',
-                'm05',
-                'm06',
-                'm07',
-                'm08',
-                'm09',
-                'm10',
-                'm11',
-                'm12',
-                'm13',
-                'm14',
-                'm15',
-                'm16',
-                'm17',
-                'm18',
-                'm19',
-                'm20',
-                'm21',
-                'm22',
-                'm23',
-                'm24',
-            ]
-            self.triangles = {
-                'NWD': [
-                    "m19",
-                    "m10",
-                    "m05",
-                ],
-                'SWD': [
-                    "m04",
-                    "m15",
-                    "m22",
-                ],
-                'SED': [ 
-                    "m03",
-                    "m18",
-                    "m13",
-                ],
-                'NED': [ 
-                    "m06",
-                    "m12",
-                    "m23",
-                ],
+        self.string_names = [
+            prefix + '01',
+            prefix + '02',
+            prefix + '03',
+            prefix + '04',
+            prefix + '05',
+            prefix + '06',
+            prefix + '07',
+            prefix + '08',
+            prefix + '09',
+            prefix + '10',
+            prefix + '11',
+            prefix + '12',
+            prefix + '13',
+            prefix + '14',
+            prefix + '15',
+            prefix + '16',
+            prefix + '17',
+            prefix + '18',
+            prefix + '19',
+            prefix + '20',
+            prefix + '21',
+            prefix + '22',
+            prefix + '23',
+            prefix + '24',
+        ]
+        self.triangles = {
+            'NWD': [ 
+                prefix + '04',
+                prefix + '22',
+                prefix + '15',
+            ],
+            'SWD': [
+                prefix + '21',
+                prefix + '02',
+                prefix + '11', #6
+            ],
+            'SED': [ 
+                prefix + '06',
+                prefix + '23',
+                prefix + '12', #5
+            ],
+            'NED': [ 
+                prefix + '24',
+                prefix + '08', #4
+                prefix + '16',
+            ],
 
-                'NWP': [
-                    "m02",
-                    "m21",
-                    "m11",
-                ],
-                'SWP': [ 
-                    "m07",
-                    "m14",
-                    "m20",
-                ],
-                'SEP': [ 
-                    "m16",
-                    "m08",
-                    "m24",
-                ],
-                'NEP': [
-                    "m17",
-                    "m01",
-                    "m09",
-                ],
-            }
+            'NWP': [
+                prefix + '03',
+                prefix + '18', #2
+                prefix + '13',
+            ],
+            'SWP': [ 
+                prefix + '17',
+                prefix + '01', #1
+                prefix + '09',
+            ],
+            'SEP': [ 
+                prefix + '05',
+                prefix + '19',
+                prefix + '10',
+            ],
+            'NEP': [
+                prefix + '20',
+                prefix + '07',
+                prefix + '14', #3
+            ],
+        }
+
+        self.roller_strings = [
+            prefix + '01', #1
+            prefix + '18', #2
+            prefix + '14', #3
+            prefix + '08', #4
+            prefix + '12', #5
+            prefix + '11', #6
+        ]
 
     def __call__(self, dt, data):
 
@@ -174,10 +118,11 @@ class SUPERBall:
         #transmitting a 0.6 gives a nice round SUPERball. Ideally transmit numbers between 0 and 1.
 
         def to_pos(val):
-            return min(max(val*2,-3.3),3.3) #outside the range -3.3 to 3.3 the simulator might crash
+            return val*2 #min(max(val*2,-3.1),3.1) #outside the range -3.3 to 3.3 the simulator might crash
 
         if self.lifetime > self.stabilise_time:
 
+            
             for string_name in self.triangles['NWP']:
                 commands[self.string_names.index(string_name)] = to_pos(data[0])
 
@@ -201,7 +146,6 @@ class SUPERBall:
 
             for string_name in self.triangles['NED']:
                 commands[self.string_names.index(string_name)] = to_pos(data[7])
-
         #the following causes a walking motion, it's fun but not very useful
             # for string_name in self.triangles['SWD']:
             #     commands[self.string_names.index(string_name)] = to_pos(data[0])

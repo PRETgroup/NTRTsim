@@ -1,6 +1,6 @@
 substructures:
   rotated1:
-    path: rot1SUPERballV2.yaml
+    path: rot1SUPERballV2_update.yaml
     translation: [0,0,0]
     rotation:
       axis: [1,0,0]
