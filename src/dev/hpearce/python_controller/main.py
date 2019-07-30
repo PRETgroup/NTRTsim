@@ -1,10 +1,13 @@
 
 import superball
+import realsuperball
 import nengo_one_osc_no_readout
 import numpy as np
 import matplotlib.pyplot as plt
 import nengo
 import math
+from time import sleep
+import hebi
 
 from datetime import datetime
 
@@ -13,10 +16,11 @@ def main():
     dt_string = now.strftime("%Y_%m_%d__%H_%M_%S")
 
     save_csv = False
-    display_graph = True
+    display_graph = False
     baseline_sine = False
     noisy_sine = False
-    simulation_time = 16
+    use_real_superball = True
+    simulation_time = 41
     stabilise_time = 1
     exp_count = 0
     results = []
@@ -34,12 +38,19 @@ def main():
     # res_8 = [0.9122508534819831, 1.33227259551396, 1.2344208418986893, 0.18717205241535587, 1.0324996333783578, 1.1016074658872594] #-14680.208574328537
     # res_9 = [0.9189953224429923, 1.2945953752545716, 1.2106765101202823, 0.21272113557661268, 1.0893544026097717, 1.1097534731782535] #-16065.145204866001
 
-    x = [0.9474544882406742, 1.148655161542617, 1.2506711965679593, 0.24089870662009338, 1.0837109130359142, 1.0] #-92
-    x = [0.943409155447694, 1.1362360516795893, 1.2498347185225787, 0.24354977039092154, 1.0820318501593955, 1.0] #-62
+    #x = [0.9474544882406742, 1.148655161542617, 1.2506711965679593, 0.24089870662009338, 1.0837109130359142, 1.0] #-92
+    x = [0.943409155447694/2, 1.1362360516795893, 1.2498347185225787, 0.24354977039092154, 1.0820318501593955, 1.0] #-62
     num_neurons = 500
-    triangles = [-1.0,-0.08677292283855402,0.10115765463505927,-1.0,0.9976762774352624,0.20130460649247867,1.0,-0.8537795405564718]
+    #triangles = [-1.0,-0.08677292283855402,0.10115765463505927,-1.0,0.9976762774352624,0.20130460649247867,1.0,-0.8537795405564718]
 
-    robot = superball.SUPERBall(stabilise_time = stabilise_time)
+    #triangles = [-0.4065, 0.9963, -0.9802, 0.9014, 0.5239, -0.4582, -0.0673, 0.9215]
+    triangles =  [-0.3802, 0.9603, -0.9855, 0.9060, 0.5587, -0.3954, -0.0334, 0.9194]
+    global robot
+    if use_real_superball:
+        robot = realsuperball.SUPERBall(stabilise_time=stabilise_time)
+    else:
+        robot = superball.SUPERBall(stabilise_time = stabilise_time)
+
     lif_model = nengo_one_osc_no_readout.get_model(robot, w = x[0], noisy = True, osc_mult = x[1], mu = x[2], tau_synapse = x[3], num_neurons = num_neurons, osc_radius = x[4], feedback_control = x[5], gauss_std=gauss_std, triangle_control=triangles)
     
     # lif_model_1 = nengo_one_osc_no_readout.get_model(robot, w = res_1[0], noisy = True, osc_mult = res_1[1], mu = res_1[2], tau_synapse = res_1[3], num_neurons = 500, osc_radius = res_1[4], feedback_control = res_1[5], gauss_std=gauss_std)
@@ -56,17 +67,18 @@ def main():
     experiments = [
         #("Marc YAML", lif_model),
         #("Nengo LIFRate", lifrate_model),
-        ("Triangle Model (Average Angle Optimised)", lif_model),
-        ("Triangle Model (Average Angle Optimised)", lif_model)
+        #("Triangle Model", lif_model),
+        #("Triangle Model", lif_model)
+        ('Here we go', lif_model)
     ]
 
-    sine_w = 1.1
-    sine_osc_mult = 0.7
+    sine_w = 0.25
+    sine_osc_mult = 1
     sine_osc_radius = 1
 
     # baseline_sine gives us an idea of our performance
     if baseline_sine:
-        for _ in range(2):
+        for _ in range(1):
             robot.reset()
 
             master_osc = [0] * 8        
@@ -90,24 +102,27 @@ def main():
                 robot.__call__(0.001, master_osc)
                 
             print("\nExperiment " + str(exp_count) + ": Sine simulation done.")
-
-            final_pos = robot.com_history[-1:]
-            #format is x,y,z where y is height
-            final_displ = math.sqrt(final_pos[0][0]**2 + final_pos[0][2]**2)
-            final_angle = math.atan(final_pos[0][0] / final_pos[0][2])
-            print("final_displ: " + "("+str(final_pos[0][0])+","+str(final_pos[0][2])+") " + str(final_displ) + ", final_angle: " + str(final_angle))
-            exp_name = 'Pure Sinusoid'
-
-            result = (exp_name, [pos[::2] for pos in robot.com_history])
-            if save_csv:
-                with open('results/' + dt_string + '_results'+str(exp_count)+'_'+exp_name+'.csv', 'w') as file:
-                    file.write('row,col\n')
-                    positions = result[1]
-                    for position in positions:
-                        file.write(str(position[0]) + ","  + str(position[1]) + "\n")
             
-            if display_graph:
-                results.append( result, )
+            if not use_real_superball:
+                final_pos = robot.com_history[-1:]
+                #format is x,y,z where y is height
+                final_displ = math.sqrt(final_pos[0][0]**2 + final_pos[0][2]**2)
+                final_angle = math.atan(final_pos[0][0] / final_pos[0][2])
+                print("final_displ: " + "("+str(final_pos[0][0])+","+str(final_pos[0][2])+") " + str(final_displ) + ", final_angle: " + str(final_angle))
+                exp_name = 'Pure Sinusoid'
+
+                result = (exp_name, [pos[::2] for pos in robot.com_history])
+                if save_csv:
+                    with open('results/' + dt_string + '_results'+str(exp_count)+'_'+exp_name+'.csv', 'w') as file:
+                        file.write('row,col\n')
+                        positions = result[1]
+                        for position in positions:
+                            file.write(str(position[0]) + ","  + str(position[1]) + "\n")
+                
+                if display_graph:
+                    results.append( result, )
+            else: #real superball
+                print("No real data collected.")
 
             exp_count += 1
 
@@ -140,22 +155,27 @@ def main():
             robot.__call__(0.001, master_osc)
         
         print("\nExperiment " + str(exp_count) + ": Noisy sine simulation done.")
-        final_pos = robot.com_history[-1:]
-        #format is x,y,z where y is height
-        final_displ = math.sqrt(final_pos[0][0]**2 + final_pos[0][2]**2)
-        final_angle = math.atan(final_pos[0][0] / final_pos[0][2])
-        print("final_displ: " + "("+str(final_pos[0][0])+","+str(final_pos[0][2])+") " + str(final_displ) + ", final_angle: " + str(final_angle))
-        exp_name = 'Noisy Sinusoid ('+ str(gauss_std) + ')'
-        result = (exp_name, [pos[::2] for pos in robot.com_history])
-        if save_csv:
-            with open('results/' + dt_string + '_results'+str(exp_count)+'_' + exp_name+'.csv', 'w') as file:
-                file.write('x,z\n')
-                positions = result[1]
-                for position in positions:
-                    file.write(str(position[0]) + ","  + str(position[1]) + "\n")
         
-        if display_graph:
-            results.append( result, )
+        if not use_real_superball:
+            final_pos = robot.com_history[-1:]
+            #format is x,y,z where y is height
+            final_displ = math.sqrt(final_pos[0][0]**2 + final_pos[0][2]**2)
+            final_angle = math.atan(final_pos[0][0] / final_pos[0][2])
+            print("final_displ: " + "("+str(final_pos[0][0])+","+str(final_pos[0][2])+") " + str(final_displ) + ", final_angle: " + str(final_angle))
+            exp_name = 'Noisy Sinusoid ('+ str(gauss_std) + ')'
+            result = (exp_name, [pos[::2] for pos in robot.com_history])
+            if save_csv:
+                with open('results/' + dt_string + '_results'+str(exp_count)+'_' + exp_name+'.csv', 'w') as file:
+                    file.write('x,z\n')
+                    positions = result[1]
+                    for position in positions:
+                        file.write(str(position[0]) + ","  + str(position[1]) + "\n")
+            
+            if display_graph:
+                results.append( result, )
+
+        else: #real_superball
+            print("No real data collected")
 
         exp_count += 1
 
@@ -167,25 +187,29 @@ def main():
 
             robot.reset()
             sim.run(simulation_time)
-            result = (exp_name, [pos[::2] for pos in robot.com_history])
 
-            if save_csv:
-                with open('results/' + dt_string + '_results'+str(exp_count)+'_' + exp_name+'.csv', 'w') as file:
-                    file.write('x,z\n')
-                    positions = result[1]
-                    for position in positions:
-                        file.write(str(position[0]) + ","  + str(position[1]) + "\n")
+            if not use_real_superball:
+                result = (exp_name, [pos[::2] for pos in robot.com_history])
 
-            if display_graph:
-                results.append(result, )
+                if save_csv:
+                    with open('results/' + dt_string + '_results'+str(exp_count)+'_' + exp_name+'.csv', 'w') as file:
+                        file.write('x,z\n')
+                        positions = result[1]
+                        for position in positions:
+                            file.write(str(position[0]) + ","  + str(position[1]) + "\n")
 
-            final_pos = robot.com_history[-1:]
-            #format is x,y,z where y is height
-            final_displ = math.sqrt(final_pos[0][0]**2 + final_pos[0][2]**2)
-            final_angle = math.atan(final_pos[0][0] / final_pos[0][2])
-            print("\nExperiment " + str(exp_count) + ": (Nengo) " + experiment[0] + " done.")
-            print("final_displ: " + "("+str(final_pos[0][0])+","+str(final_pos[0][2])+") " + str(final_displ) + ", final_angle: " + str(final_angle))
+                if display_graph:
+                    results.append(result, )
 
+                final_pos = robot.com_history[-1:]
+                #format is x,y,z where y is height
+                final_displ = math.sqrt(final_pos[0][0]**2 + final_pos[0][2]**2)
+                final_angle = math.atan(final_pos[0][0] / final_pos[0][2])
+                print("\nExperiment " + str(exp_count) + ": (Nengo) " + experiment[0] + " done.")
+                print("final_displ: " + "("+str(final_pos[0][0])+","+str(final_pos[0][2])+") " + str(final_displ) + ", final_angle: " + str(final_angle))
+
+            else:
+                print("No real data collected")
 
         exp_count += 1
 
@@ -210,7 +234,16 @@ def main():
         plt.title(str(simulation_time-stabilise_time)+'s Movement Simulation')
         plt.show()
 
+robot = None
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+        robot.reset()
+    except KeyboardInterrupt:
+        if robot is not None:
+            robot.reset()
+        print("Keyboard abort")
+
+    hebi.util.clear_all_groups()
 
 

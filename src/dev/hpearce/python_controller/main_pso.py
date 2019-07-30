@@ -191,7 +191,7 @@ def main():
     #noisy_sine = True
     simulation_time = 41
     stabilise_time = 1
-    num_sim_iter = 3
+    num_sim_iter = 2
     #exp_count = 0
     #results = []
     gauss_std = 0.1
@@ -224,8 +224,8 @@ def main():
         constraints = [no_negative_control_value]
     
     if mode == 'nengo_lif_maximum_displacement':
-        pso_lb = [-1, -1, -1, -1, -1, -1, -1, -1]
-        pso_ub = [1, 1, 1, 1, 1, 1, 1, 1]
+        pso_lb = [-0.5, 0.7, -1,   0.5, 0.25,  0.25, -0.25, 0.5]
+        pso_ub = [ 0,   1,   -0.7,   1, 0.75,  0.75,  0.25, 1  ]
         use_params = [0.943409155447694, 1.1362360516795893, 1.2498347185225787, 0.24354977039092154, 1.0820318501593955, 1.0]
 
     if mode == 'nengo_lif_target_trajectory':
@@ -233,13 +233,8 @@ def main():
         pso_ub = [1, 1, 1, 1, 1, 1, 1, 1]
         use_params = [0.943409155447694, 1.1362360516795893, 1.2498347185225787, 0.24354977039092154, 1.0820318501593955, 1.0]
 
-    if mode == 'nengo_lif_maximum_displacement_enable_offsets':
-        pso_lb = [-1, -1, -1, -1, -1, -1, -1, -1, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5]
-        pso_ub = [ 1,  1,  1,  1,  1,  1,  1,  1,  0.5,  0.5,  0.5,  0.5,  0.5,  0.5,  0.5,  0.5]
-        use_params = [0.943409155447694, 1.1362360516795893, 1.2498347185225787, 0.24354977039092154, 1.0820318501593955, 1.0]
-
-    pso_maxiter = 23
-    pso_swarmsize = 40
+    pso_maxiter = 20
+    pso_swarmsize = 25
 
     approx_runs = num_sim_iter * pso_maxiter * pso_swarmsize
 

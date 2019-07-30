@@ -127,29 +127,29 @@ class SUPERBall:
         if self.lifetime > self.stabilise_time:
             
             
-            for string_name in self.triangles['NWP']:
-                commands[self.string_names.index(string_name)] = to_pos(data[0] + self.offsets[0])
+            # for string_name in self.triangles['NWP']:
+            #     commands[self.string_names.index(string_name)] = to_pos(data[0] + self.offsets[0])
 
-            for string_name in self.triangles['NWD']:
-                commands[self.string_names.index(string_name)] = to_pos(data[1] + self.offsets[1])
+            # for string_name in self.triangles['NWD']:
+            #     commands[self.string_names.index(string_name)] = to_pos(data[1] + self.offsets[1])
 
-            for string_name in self.triangles['SWP']:
-                commands[self.string_names.index(string_name)] = to_pos(data[2] + self.offsets[2])
+            # for string_name in self.triangles['SWP']:
+            #     commands[self.string_names.index(string_name)] = to_pos(data[2] + self.offsets[2])
 
             for string_name in self.triangles['SWD']:
                 commands[self.string_names.index(string_name)] = to_pos(data[3] + self.offsets[3])
             
-            for string_name in self.triangles['SEP']:
-                commands[self.string_names.index(string_name)] = to_pos(data[4] + self.offsets[4])
+            # for string_name in self.triangles['SEP']:
+            #     commands[self.string_names.index(string_name)] = to_pos(data[4] + self.offsets[4])
             
-            for string_name in self.triangles['SED']:
-                commands[self.string_names.index(string_name)] = to_pos(data[5] + self.offsets[5])
+            # for string_name in self.triangles['SED']:
+            #     commands[self.string_names.index(string_name)] = to_pos(data[5] + self.offsets[5])
             
-            for string_name in self.triangles['NEP']:
-                commands[self.string_names.index(string_name)] = to_pos(data[6] + self.offsets[6])
+            # for string_name in self.triangles['NEP']:
+            #     commands[self.string_names.index(string_name)] = to_pos(data[6] + self.offsets[6])
 
-            for string_name in self.triangles['NED']:
-                commands[self.string_names.index(string_name)] = to_pos(data[7] + self.offsets[7])
+            # for string_name in self.triangles['NED']:
+            #     commands[self.string_names.index(string_name)] = to_pos(data[7] + self.offsets[7])
         #the following causes a walking motion, it's fun but not very useful
             # for string_name in self.triangles['SWD']:
             #     commands[self.string_names.index(string_name)] = to_pos(data[0])
