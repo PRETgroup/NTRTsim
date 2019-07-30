@@ -133,6 +133,11 @@ void LengthControllerYAMLZmq::onSetup(TensegrityModel& subject)
   
 }
 
+struct commandWithVal {
+  std::string name;
+  double value;
+};
+
 void LengthControllerYAMLZmq::onStep(TensegrityModel& subject, double dt)
 {
   // First, increment the accumulator variable.
@@ -163,19 +168,19 @@ void LengthControllerYAMLZmq::onStep(TensegrityModel& subject, double dt)
 
   std::string name_with_command;
     
-  std::vector<std::tuple<std::string,double>> commands;
+  std::vector<struct commandWithVal> commands;
   while (iss >> name_with_command) //name_with_command looks like string_name:double_command
   {
-    std::string name;
     std::string command_string;
-    double command;
+
+    struct commandWithVal com;
    
-    name = name_with_command.substr(0, name_with_command.find(":"));
+    com.name = name_with_command.substr(0, name_with_command.find(":"));
     command_string = name_with_command.substr(name_with_command.find(":")+1);
-    command = std::stod(command_string);
+    com.value = std::stod(command_string);
 
     //std::cout << "string_name:" << name << ", command:" << command << std::endl;
-    commands.push_back(std::tuple<std::string,double>(name,command));
+    commands.push_back(com);
   }
 
   //std::cout << "received " << commands.size() << " commands " << std::endl;
@@ -189,8 +194,8 @@ void LengthControllerYAMLZmq::onStep(TensegrityModel& subject, double dt)
   for(std::size_t i = 0; i < commands.size(); i++)
   {
       //break command into its parts
-      std::string name = std::get<std::string>(commands[i]);
-      double command = std::get<double>(commands[i]);
+      std::string name = commands[i].name;
+      double command = commands[i].value;
 
       //find the string which matches this name
       std::size_t str_i;
@@ -211,7 +216,7 @@ void LengthControllerYAMLZmq::onStep(TensegrityModel& subject, double dt)
 
       
 
-      double setRestLength = command*2 + minRestLength;
+      double setRestLength = command*minRestLength + minRestLength;
 
       // if(setRestLength > (currRestLength - m_rate)) {
       //   double nextRestLength = currRestLength + m_rate * dt;

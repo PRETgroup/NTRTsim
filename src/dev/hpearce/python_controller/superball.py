@@ -118,7 +118,7 @@ class SUPERBall:
         #transmitting a 0.6 gives a nice round SUPERball. Ideally transmit numbers between 0 and 1.
 
         def to_pos(val):
-            return val*2 #min(max(val*2,-3.1),3.1) #outside the range -3.3 to 3.3 the simulator might crash
+            return val/2.1 #min(max(val*2,-3.1),3.1) #outside the range -3.3 to 3.3 the simulator might crash
 
         if self.lifetime > self.stabilise_time:
 
