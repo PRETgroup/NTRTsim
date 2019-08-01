@@ -114,7 +114,7 @@ class SUPERBall:
 
         self.hebi_feedback = hebi.GroupFeedback(self.hebi_group.size)
 
-        self.hebi_group.feedback_frequency = 50.0 #Reduces hebi NaN errors - see Massimo
+        self.hebi_group.feedback_frequency = 1000.0 #Reduces hebi NaN errors - see Massimo
 
         # Keep commands active indefinitely
         self.hebi_group.command_lifetime = 0
@@ -166,19 +166,39 @@ class SUPERBall:
                 commands[self.string_names.index(string_name)] = to_radians(data[7] + self.offsets[7])
         
         #first we get the feedback from hebi
-        #don't care at the moment
+        while True:
+            self.hebi_feedback = self.hebi_group.get_next_feedback(reuse_fbk = self.hebi_feedback)
+            if self.hebi_feedback is not None:
+                break
+            
+        #print("effort ", self.hebi_feedback.effort)
+        #print("measured_pos", self.hebi_feedback.position)
+        cur_efforts = self.hebi_feedback.effort
+        cur_positions = self.hebi_feedback.position
 
-        default_string_length = 80 #remember commands[i] is in form of a percentage
+        default_string_length = 105 #remember commands[i] is in form of a percentage
         hebi_motor_commands = [0 for _ in range(24)]
         for i in range(len(commands)):
             hebi_motor_commands[i] = (commands[i] * default_string_length) * self.hebi_slope 
+
+        min_effort_to_unwind = 0.4
+        max_effort_to_wind = 4
+
+        #only unwind a cable as long as it is tight
+        #only wind a cable as long as the effort isn't too high (we don't want to snap anything (again))
+        for i in range(24):
+            if cur_efforts[i] < min_effort_to_unwind and hebi_motor_commands[i] < cur_positions[i]:
+                hebi_motor_commands[i] = cur_positions[i] 
+            elif cur_efforts[i] > max_effort_to_wind and hebi_motor_commands[i] > cur_positions[i]:
+                hebi_motor_commands[i] = cur_positions[i]
+        
         
         #msg =  ' '.join([self.string_names[i]+":"+str(commands[i]) for i in range(24)])
         #print(hebi_motor_commands)
 
         self.hebi_cmd.position = hebi_motor_commands
         self.hebi_group.send_command(self.hebi_cmd)
-        #sleep(0.02)
+        #sleep(0.001)
         self.lifetime += 0.001
         #self.socket.send_string(msg)
         
@@ -255,8 +275,9 @@ def DiscoverModules( numModules = 24 ):
     except AttributeError:
         raise Exception('Attribute Error while accessing GroupSB.size')
 
+    return GroupSB
     try:
-        for i in range(5):
+        for i in range(15):
             infoTableSB = GroupSB.request_info()
             if infoTableSB is not None:
                 break

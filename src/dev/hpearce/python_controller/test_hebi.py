@@ -1,9 +1,13 @@
 import hebi
 from time import sleep
+import math
 
 class TestHebiMotors:
 
-    def __init__(self):
+    def __init__(self, numModules=24):
+        self.numModules = numModules
+        self.largest_effort = 0
+        self.smallest_effort = 1
         self.init_hebi()
 
     def init_hebi(self):
@@ -12,7 +16,7 @@ class TestHebiMotors:
         hebi.util.clear_all_groups()
 
         # Discover the modules on the network and create a Hebi Group
-        self.hebi_group = DiscoverModules(numModules=24)
+        self.hebi_group = DiscoverModules(self.numModules)
 
         # Set command stuctures for SB motors
         self.hebi_cmd = hebi.GroupCommand(self.hebi_group.size)
@@ -32,8 +36,31 @@ class TestHebiMotors:
         # Converts from NTRT actions to SUPERball motor positions 
         #positions = action / 10 # Converts cable length from decimiters to meters
         #cmdMotorPositions = ( 100 * positions ) * self.hebi_slope + self.hebi_offset #Converts cable length into spool actuation
-        cmdMotorPositions = action
-        self.hebi_cmd.position = [cmdMotorPositions for _ in range(24)]
+        while True:
+            self.hebi_feedback = self.hebi_group.get_next_feedback(reuse_fbk = self.hebi_feedback)
+            if self.hebi_feedback is not None:
+                break
+        
+        #print("effort ", self.hebi_feedback.effort)
+        #print("measured_pos", self.hebi_feedback.position)
+        cur_efforts = self.hebi_feedback.effort
+        cur_positions = self.hebi_feedback.position
+
+        cmdMotorPositions = [0 for _ in range(self.numModules)]
+        cmdMotorPositions[8] = action
+
+        cmdMotorPositions[11] = action
+
+        #only unwind a cable as long as it is tight
+        for i in range(self.numModules):
+            if cur_efforts[i] < 0.4 and cmdMotorPositions[i] < cur_positions[i]:
+                cmdMotorPositions[i] = cur_positions[i] 
+
+        self.hebi_cmd.position = cmdMotorPositions
+        
+        # self.hebi_cmd.effort[0] = 0.05
+        # self.hebi_cmd.position_limit_min[0] = -20
+        # self.hebi_cmd.position_limit_max[0] = -10
 
         self.hebi_group.send_command(self.hebi_cmd)
 
@@ -76,48 +103,52 @@ def DiscoverModules( numModules = 24 ):
     except AttributeError:
         raise Exception('Attribute Error while accessing GroupSB.size')
 
-    sleep(2)
+    sleep(1)
 
-    try:
-        infoTableSB = GroupSB.request_info()
-    except AttributeError:
-        raise Exception('Attribute Error in GroupSB')
+    # try:
+    #     for i in range(10):
+    #         infoTableSB = GroupSB.request_info()
+    #         if infoTableSB is not None:
+    #             break
+    #         print("infoTableSB is None, trying again (%d/10)" % (i+1))
+    #         sleep(0.25)
+    # except AttributeError:
+    #     raise Exception('Attribute Error in GroupSB')
     
-    if infoTableSB is None:
-        raise Exception('infoTableSB is None!')
+    # if infoTableSB is None:
+    #     raise Exception('infoTableSB is None!')
 
-    try:
-        print('{} module(s) found!'.format(len(infoTableSB.name)))
-    except AttributeError:
-        raise Exception('Attribute Error in infoTableSB')
+    # try:
+    #     print('{} module(s) found!'.format(len(infoTableSB.name)))
+    # except AttributeError:
+    #     raise Exception('Attribute Error in infoTableSB')
 
-    if len(infoTableSB.name) != numModules:
-        raise Exception('Number of modules mismatch')
+    # if len(infoTableSB.name) != numModules:
+    #     raise Exception('Number of modules mismatch')
     
-    print('SUPERball Motors Found:')
-    for module in range(len(infoTableSB.name)):
-        print(infoTableSB.name[module])
+    # print('SUPERball Motors Found:')
+    # for module in range(len(infoTableSB.name)):
+    #     print(infoTableSB.name[module])
 
     return GroupSB
 
 try:
     x = 1
-    dir = 0.1
+    dir = 0.5
     count = 0
-    hm = TestHebiMotors()
-    while count < 300:
+    hm = TestHebiMotors(numModules=24)
+    while count < 3000:
         count += 1
         x += dir
         if x >= 5:
-            dir = -0.25
-        if x <= -5:
-            dir = 0.25
+            dir = -0.5
+        if x <= -130:
+            dir = 0.5
         hm.set_motors(x)
-        sleep(0.05)
+        sleep(0.01)
 except Exception as e:
     print("Exception:")
     print(e)
-    pass
 
 
 hebi.util.clear_all_groups()

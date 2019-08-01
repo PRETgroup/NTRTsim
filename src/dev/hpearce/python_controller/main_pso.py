@@ -191,7 +191,7 @@ def main():
     #noisy_sine = True
     simulation_time = 41
     stabilise_time = 1
-    num_sim_iter = 2
+    num_sim_iter = 4
     #exp_count = 0
     #results = []
     gauss_std = 0.1
@@ -201,9 +201,9 @@ def main():
     record_wait = 0
 
     #mode = 'pure_sine'
-    #mode = 'nengo_lif'
+    mode = 'nengo_lif'
     #mode = 'nengo_lif_maximum_displacement'
-    mode = 'nengo_lif_maximum_displacement_enable_offsets'
+    #mode = 'nengo_lif_maximum_displacement_enable_offsets'
 
     pso_lb = None
     pso_ub = None
@@ -216,8 +216,8 @@ def main():
     if mode == 'nengo_lif': #format: [w_set, osc_mult, mu, tau_synapse, osc_radius, feedback_control]
         #pso_lb = [0.9, 0.9, 0.9, 0.1, 0.8, 0.8]
         #pso_ub = [1.7, 1.5, 1.3, 0.35, 1.2, 1.8] 
-        pso_lb = [0.91, 1.1, 1.2, 0.18, 0.9, 1]
-        pso_ub = [1.01, 1.3, 1.3, 0.26, 1.1, 1.2] 
+        pso_lb = [0.15, 1.1, 1.2, 0.18, 0.9, 1]
+        pso_ub = [0.40, 1.3, 1.3, 0.26, 1.1, 1.2] 
     
         def no_negative_control_value(x, *args): #make sure that osc_mult * radius doesn't exceed 1.65
             return 1.65 - x[1] * x[4]

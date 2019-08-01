@@ -104,7 +104,7 @@ def get_model(robot, w = 1, noisy = True, gauss_std = 0.01, osc_mult = 1.1, mu =
 
         # Connect to the robot
         arm_out = nengo.Node(output=robot, size_in=8, size_out=0)
-        nengo.Connection(master_osc, arm_out, function=config_transform)
+        nengo.Connection(master_osc, arm_out, function=config_transform, synapse=0.2)
         #p_arm = nengo.Probe(readout, synapse = 0.01)
         ### end with nengo.Network() as model
 
