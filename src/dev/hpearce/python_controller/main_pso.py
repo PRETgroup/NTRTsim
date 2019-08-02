@@ -195,7 +195,7 @@ def main():
     #noisy_sine = True
     simulation_time = 61
     stabilise_time = 1
-    num_sim_iter = 3
+    num_sim_iter = 4
     #exp_count = 0
     #results = []
     gauss_std = 0.1
@@ -221,17 +221,20 @@ def main():
     if mode == 'nengo_lif': #format: [w_set, osc_mult, mu, tau_synapse, osc_radius, feedback_control]
         #pso_lb = [0.9, 0.9, 0.9, 0.1, 0.8, 0.8]
         #pso_ub = [1.7, 1.5, 1.3, 0.35, 1.2, 1.8] 
-        pso_lb = [0.91, 1.1, 1.2, 0.18, 0.9, 1]
-        pso_ub = [1.01, 1.3, 1.3, 0.26, 1.1, 1.2] 
+        pso_lb = [0.15, 1.1, 1.2, 0.18, 0.9, 1]
+        pso_ub = [0.40, 1.3, 1.3, 0.26, 1.1, 1.2] 
     
         def no_negative_control_value(x, *args): #make sure that osc_mult * radius doesn't exceed 1.65
             return 1.65 - x[1] * x[4]
         constraints = [no_negative_control_value]
     
     if mode == 'nengo_lif_maximum_displacement':
-        pso_lb = [-1, -1, -1, -1, -1, -1, -1, -1]
-        pso_ub = [1, 1, 1, 1, 1, 1, 1, 1]
-        use_params = [0.943409155447694*0.6, 1.1362360516795893, 1.2498347185225787, 0.24354977039092154, 1.0820318501593955, 1.0]
+        #pso_lb = [-1, -1, -1, -1, -1, -1, -1, -1]
+        #pso_ub = [1, 1, 1, 1, 1, 1, 1, 1]
+        #use_params = [0.943409155447694*0.6, 1.1362360516795893, 1.2498347185225787, 0.24354977039092154, 1.0820318501593955, 1.0]
+        pso_lb = [-0.5, 0.7, -1,   0.5, 0.25,  0.25, -0.25, 0.5]
+        pso_ub = [ 0,   1,   -0.7,   1, 0.75,  0.75,  0.25, 1  ]
+        use_params = [0.943409155447694, 1.1362360516795893, 1.2498347185225787, 0.24354977039092154, 1.0820318501593955, 1.0]
 
     if mode == 'nengo_lif_target_trajectory':
         pso_lb = [-1, -1, -1, -1, -1, -1, -1, -1]
@@ -252,8 +255,8 @@ def main():
         pso_ub = [1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
         use_params = [0.943409155447694*0.6, 1.1362360516795893, 1.2498347185225787, 0.24354977039092154, 1.0820318501593955, 1.0]
     
-    pso_maxiter = 15
-    pso_swarmsize = 20
+    pso_maxiter = 30
+    pso_swarmsize = 30
 
     approx_runs = num_sim_iter * pso_maxiter * pso_swarmsize
 
