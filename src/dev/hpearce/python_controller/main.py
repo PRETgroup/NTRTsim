@@ -12,11 +12,11 @@ def main():
     now = datetime.now()
     dt_string = now.strftime("%Y_%m_%d__%H_%M_%S")
 
-    save_csv = False
+    save_csv = True
     display_graph = True
     baseline_sine = False
     noisy_sine = False
-    simulation_time = 16
+    simulation_time = 61
     stabilise_time = 1
     exp_count = 0
     results = []
@@ -34,12 +34,15 @@ def main():
     # res_8 = [0.9122508534819831, 1.33227259551396, 1.2344208418986893, 0.18717205241535587, 1.0324996333783578, 1.1016074658872594] #-14680.208574328537
     # res_9 = [0.9189953224429923, 1.2945953752545716, 1.2106765101202823, 0.21272113557661268, 1.0893544026097717, 1.1097534731782535] #-16065.145204866001
 
-    x = [0.9474544882406742, 1.148655161542617, 1.2506711965679593, 0.24089870662009338, 1.0837109130359142, 1.0] #-92
-    x = [0.943409155447694, 1.1362360516795893, 1.2498347185225787, 0.24354977039092154, 1.0820318501593955, 1.0] #-62
+    #x = [0.9474544882406742, 1.148655161542617, 1.2506711965679593, 0.24089870662009338, 1.0837109130359142, 1.0] #-92
+    x = [0.943409155447694*0.6, 1.1362360516795893, 1.2498347185225787, 0.24354977039092154, 1.0820318501593955, 1.0] #-62
     num_neurons = 500
-    triangles = [-1.0,-0.08677292283855402,0.10115765463505927,-1.0,0.9976762774352624,0.20130460649247867,1.0,-0.8537795405564718]
-
+    #triangles = [-1.0,-0.08677292283855402,0.10115765463505927,-1.0,0.9976762774352624,0.20130460649247867,1.0,-0.8537795405564718]
+    triangles = [-0.7129260869934373,0.3327286467043015,-0.9683658780087295,0.8840038521952567,-0.9861951019471396,-0.2989263572233443,0.8478325106643992,0.8942312129892782]
+    offsets =   [-0.09641047965727331,-0.31251331330964105,-0.16251623449002492,-0.2961696960246747,-0.24355660748728966,-0.09151897555835849,-0.02359746828029952,-0.00996973522153814]
     robot = superball.SUPERBall(stabilise_time = stabilise_time)
+    robot.set_offsets(offsets)
+
     lif_model = nengo_one_osc_no_readout.get_model(robot, w = x[0], noisy = True, osc_mult = x[1], mu = x[2], tau_synapse = x[3], num_neurons = num_neurons, osc_radius = x[4], feedback_control = x[5], gauss_std=gauss_std, triangle_control=triangles)
     
     # lif_model_1 = nengo_one_osc_no_readout.get_model(robot, w = res_1[0], noisy = True, osc_mult = res_1[1], mu = res_1[2], tau_synapse = res_1[3], num_neurons = 500, osc_radius = res_1[4], feedback_control = res_1[5], gauss_std=gauss_std)
@@ -56,8 +59,8 @@ def main():
     experiments = [
         #("Marc YAML", lif_model),
         #("Nengo LIFRate", lifrate_model),
-        ("Triangle Model (Average Angle Optimised)", lif_model),
-        ("Triangle Model (Average Angle Optimised)", lif_model)
+        ("Triangle and Offsets Model (run 1)", lif_model),
+        ("Triangle and Offsets Model (run 2)", lif_model)
     ]
 
     sine_w = 1.1
@@ -200,7 +203,7 @@ def main():
         ax = fig.add_subplot(111)
         for result in results:
             #color = cmap(float(color_i)/color_N)
-            label = "w = " + str(result[0])
+            label = str(result[0])
             positions = result[1]
             ax.plot(*zip(*positions), label=label)
             #color_i += 1

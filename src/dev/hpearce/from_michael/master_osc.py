@@ -33,12 +33,12 @@ with nengo.Network() as model:
     type_of_neuron = nengo.LIF
     #type_of_neuron = nengo.LIFRate
     
-    w = 1.5
-    mu = 1
-    tau_synapse = 0.2
-    num_neurons = 200
+    w = 0.943409155447694*0.6
+    mu = 1.2498347185225787
+    tau_synapse = 0.24354977039092154
+    num_neurons = 500
     readout_radius = 2 ##1.*np.sqrt(6)
-    osc_radius = 1
+    osc_radius = 1.0820318501593955
     
     def feedback_func(x):
         r_2 = x[0]*x[0] + x[1]*x[1]
