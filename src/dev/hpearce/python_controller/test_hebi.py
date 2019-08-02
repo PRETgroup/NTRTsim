@@ -46,17 +46,28 @@ class TestHebiMotors:
         cur_efforts = self.hebi_feedback.effort
         cur_positions = self.hebi_feedback.position
 
-        cmdMotorPositions = [0 for _ in range(self.numModules)]
-        cmdMotorPositions[8] = action
+        hebi_motor_commands = [0 for _ in range(self.numModules)]
+        hebi_motor_commands[8] = action
 
-        cmdMotorPositions[11] = action
+        hebi_motor_commands[11] = action
+
+        min_effort_to_unwind = 0.4
+        max_effort_to_wind = 3.9
+
+        for effort in cur_efforts:
+            if effort > self.largest_effort:
+                print("New largest effort ", effort)
+                self.largest_effort = effort
 
         #only unwind a cable as long as it is tight
-        for i in range(self.numModules):
-            if cur_efforts[i] < 0.4 and cmdMotorPositions[i] < cur_positions[i]:
-                cmdMotorPositions[i] = cur_positions[i] 
+        #only wind a cable as long as the effort isn't too high (we don't want to snap anything (again))
+        for i in range(24):
+            if cur_efforts[i] < min_effort_to_unwind and hebi_motor_commands[i] < cur_positions[i]:
+                hebi_motor_commands[i] = cur_positions[i] 
+            elif cur_efforts[i] > max_effort_to_wind and hebi_motor_commands[i] > cur_positions[i]:
+                hebi_motor_commands[i] = cur_positions[i]
 
-        self.hebi_cmd.position = cmdMotorPositions
+        self.hebi_cmd.position = hebi_motor_commands
         
         # self.hebi_cmd.effort[0] = 0.05
         # self.hebi_cmd.position_limit_min[0] = -20
@@ -140,10 +151,10 @@ try:
     while count < 3000:
         count += 1
         x += dir
-        if x >= 5:
-            dir = -0.5
-        if x <= -130:
-            dir = 0.5
+        if x >= 35:
+            dir = -0.2
+        if x <= -45:
+            dir = 0.2
         hm.set_motors(x)
         sleep(0.01)
 except Exception as e:

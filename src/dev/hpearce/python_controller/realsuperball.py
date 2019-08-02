@@ -176,13 +176,13 @@ class SUPERBall:
         cur_efforts = self.hebi_feedback.effort
         cur_positions = self.hebi_feedback.position
 
-        default_string_length = 105 #remember commands[i] is in form of a percentage
+        default_string_length = 110 #remember commands[i] is in form of a percentage
         hebi_motor_commands = [0 for _ in range(24)]
         for i in range(len(commands)):
             hebi_motor_commands[i] = (commands[i] * default_string_length) * self.hebi_slope 
 
         min_effort_to_unwind = 0.4
-        max_effort_to_wind = 4
+        max_effort_to_wind = 4.85
 
         #only unwind a cable as long as it is tight
         #only wind a cable as long as the effort isn't too high (we don't want to snap anything (again))
