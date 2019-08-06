@@ -1,3 +1,12 @@
+#/bin/python3
+
+'''
+@file main_pso.py - entry point for optimising SUPERball under simulation using Nengo. See the README.md for details.
+
+@author Hammond Pearce
+@email hammond.pearce@auckland.ac.nz
+@date 2019-07-06
+'''
 
 import superball
 import numpy as np
@@ -12,6 +21,11 @@ from datetime import datetime
 exp_count = 0
 
 def pure_sine_simulation(robot, w_set, osc_mult, simulation_time, lead_str):
+    """
+    pure_sine_simulation is used as a placeholder function for debugging pso without using nengo as a controller.
+    It won't really give good results to score. 
+    """
+
     master_osc = [0] * 8    
     while robot.lifetime < simulation_time:
         print("\r" + lead_str + " sine simulation time: "+ str(robot.lifetime), end='')
@@ -29,23 +43,30 @@ def pure_sine_simulation(robot, w_set, osc_mult, simulation_time, lead_str):
         
         robot.__call__(0.001, master_osc)
 
-
-
 def get_robot_score(x, *args):
+    """
+    get_robot_score is a function called by pso which will, depending on the mode set (in *args), call NTRT via ZMQ and score the performance.
+    The mode chooses how the performance is scored. 
+    Configure this function using the configuration variables in main()
+    """
+
     global exp_count
 
+    #these vars are only used in the pure_sine mode
     w_set = x[0]
     osc_mult = x[1]
 
+    #extract the args from *xargs
     mode, robot, simulation_time, num_sim_iter, save_csv, csv_file_name, gauss_std, abort_tolerance, min_req_displ, num_neurons, use_params = args
     
-     
+    #configure initial variables
     avg_final_displ = 0 
     final_angles = []
     final_displs = []
     final_x_displs = []
     avg_angles = []
 
+    #when using nengo_lif_target_trajectory, this sets the target trajectory as 0 radians
     target_angle = 0
 
     lif_model = None
@@ -59,7 +80,7 @@ def get_robot_score(x, *args):
         lif_model = nengo_one_osc_no_readout.get_model(robot, w = use_params[0], noisy = True, osc_mult = use_params[1], mu = use_params[2], tau_synapse = use_params[3], num_neurons = num_neurons, osc_radius = use_params[4], feedback_control = use_params[5], gauss_std=gauss_std, triangle_control=x)
     
 
-    aborted = False #set to true if the system aborts due to too much inconsistency
+    aborted = False #this variable is set to true if the system aborts due to too much inconsistency
     
     final_exp_iter = 0
     for exp_iter in range(num_sim_iter):
@@ -74,11 +95,6 @@ def get_robot_score(x, *args):
             print(lead_str)
             with nengo.Simulator(lif_model) as sim:
                 sim.run(simulation_time)
-
-        # result = ('Pure Sinusoid', [pos[::2] for pos in robot.com_history])
-        
-        # if display_graph:
-        #     results.append( result, )
 
         #get the distance and angle
         start_pos = robot.com_history[0]
@@ -142,79 +158,103 @@ def get_robot_score(x, *args):
 
     #endfor
 
+    #it's difficult to come up with a good scoring algorithm. Below are my attempts for the different modes.
+    #You'll probably want to change these a lot depending on what you're doing.
+    #i've played with finding the differences between final_angles, the average_angles, the displacements...
+
     score = None
     if mode == 'pure_sine' or mode == 'nengo_lif' or mode == 'nengo_lif_maximum_displacement' or mode == 'nengo_lif_maximum_displacement_enable_offsets':
         avg_final_displ /= num_sim_iter
         max_angle_diff = abs((max(final_angles) - min(final_angles)))
         
-        #if aborted: 
-        # # if we aborted then assume the angle difference could have been worse based on the time before this went wrong
+        # if we aborted then num_sim_iter and final_exp_iter will differ
+        # we assume the angle difference could have been worse based on the time before this went wrong
         max_angle_diff *= ((num_sim_iter - final_exp_iter))
-        
-        #max_angle_diff = max_angle_diff**2 #square so it's continuous and non-negative
-
-        #max_displ_diff = (max(final_displs) - min(final_displs))**2
-
-        #score = -(avg_final_displ/(1+max_displ_diff+max_angle_diff))
     
+        #increase the 5 to emphasize the displacement reward
+        #increase the 0.08 to cap the accuracy reward
         score = -( (5 * min(final_displs))**2 / (0.08 + max_angle_diff))
-        #if aborted: #penalty to score if we aborted early (probably the score will already be terrible)
-        #    score = score / 2
     
     if mode == 'nengo_lif_target_trajectory':
-        #assume for now the target trajectory is angle 0
         avg_final_displ /= num_sim_iter
         max_angle_diff = 0
         for angle in avg_angles:
             if abs(angle - target_angle) > max_angle_diff:
                 max_angle_diff = abs(angle - target_angle)
         
-        #max_angle_diff *= 1
-        
         score = -( (2 * min(final_displs))**2 / (0.05 + max_angle_diff))
 
-    if mode == 'nengo_lif_maximum_x_displacement_enable_offsets':
+    if mode == 'nengo_lif_maximum_x_displacement_enable_offsets': 
+        #todo: this scoring function is pretty tragic and doesn't work well (PSO didn't want to converge on a useful solution with it)
+        max_angle_diff = abs((max(final_angles) - min(final_angles)))
+        max_angle_diff *= ((num_sim_iter - final_exp_iter))
+        
         score = -( (2 * min(final_x_displs))**2 / (0.05 + max_angle_diff))
 
     if save_csv:
         with open(csv_file_name, 'a') as file:
             line = str(score)
             file.write(line)
+
     exp_count += 1
     return score
 
 def main():
+    """
+    main - this function is for running the pso algorithm developed by Hammond over the 2019 Summer Internship
+    Configuration of the PSO algorithm is done internal to this function.
+    """
+    #configuration is done using the variables below:
+
     now = datetime.now()
     dt_string = now.strftime("%Y_%m_%d__%H_%M_%S")
     csv_file_name = "./pso_results/" + dt_string + "_pso_results.csv"
     log_file_name = "./pso_results/" + dt_string + "_pso_results.txt"
 
-    save_csv = True
-    display_graph = True
-    #baseline_sine = True
-    #noisy_sine = True
-    simulation_time = 61
-    stabilise_time = 1
-    num_sim_iter = 4
-    #exp_count = 0
-    #results = []
-    gauss_std = 0.1
-    abort_tolerance = 0.1
-    min_req_displ = 20
-    num_neurons = 500
-    record_wait = 0
+    save_csv = True       #save each PSO result to a file. I strongly recommend leaving this set to true.
+    
+    simulation_time = 61  #how long should each simulation run? the best results are >45 seconds.
+    stabilise_time = 1    #a stabilisation time of between 1-3 seconds is good for NTRTsim.
+    
+    num_sim_iter = 4      #how many iterations of a given set of parameters should be performed? Good for scoring accuracy/consistency.
+                          #i like values of between 3-9
+                          #abort paremeters (below) control if all iterations are performed
 
-    #mode = 'pure_sine'
-    #mode = 'nengo_lif'
-    #mode = 'nengo_lif_maximum_displacement'
-    #mode = 'nengo_lif_maximum_displacement_enable_offsets'
-    mode = 'nengo_lif_maximum_x_displacement_enable_offsets'
+    gauss_std = 0.1       #how noisy should our LIF neurons be?
+    num_neurons = 500     #how many neurons will our system have? (I always set this to 500)
+    
+    abort_tolerance = 0.1 #if we are doing a mode with aborted iterations, how large may the tolerance between final angles be?
+    min_req_displ = 20    #if we are doing a mode with aborted iterations, what is the minimum required displacement (dm)? 
+                          #(consider the length of the simulation time when setting this - obviously a short sim with a large displacement
+                          # will result in all iterations being preemptively aborted)
+    
+    record_wait = 0       #when scoring, how long to wait before we set the 0 point? I usually set this to 0, but
+                          # sometimes it is necessary to put it higher (if for instance the initial config of the robot is
+                          # messing with your results)
+
+    pso_maxiter = 30      #PSO configuration: how many PSO iterations will you perform? (The higher the better, but the longer it will take)
+    pso_swarmsize = 30    #PSO configuration: how large is the swarm size? (The higher the better, but the longer it will take)
+
+    #choose your mode below: these are the options.
+    #if you are unsure, nengo_lif_maximum_displacement_enable_offsets is a good default (although it doesn't care about steering).
+
+    #mode = 'pure_sine'                                      #optimising for a pure sine wave (freq + amp): mostly only useful for debugging. This was done using Marc's original model and may no longer be compatible
+    #mode = 'nengo_lif'                                      #optimising the oscillator params. This was done using Marc's original model and may no longer give satisfactory results, as the symmetrical robot no longer rolls on its own.
+    #mode = 'nengo_lif_maximum_displacement'                 #using the best oscillator, let us try and deduce triangle params to get maximum distance (with accuracy)
+    #mode = 'nengo_lif_target_trajectory'                    #using the best oscillator, let us try and deduce triangle params to get maximum distance (with accuracy) to target trajectory 0 radians
+    #mode = 'nengo_lif_maximum_displacement_enable_offsets'  #using the best oscillator, let us try and deduce triangle params+offsets to get maximum distance (with accuracy)
+    mode = 'nengo_lif_maximum_x_displacement_enable_offsets' #using the best oscillator, let us try and deduce triangle params+offsets to get maximum distance in x dimension (with accuracy)
+
+    #end configuration variables
 
     pso_lb = None
     pso_ub = None
     constraints = []
     use_params = None
 
+    #PSO setup. You may change the upper and lower bound variables to have more targeted optimisation strategies if suitable
+    # (it can be hard to judge what is suitable)
+    # The format of _lb and _ub is denoted in a comment at the start of each mode
     if mode == 'pure_sine': #format: [w_set, osc_mult]
         pso_lb = [0.7, 0.8]
         pso_ub = [1.5, 1.7]
@@ -228,7 +268,7 @@ def main():
             return 1.65 - x[1] * x[4]
         constraints = [no_negative_control_value]
     
-    if mode == 'nengo_lif_maximum_displacement':
+    if mode == 'nengo_lif_maximum_displacement': #format [triangle[0], triangle[1],..., triangle[7]]
         #pso_lb = [-1, -1, -1, -1, -1, -1, -1, -1]
         #pso_ub = [1, 1, 1, 1, 1, 1, 1, 1]
         #use_params = [0.943409155447694*0.6, 1.1362360516795893, 1.2498347185225787, 0.24354977039092154, 1.0820318501593955, 1.0]
@@ -236,35 +276,30 @@ def main():
         pso_ub = [ 0,   1,   -0.7,   1, 0.75,  0.75,  0.25, 1  ]
         use_params = [0.943409155447694, 1.1362360516795893, 1.2498347185225787, 0.24354977039092154, 1.0820318501593955, 1.0]
 
-    if mode == 'nengo_lif_target_trajectory':
+    if mode == 'nengo_lif_target_trajectory': #format [triangle[0], triangle[1],..., triangle[7]]
         pso_lb = [-1, -1, -1, -1, -1, -1, -1, -1]
         pso_ub = [1, 1, 1, 1, 1, 1, 1, 1]
         use_params = [0.943409155447694, 1.1362360516795893, 1.2498347185225787, 0.24354977039092154, 1.0820318501593955, 1.0]
 
-    if mode == 'nengo_lif_maximum_displacement_enable_offsets':
-
-        #-0.7129260869934373,0.3327286467043015,-0.9683658780087295,0.8840038521952567,-0.9861951019471396,
-        #-0.2989263572233443,0.8478325106643992,0.8942312129892782,-0.09641047965727331,-0.31251331330964105,-0.16251623449002492,
-        #-0.2961696960246747,-0.24355660748728966,-0.09151897555835849,-0.02359746828029952,-0.00996973522153814,
-
+    if mode == 'nengo_lif_maximum_displacement_enable_offsets': #format [triangle[0], triangle[1],..., triangle[7], offsets[0], offsets[1], ..., offsets[7]]
         pso_lb = [-1,    0,   -1,   0.5,  -1,    -0.5, 0.5, 0.5, -0.25, -0.5, -0.25, -0.5, -0.5, -0.25, -0.25, -0.25]
         pso_ub = [-0.5,  0.5, -0.5,   1,   -0.5,  0  ,   1,  1,   0.25,    0,  0.25,  0  ,  0  ,  0.25,  0.25,  0.25]
         use_params = [0.943409155447694*0.6, 1.1362360516795893, 1.2498347185225787, 0.24354977039092154, 1.0820318501593955, 1.0]
-    if mode == 'nengo_lif_maximum_x_displacement_enable_offsets':
+
+    if mode == 'nengo_lif_maximum_x_displacement_enable_offsets': #format [triangle[0], triangle[1],..., triangle[7], offsets[0], offsets[1], ..., offsets[7]
         pso_lb = [-1, -1, -1, -1, -1, -1, -1, -1, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5]
         pso_ub = [1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
         use_params = [0.943409155447694*0.6, 1.1362360516795893, 1.2498347185225787, 0.24354977039092154, 1.0820318501593955, 1.0]
     
-    pso_maxiter = 30
-    pso_swarmsize = 30
-
+    #let us determine an approx upper limit for the number of simulations (it will be saved in the .txt for perusal later)
     approx_runs = num_sim_iter * pso_maxiter * pso_swarmsize
 
+    #construct the robot and the robot's arguments to be passed into the simulation control environment
     robot = superball.SUPERBall(stabilise_time = stabilise_time, record_wait=record_wait)
     args = (mode, robot, simulation_time, num_sim_iter, save_csv, csv_file_name, gauss_std, abort_tolerance, min_req_displ, num_neurons, use_params)
     print("PSO commence")
 
-    if save_csv:
+    if save_csv: #each mode has different formats for the saved csv
         with open(csv_file_name, 'w') as file:
             if mode == 'pure_sine':
                 file.write('run,run_iter,w_set,osc_mult,final_x,final_z,final_displ,final_angle,avg_angle,score')
@@ -290,11 +325,11 @@ def main():
             file.write('pso_swarmsize: ' + str(pso_swarmsize) + '\n')
             file.write('approx_runs: ' + str(approx_runs) + '\n')
 
-    #lb, ub, and x format is [w_set, osc_mult]
 
-
+    #actually perform the requested pso
     xopt, fopt = pso(get_robot_score, pso_lb, pso_ub, args=args, maxiter=pso_maxiter, swarmsize=pso_swarmsize, ieqcons=constraints)
 
+    #print the best result
     print(xopt, fopt)
 
     if save_csv:
@@ -303,20 +338,6 @@ def main():
             file.write('final_result_x:' + str(xopt) + '\n')
             file.write('final_result_f:' + str(fopt) + '\n')
 
-
-    # result = ('Pure Sine Best Performance (w = '+str(xopt[0])+', osc_mult = '+str(xopt[1])+')', [pos[::2] for pos in robot.com_history])
-    
-    # if display_graph:
-    #     fig = plt.figure()
-    #     ax = fig.add_subplot(111)
-    #     label = result[0]
-    #     positions = result[1]
-    #     ax.plot(*zip(*positions), label=label)
-    #     ax.legend()
-    #     ax.set_xlabel('X Displacement (m)')
-    #     ax.set_ylabel('Z Displacement (m)')
-    #     plt.title('30s Movement Simulation after PSO')
-    #     plt.show()
 
 if __name__ == '__main__':
     main()

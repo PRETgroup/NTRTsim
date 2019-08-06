@@ -19,7 +19,8 @@
 /**
  * @file LengthControllerYAMLZmq.cpp
  * @brief Implementation of LengthControllerYAMLZmq.
- * @author Hammond Pearce
+ * @author Hammond Pearce, based on code written by Marc Leroy
+ * @date Summer 2019
  * $Id$
  */
 
@@ -189,8 +190,6 @@ void LengthControllerYAMLZmq::onStep(TensegrityModel& subject, double dt)
   //Strings that are not provided will not be controlled.
   //duplicated string names will have both commands applied to them (thus the last one will take precedence)
 
-  
-
   for(std::size_t i = 0; i < commands.size(); i++)
   {
       //break command into its parts
@@ -212,32 +211,21 @@ void LengthControllerYAMLZmq::onStep(TensegrityModel& subject, double dt)
 
       // Calculate the minimum rest length for this cable.
       // Remember that m_minLength is a percent.
-      double minRestLength = initialRL[cablesWithTags[str_i]->getTags()]; // * m_minLength;
-
-      
+      double minRestLength = initialRL[cablesWithTags[str_i]->getTags()]; 
 
       double setRestLength = command*minRestLength + minRestLength;
 
-      // if(setRestLength > (currRestLength - m_rate)) {
-      //   double nextRestLength = currRestLength + m_rate * dt;
-      //    cablesWithTags[i]->setControlInput(nextRestLength,dt);
-      // } else if(setRestLength < (currRestLength + m_rate)) {
-      //   double nextRestLength = currRestLength - m_rate * dt;
-      //    cablesWithTags[i]->setControlInput(nextRestLength,dt);
-      // }
-      //std::cout << "Cable " << cablesWithTags[i]->getTagStr() << ", min: " << minRestLength << ", control: " << setRestLength << std::endl;
       cablesWithTags[str_i]->setControlInput(setRestLength);
       
   }
 
+  //now that commands are loaded, actuate the motors with time step dt
   for(std::size_t i = 0; i < cablesWithTags.size(); i++) 
   {
-    //double currRestLength = cablesWithTags[i]->getRestLength();
     //std::cout << "Cable " << cablesWithTags[i]->getTagStr() << ", currRestLength: " << currRestLength << std::endl;
     cablesWithTags[i]->moveMotors(dt);  
   }
-  //report a response - at some point this will be sensor data, for now it is just the internal time of 
-  //  the simulator (useful for synchronisation purposes)
+  //report a response - this is the time of the simulation, followed by the com (x,y,z) of the robot, followed by the name:tension of each cable
   std::stringbuf buffer;
   std::ostream msg (&buffer);
 
@@ -257,87 +245,6 @@ void LengthControllerYAMLZmq::onStep(TensegrityModel& subject, double dt)
   memcpy(resp.data(), &msg_str[0], msg_str.length());
   zmq_rx_sock->send(resp);
 
-  /*// Then, if it's passed the time to start the controller,
-  if( m_timePassed > m_startTime ) {
-    // For each cable, check if its rest length is past the minimum,
-    // otherwise adjust its length according to m_rate and dt.
-    //for (std::size_t i = 0; i < cablesWithTags.size()/3; i ++) {	
-    for (std::size_t i = 0; i < 2; i ++) {  
-      double currRestLength = cablesWithTags[i]->getRestLength();
-      // Calculate the minimum rest length for this cable.
-      // Remember that m_minLength is a percent.
-      double minRestLength = initialRL[cablesWithTags[i]->getTags()] * m_minLength;
-      // If the current rest length is still greater than the minimum,qqq
-      if( currRestLength > minRestLength ) {
-	// output a progress bar for the controller, to track when control occurs.
-	//std::cout << "." << i;
-	
-  //std::cout << "Rest Length = " << currRestLength << std::endl;  
-  
-  // Then, adjust the rest length of the actuator itself, according to
-	// m_rate and dt.
-	double nextRestLength = currRestLength - m_rate * dt;
-	//DEBUGGING
-	//std::cout << "Next Rest Length: " << nextRestLength << std::endl;
-	cablesWithTags[i]->setControlInput(nextRestLength,dt);
-      }
-    }   
-  }
-
-  if( m_timePassed > 6000*dt ) {
-    // For each cable, check if its rest length is past the minimum,
-    // otherwise adjust its length according to m_rate and dt.
-    //for (std::size_t i = cablesWithTags.size()/3; i < 2*cablesWithTags.size()/3; i ++) {  
-    for (std::size_t i = 2; i < 4; i ++) {  
-      double currRestLength = cablesWithTags[i]->getRestLength();
-      // Calculate the minimum rest length for this cable.
-      // Remember that m_minLength is a percent.
-      double minRestLength = initialRL[cablesWithTags[i]->getTags()] * m_minLength;
-      // If the current rest length is still greater than the minimum,qqq
-      if( currRestLength > minRestLength ) {
-  // output a progress bar for the controller, to track when control occurs.
-  //std::cout << "." << i;
-  
-  //std::cout << "Rest Length = " << currRestLength << std::endl;  
-  
-  // Then, adjust the rest length of the actuator itself, according to
-  // m_rate and dt.
-  double nextRestLength = currRestLength - m_rate * dt;
-  //DEBUGGING
-  //std::cout << "Next Rest Length: " << nextRestLength << std::endl;
-  cablesWithTags[i]->setControlInput(nextRestLength,dt);
-      }
-    }   
-  }
-
-  if( m_timePassed > 10000*dt ) {
-    // For each cable, check if its rest length is past the minimum,
-    // otherwise adjust its length according to m_rate and dt.
-    //for (std::size_t i = 2*cablesWithTags.size()/3; i < cablesWithTags.size(); i ++) {  
-    for (std::size_t i = 4; i < 6; i ++) {  
-      double currRestLength = cablesWithTags[i]->getRestLength();
-      // Calculate the minimum rest length for this cable.
-      // Remember that m_minLength is a percent.
-      double minRestLength = initialRL[cablesWithTags[i]->getTags()] * m_minLength;
-      // If the current rest length is still greater than the minimum,qqq
-      if( currRestLength > minRestLength ) {
-  // output a progress bar for the controller, to track when control occurs.
-  //std::cout << "." << i;
-  
-  //std::cout << "Rest Length = " << currRestLength << std::endl;  
-  
-  // Then, adjust the rest length of the actuator itself, according to
-  // m_rate and dt.
-  double nextRestLength = currRestLength - m_rate * dt;
-  //DEBUGGING
-  //std::cout << "Next Rest Length: " << nextRestLength << std::endl;
-  cablesWithTags[i]->setControlInput(nextRestLength,dt);
-      }
-    }   
-  }
-
-  if(m_timePassed > 30000*dt && m_timePassed < 30001*dt)
-      getBallCOM(subject,32);*/
 }
 
 void LengthControllerYAMLZmq::resetTimePassed()

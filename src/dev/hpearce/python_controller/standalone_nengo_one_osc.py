@@ -1,10 +1,11 @@
 '''
-@file main.py - entry point for controlling SUPERball from Nengo
+@file standalone_nengo_one_osc.py - a debugging/test script for the Nengo/Superball project
 
-@author P. Michael Furlong 
-@email furlong@nasa.gov
+@author Hammond Pearce and P. Michael Furlong 
+@email hammond.pearce@auckland.ac.nz and furlong@nasa.gov
 @date 2019-06-13
 '''
+
 
 import nengo
 import numpy as np

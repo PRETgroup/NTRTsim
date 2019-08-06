@@ -1,3 +1,14 @@
+#/bin/python3
+
+'''
+@file main.py - entry point for controlling SUPERball under simulation, or in reality, using Nengo. See the README.md for details.
+This file is a little messier than main_pso.py, as it may be altered freely to achieve the desired test behaviour at any time.
+
+@author Hammond Pearce
+@email hammond.pearce@auckland.ac.nz
+@date 2019-07-06
+'''
+
 
 import superball
 import realsuperball
@@ -12,23 +23,40 @@ import hebi
 from datetime import datetime
 
 def main():
+    """
+    main - the entry point for this program. This is used for examining in detail the results of a pso from main_pso.py.
+    You can configure main using variables defined inside the function. See README.md for more details.
+    """
+
+    #configuration variables begin 
     now = datetime.now()
     dt_string = now.strftime("%Y_%m_%d__%H_%M_%S")
 
-    save_csv = False
-    display_graph = False
-    baseline_sine = False
-    noisy_sine = False
-    use_real_superball = True
+    use_real_superball = False   #Set to True to use the real robot (via hebi-py) instead of the simulated robot (via ZMQ)
+    
+    save_csv = False            #Set to True to save location data of the simulated robot (does nothing for real robot)
+    display_graph = False       #Set to True to display results of the simulated robot (does nothing for real robot)
+    baseline_sine = False       #Set to True to compute performance of robot with single sine oscillator. Note that it used to work a lot better with Marc's original model...
+    noisy_sine = False          #Set to True to compute performance of robot with a noisy sine oscillator.
+
+    #to define nengo experiments, go to where experiments = [] are defined in this function.
+    
     simulation_time = 42
     stabilise_time = 2
-    exp_count = 0
-    results = []
     gauss_std = 0.1
-
-    #best oscillator settings, multiply first arg by 0.6 if running on real robot since it can't keep up otherwise
-    x = [0.943409155447694*0.6, 1.1362360516795893, 1.2498347185225787, 0.24354977039092154, 1.0820318501593955, 1.0] #-62
     num_neurons = 500
+
+    #IMPORTANT: the real robot can't keep up with nengo running at default speed and with oscillator running above about 0.5.
+    #as a result, we have two options: we can either slow down nengo, or we can slow down the oscillator.
+    #Control these options using the two variables nengo_simulation_dt and oscillator_multiplier
+    nengo_simulation_dt = 0.001 #0.0006 #default is 0.001
+    oscillator_multiplier = 1    #default is 0.6
+
+    #variables defined using main_pso.py follow.
+
+    #best oscillator settings, you may want to multiply first arg (which is w) by 0.6 if running on real robot since 
+    # it can't keep up otherwise
+    x = [0.943409155447694*oscillator_multiplier, 1.1362360516795893, 1.2498347185225787, 0.24354977039092154, 1.0820318501593955, 1.0] #-62
     
     #best pure triangles with fast oscillator:
     triangles =  [-0.3802, 0.9603, -0.9855, 0.9060, 0.5587, -0.3954, -0.0334, 0.9194]
@@ -47,30 +75,47 @@ def main():
     #offsets   = [ 0.1112, -0.3539,   0.0987, -0.4780, -0.3987,  0.0184, -0.0479,  0.1932 ]
 
     #even better triangles+offsets
-    triangles =  [-0.6001,  0.0,     -0.7113,  0.7986, -0.5856,    -0.5,     1.0,   1.0    ]
-    offsets   =  [ 0.0664, -0.5,     -0.25,   -0.5,    -0.3793, -0.1947,   -0.25,   0.0225 ]
+    #triangles =  [-0.6001,  0.0,     -0.7113,  0.7986, -0.5856,    -0.5,     1.0,   1.0    ]
+    #offsets   =  [ 0.0664, -0.5,     -0.25,   -0.5,    -0.3793, -0.1947,   -0.25,   0.0225 ]
 
-    global robot
+    #robot definition location (you probably won't need to change this)
+    global robot #a global makes it easier to catch errors with Ctrl+C
     if use_real_superball:
         robot = realsuperball.SUPERBall(stabilise_time=stabilise_time)
     else:
         robot = superball.SUPERBall(stabilise_time = stabilise_time)
 
     robot.set_offsets(offsets)
-
-    lif_model = nengo_one_osc_no_readout.get_model(robot, w = x[0], noisy = True, osc_mult = x[1], mu = x[2], tau_synapse = x[3], num_neurons = num_neurons, osc_radius = x[4], feedback_control = x[5], gauss_std=gauss_std, triangle_control=triangles)
-    
     print('Robot created')
 
-    experiments = [
+    #robot definition location end
+
+    #nengo experiment definition location
+
+    #define and add more models and experiments as neccessary
+    lif_model = nengo_one_osc_no_readout.get_model(robot, w = x[0], noisy = True, osc_mult = x[1], mu = x[2], tau_synapse = x[3], num_neurons = num_neurons, osc_radius = x[4], feedback_control = x[5], gauss_std=gauss_std, triangle_control=triangles)
+
+    experiments = [ #format: ('experiment/model name', model)
         ('Here we go', lif_model)
     ]
+
+    #nengo experiment definition location end
+
+    #pure sine definition location begin
 
     sine_w = 0.25
     sine_osc_mult = 1
     sine_osc_radius = 1
 
-    # baseline_sine can give us an idea of our performance
+    #pure sine definition location end
+
+    #configuration section end
+
+    #initialise storage variables
+    exp_count = 0
+    results = []
+
+    # baseline_sine can give us an idea of our performance. Note that it used to work a lot better with Marc's original model...
     if baseline_sine:
         for _ in range(1):
             robot.reset()
@@ -176,7 +221,7 @@ def main():
     for experiment in experiments:
         exp_name = experiment[0]
         model = experiment[1]
-        with nengo.Simulator(model) as sim: #, dt=0.0006) as sim:
+        with nengo.Simulator(model, dt=nengo_simulation_dt) as sim:
             print("Experiment " + str(exp_count) + ": (Nengo) " + exp_name)
 
             robot.reset()
