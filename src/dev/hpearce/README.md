@@ -8,6 +8,12 @@ As part of this, several elements of code were developed.
 
 You will need to install libzmq and `pip3 install hebi-py` and `pip3 install pyzmq`
 
+## Running
+
+Once built in the normal fashion (i.e. with CMake set up and `NTRTsim/bin/build.sh`) you may run the code with
+`launch_marc.sh` in the `SUPERballChainZmq` directory, and `python3 main.py` or `python3 main_pso.py` in the `python_controllers` 
+directory.
+
 ## LengthControllerYAMLZmq
 
 This is located in the `SUPERballChainZmq` directory, which is a fork of mleroy's `SUPERballChain` directory.
