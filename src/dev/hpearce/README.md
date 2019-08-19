@@ -6,7 +6,7 @@ As part of this, several elements of code were developed.
 
 ## Dependencies:
 
-You will need to install libzmq and `pip3 install hebi-py` and `pip3 install pyzmq`
+You will need to install `apt install libzmq3-dev` and `pip3 install hebi-py` and `pip3 install pyzmq`
 
 ## Running
 
