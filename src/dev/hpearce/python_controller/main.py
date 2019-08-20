@@ -34,15 +34,15 @@ def main():
 
     use_real_superball = False   #Set to True to use the real robot (via hebi-py) instead of the simulated robot (via ZMQ)
     
-    save_csv = False            #Set to True to save location data of the simulated robot (does nothing for real robot)
-    display_graph = False       #Set to True to display results of the simulated robot (does nothing for real robot)
+    save_csv = True            #Set to True to save location data of the simulated robot (does nothing for real robot)
+    display_graph = True       #Set to True to display results of the simulated robot (does nothing for real robot)
     baseline_sine = False       #Set to True to compute performance of robot with single sine oscillator. Note that it used to work a lot better with Marc's original model...
     noisy_sine = False          #Set to True to compute performance of robot with a noisy sine oscillator.
 
     #to define nengo experiments, go to where experiments = [] are defined in this function.
     
-    simulation_time = 42
-    stabilise_time = 2
+    simulation_time = 61
+    stabilise_time = 1
     gauss_std = 0.1
     num_neurons = 500
 
@@ -59,24 +59,24 @@ def main():
     x = [0.943409155447694*oscillator_multiplier, 1.1362360516795893, 1.2498347185225787, 0.24354977039092154, 1.0820318501593955, 1.0] #-62
     
     #best pure triangles with fast oscillator:
-    triangles =  [-0.3802, 0.9603, -0.9855, 0.9060, 0.5587, -0.3954, -0.0334, 0.9194]
-    offsets = [0 for _ in range(8)]
+    triangles1 =  [-0.3802, 0.9603, -0.9855, 0.9060, 0.5587, -0.3954, -0.0334, 0.9194]
+    offsets1 = [0 for _ in range(8)]
 
     #best triangles+offsets with fast oscillator
-    #triangles = [-0.7148297411036596,   0.3240215197811036, -0.9667154832748273,   0.8925040046624605,  -0.9883450720199211,  -0.30065676834917787,  0.852027854986793,     0.8963933944220774  ]
-    #offsets =   [-0.10118825437204569, -0.3190824611222042, -0.15492661257500742, -0.30500607853487355, -0.24359791498258165, -0.08943241803886946, -0.027331519071941198, -0.009905225132451912]
+    triangles2 = [-0.7148297411036596,   0.3240215197811036, -0.9667154832748273,   0.8925040046624605,  -0.9883450720199211,  -0.30065676834917787,  0.852027854986793,     0.8963933944220774  ]
+    offsets2 =   [-0.10118825437204569, -0.3190824611222042, -0.15492661257500742, -0.30500607853487355, -0.24359791498258165, -0.08943241803886946, -0.027331519071941198, -0.009905225132451912]
     
     #second best triangles+offsets with slow osicllator
-    #triangles = [-0.8432965632608778,  0.4152025040048478,  -0.6007319632860513,   0.7828493067287403,  -0.6503761579546807, -0.14796287857760093,  0.9288787300170274,  0.7732824824255025 ]
-    #offsets =   [0.03297997152932941, -0.4268132031208452,   0.15693730330711403, -0.14096466982312605, -0.4333835180251198,  0.14232821633797144,  0.04323382213858212, 0.09722186863541799]
+    triangles3 = [-0.8432965632608778,  0.4152025040048478,  -0.6007319632860513,   0.7828493067287403,  -0.6503761579546807, -0.14796287857760093,  0.9288787300170274,  0.7732824824255025 ]
+    offsets3 =   [0.03297997152932941, -0.4268132031208452,   0.15693730330711403, -0.14096466982312605, -0.4333835180251198,  0.14232821633797144,  0.04323382213858212, 0.09722186863541799]
 
     #best triangles+offsets with slow osicllator
-    #triangles = [-0.7414,  0.1060,  -0.9903,  0.9046, -0.8898, -0.3817,  0.9847,  0.9282 ]
-    #offsets   = [ 0.1112, -0.3539,   0.0987, -0.4780, -0.3987,  0.0184, -0.0479,  0.1932 ]
+    triangles4 = [-0.7414,  0.1060,  -0.9903,  0.9046, -0.8898, -0.3817,  0.9847,  0.9282 ]
+    offsets4   = [ 0.1112, -0.3539,   0.0987, -0.4780, -0.3987,  0.0184, -0.0479,  0.1932 ]
 
     #even better triangles+offsets
-    #triangles =  [-0.6001,  0.0,     -0.7113,  0.7986, -0.5856,    -0.5,     1.0,   1.0    ]
-    #offsets   =  [ 0.0664, -0.5,     -0.25,   -0.5,    -0.3793, -0.1947,   -0.25,   0.0225 ]
+    triangles5 =  [-0.6001,  0.0,     -0.7113,  0.7986, -0.5856,    -0.5,     1.0,   1.0    ]
+    offsets5   =  [ 0.0664, -0.5,     -0.25,   -0.5,    -0.3793, -0.1947,   -0.25,   0.0225 ]
 
     #robot definition location (you probably won't need to change this)
     global robot #a global makes it easier to catch errors with Ctrl+C
@@ -85,7 +85,6 @@ def main():
     else:
         robot = superball.SUPERBall(stabilise_time = stabilise_time)
 
-    robot.set_offsets(offsets)
     print('Robot created')
 
     #robot definition location end
@@ -93,10 +92,18 @@ def main():
     #nengo experiment definition location
 
     #define and add more models and experiments as neccessary
-    lif_model = nengo_one_osc_no_readout.get_model(robot, w = x[0], noisy = True, osc_mult = x[1], mu = x[2], tau_synapse = x[3], num_neurons = num_neurons, osc_radius = x[4], feedback_control = x[5], gauss_std=gauss_std, triangle_control=triangles)
+    lif_model1 = nengo_one_osc_no_readout.get_model(robot, w = x[0], noisy = True, osc_mult = x[1], mu = x[2], tau_synapse = x[3], num_neurons = num_neurons, osc_radius = x[4], feedback_control = x[5], gauss_std=gauss_std, triangle_control=triangles1)
+    lif_model2 = nengo_one_osc_no_readout.get_model(robot, w = x[0], noisy = True, osc_mult = x[1], mu = x[2], tau_synapse = x[3], num_neurons = num_neurons, osc_radius = x[4], feedback_control = x[5], gauss_std=gauss_std, triangle_control=triangles2)
+    lif_model3 = nengo_one_osc_no_readout.get_model(robot, w = x[0], noisy = True, osc_mult = x[1], mu = x[2], tau_synapse = x[3], num_neurons = num_neurons, osc_radius = x[4], feedback_control = x[5], gauss_std=gauss_std, triangle_control=triangles3)
+    lif_model4 = nengo_one_osc_no_readout.get_model(robot, w = x[0], noisy = True, osc_mult = x[1], mu = x[2], tau_synapse = x[3], num_neurons = num_neurons, osc_radius = x[4], feedback_control = x[5], gauss_std=gauss_std, triangle_control=triangles4)
+    lif_model5 = nengo_one_osc_no_readout.get_model(robot, w = x[0], noisy = True, osc_mult = x[1], mu = x[2], tau_synapse = x[3], num_neurons = num_neurons, osc_radius = x[4], feedback_control = x[5], gauss_std=gauss_std, triangle_control=triangles5)
 
     experiments = [ #format: ('experiment/model name', model)
-        ('Here we go', lif_model)
+        ('Pure Triangles', lif_model1, offsets1),
+        ('Triangles+Offsets A', lif_model2, offsets2),
+        ('Triangles+Offsets B', lif_model3, offsets3),
+        ('Triangles+Offsets C', lif_model4, offsets4),
+        ('Triangles+Offsets D', lif_model5, offsets5)
     ]
 
     #nengo experiment definition location end
@@ -221,10 +228,13 @@ def main():
     for experiment in experiments:
         exp_name = experiment[0]
         model = experiment[1]
+        offsets = experiment[2]
+        
         with nengo.Simulator(model, dt=nengo_simulation_dt) as sim:
             print("Experiment " + str(exp_count) + ": (Nengo) " + exp_name)
 
             robot.reset()
+            robot.set_offsets(offsets)
             sim.run(simulation_time)
 
             if not use_real_superball:
