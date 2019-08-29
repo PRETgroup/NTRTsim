@@ -6,7 +6,7 @@ As part of this, several elements of code were developed.
 
 ## Dependencies:
 
-You will need to install `apt install libzmq3-dev python3-tk` and `pip3 install hebi-py pyzmq nengo nengo-gui`
+You will need to install `apt install libzmq3-dev python3-tk` and `pip3 install hebi-py pyzmq nengo nengo-gui pyswarm`
 
 ## Running
 

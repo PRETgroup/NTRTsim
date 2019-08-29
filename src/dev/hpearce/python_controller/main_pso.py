@@ -79,6 +79,9 @@ def get_robot_score(x, *args):
     if mode == 'nengo_lif_target_trajectory' or mode == 'nengo_lif_maximum_displacement' or mode == 'nengo_lif_maximum_displacement_enable_offsets' or mode == 'nengo_lif_maximum_x_displacement_enable_offsets' or mode == '2d_nengo_lif_maximum_displacement':
         lif_model = nengo_one_osc_no_readout.get_model(robot, w = use_params[0], noisy = True, osc_mult = use_params[1], mu = use_params[2], tau_synapse = use_params[3], num_neurons = num_neurons, osc_radius = use_params[4], feedback_control = use_params[5], gauss_std=gauss_std, triangle_control=x, two_d_control = (mode == '2d_nengo_lif_maximum_displacement'))
     
+    if mode == '2d_nengo_lif_maximum_displacement_all_strings':
+        lif_model = nengo_one_osc_no_readout.get_model(robot, w = use_params[0], noisy = True, osc_mult = use_params[1], mu = use_params[2], tau_synapse = use_params[3], num_neurons = num_neurons, osc_radius = use_params[4], feedback_control = use_params[5], gauss_std=gauss_std, all_string_control=x, two_d_control = True)
+    
 
     aborted = False #this variable is set to true if the system aborts due to too much inconsistency
     
@@ -90,7 +93,7 @@ def get_robot_score(x, *args):
             lead_str = "Run " + str(exp_count) + "["+str(exp_iter)+"] (w_set = " + str(w_set) + ", osc_mult = " + str(osc_mult) + "):"
             print(lead_str + " sine simulation time: 0", end='')
             pure_sine_simulation(robot, w_set, osc_mult, simulation_time, lead_str)
-        elif mode == 'nengo_lif' or mode == 'nengo_lif_target_trajectory' or mode == 'nengo_lif_maximum_displacement' or mode == 'nengo_lif_maximum_displacement_enable_offsets' or mode == 'nengo_lif_maximum_x_displacement_enable_offsets' or mode == '2d_nengo_lif_maximum_displacement':
+        elif mode == 'nengo_lif' or mode == 'nengo_lif_target_trajectory' or mode == 'nengo_lif_maximum_displacement' or mode == 'nengo_lif_maximum_displacement_enable_offsets' or mode == 'nengo_lif_maximum_x_displacement_enable_offsets' or mode == '2d_nengo_lif_maximum_displacement' or mode == '2d_nengo_lif_maximum_displacement_all_strings':
             lead_str = "Nengo Run " + str(exp_count) + "["+str(exp_iter)+"]"
             print(lead_str)
             with nengo.Simulator(lif_model) as sim:
@@ -130,6 +133,8 @@ def get_robot_score(x, *args):
                     line = str(exp_count) + "," + str(exp_iter) + "," + str(x[0]) + "," + str(x[1]) + "," + str(x[2]) + "," + str(x[3]) + "," + str(x[4]) + "," + str(x[5]) + "," + str(x[6]) + "," + str(x[7]) + "," + str(final_pos[0])+ ","+ str(final_pos[2]) + "," + str(final_displ) + "," + str(final_angle) + "," + str(avg_angle) + ","
                 elif mode == 'nengo_lif_maximum_displacement_enable_offsets' or mode == 'nengo_lif_maximum_x_displacement_enable_offsets' or mode == '2d_nengo_lif_maximum_displacement':
                     line = str(exp_count) + "," + str(exp_iter) + "," + str(x[0]) + "," + str(x[1]) + "," + str(x[2]) + "," + str(x[3]) + "," + str(x[4]) + "," + str(x[5]) + "," + str(x[6]) + "," + str(x[7]) + "," + str(x[8]) + "," + str(x[9]) + "," + str(x[10]) + "," + str(x[11]) + "," + str(x[12]) + "," + str(x[13]) + "," + str(x[14]) + "," + str(x[15]) + "," + str(final_pos[0])+ ","+ str(final_pos[2]) + "," + str(final_displ) + "," + str(final_angle) + "," + str(avg_angle) + ","
+                elif mode == '2d_nengo_lif_maximum_displacement_all_strings':
+                    line = str(exp_count) + "," + str(exp_iter) + "," + str(x[0]) + "," + str(x[1]) + "," + str(x[2]) + "," + str(x[3]) + "," + str(x[4]) + "," + str(x[5]) + "," + str(x[6]) + "," + str(x[7]) + "," + str(x[8]) + "," + str(x[9]) + "," + str(x[10]) + "," + str(x[11]) + "," + str(x[12]) + "," + str(x[13]) + "," + str(x[14]) + "," + str(x[15]) + "," + str(x[16]) + "," + str(x[17]) + "," + str(x[18]) + "," + str(x[19]) + "," + str(x[20]) + "," + str(x[21]) + "," + str(x[22]) + "," + str(x[23]) + "," + str(x[24]) + "," + str(x[25]) + "," + str(x[26]) + "," + str(x[27]) + "," + str(x[28]) + "," + str(x[29]) + "," + str(x[30]) + "," + str(x[31]) + "," + str(x[32]) + "," + str(x[33]) + "," + str(x[34]) + "," + str(x[35]) + "," + str(x[36]) + "," + str(x[37]) + "," + str(x[38]) + "," + str(x[39]) + "," + str(x[40]) + "," + str(x[41]) + "," + str(x[42]) + "," + str(x[43]) + "," + str(x[44]) + "," + str(x[45]) + "," + str(x[46]) + "," + str(x[47]) + "," + str(final_pos[0])+ ","+ str(final_pos[2]) + "," + str(final_displ) + "," + str(final_angle) + "," + str(avg_angle) + ","
                 
                 file.write(line)
 
@@ -137,7 +142,7 @@ def get_robot_score(x, *args):
             if abs(final_angle - target_angle) > abort_tolerance:
                 aborted = True
 
-        if mode == 'nengo_lif' or mode == 'pure_sine' or mode == 'nengo_lif_maximum_displacement' or mode == 'nengo_lif_maximum_displacement_enable_offsets' or mode == '2d_nengo_lif_maximum_displacement':
+        if mode == 'nengo_lif' or mode == 'pure_sine' or mode == 'nengo_lif_maximum_displacement' or mode == 'nengo_lif_maximum_displacement_enable_offsets' or mode == '2d_nengo_lif_maximum_displacement' or mode == '2d_nengo_lif_maximum_displacement_all_strings':
             #check if we want to abort
             for prev_final_angle in final_angles:
                 if abs(prev_final_angle - final_angle) > abort_tolerance:
@@ -163,7 +168,7 @@ def get_robot_score(x, *args):
     #i've played with finding the differences between final_angles, the average_angles, the displacements...
 
     score = None
-    if mode == 'pure_sine' or mode == 'nengo_lif' or mode == 'nengo_lif_maximum_displacement' or mode == 'nengo_lif_maximum_displacement_enable_offsets' or mode == '2d_nengo_lif_maximum_displacement':
+    if mode == 'pure_sine' or mode == 'nengo_lif' or mode == 'nengo_lif_maximum_displacement' or mode == 'nengo_lif_maximum_displacement_enable_offsets' or mode == '2d_nengo_lif_maximum_displacement' or mode == '2d_nengo_lif_maximum_displacement_all_strings':
         avg_final_displ /= num_sim_iter
         max_angle_diff = abs((max(final_angles) - min(final_angles)))
         
@@ -232,8 +237,8 @@ def main():
                           # sometimes it is necessary to put it higher (if for instance the initial config of the robot is
                           # messing with your results)
 
-    pso_maxiter = 30      #PSO configuration: how many PSO iterations will you perform? (The higher the better, but the longer it will take)
-    pso_swarmsize = 30    #PSO configuration: how large is the swarm size? (The higher the better, but the longer it will take)
+    pso_maxiter = 2      #PSO configuration: how many PSO iterations will you perform? (The higher the better, but the longer it will take)
+    pso_swarmsize = 2    #PSO configuration: how large is the swarm size? (The higher the better, but the longer it will take)
 
     #choose your mode below: these are the options.
     #if you are unsure, nengo_lif_maximum_displacement_enable_offsets is a good default (although it doesn't care about steering).
@@ -244,7 +249,8 @@ def main():
     #mode = 'nengo_lif_target_trajectory'                     #using the best oscillator, let us try and deduce triangle params to get maximum distance (with accuracy) to target trajectory 0 radians
     #mode = 'nengo_lif_maximum_displacement_enable_offsets'   #using the best oscillator, let us try and deduce triangle params+offsets to get maximum distance (with accuracy)
     #mode = 'nengo_lif_maximum_x_displacement_enable_offsets' #using the best oscillator, let us try and deduce triangle params+offsets to get maximum distance in x dimension (with accuracy)
-    mode = '2d_nengo_lif_maximum_displacement'              #the only 2d mode  
+    #mode = '2d_nengo_lif_maximum_displacement'               #2d mode, simple oscillator
+    mode = '2d_nengo_lif_maximum_displacement_all_strings'    #2d mode, all strings (no triangles), here we go boys
 
     #end configuration variables
 
@@ -297,6 +303,11 @@ def main():
         pso_ub = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         use_params = [0.943409155447694*0.6, 1.1362360516795893, 1.2498347185225787, 0.24354977039092154, 1.0820318501593955, 1.0]
 
+    if mode == '2d_nengo_lif_maximum_displacement_all_strings': #format string[0][0], string[0][1], ...., string[0][23], string[1][0], .... string [1][23]
+        pso_lb = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+        pso_ub = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        use_params = [0.943409155447694*0.6, 1.1362360516795893, 1.2498347185225787, 0.24354977039092154, 1.0820318501593955, 1.0]
+
     #let us determine an approx upper limit for the number of simulations (it will be saved in the .txt for perusal later)
     approx_runs = num_sim_iter * pso_maxiter * pso_swarmsize
 
@@ -317,6 +328,8 @@ def main():
                 file.write('run,run_iter,triangles[0],triangles[1],triangles[2],triangles[3],triangles[4],triangles[5],triangles[6],triangles[7],offsets[0],offsets[1],offsets[2],offsets[3],offsets[4],offsets[5],offsets[6],offsets[7],final_x,final_z,final_displ,final_angle,avg_angle,score')
             elif mode == '2d_nengo_lif_maximum_displacement':
                 file.write('run,run_iter,triangles[0][0],triangles[0][1],triangles[0][2],triangles[0][3],triangles[0][4],triangles[0][5],triangles[0][6],triangles[0][7],triangles[0][0],triangles[0][1],triangles[0][2],triangles[0][3],triangles[0][4],triangles[0][5],triangles[0][6],triangles[0][7],final_x,final_z,final_displ,final_angle,avg_angle,score')
+            elif mode == '2d_nengo_lif_maximum_displacement_all_strings':
+                file.write('run,run_iter,all_string_control[0],all_string_control[1],all_string_control[2],all_string_control[3],all_string_control[4],all_string_control[5],all_string_control[6],all_string_control[7],all_string_control[8],all_string_control[9],all_string_control[10],all_string_control[11],all_string_control[12],all_string_control[13],all_string_control[14],all_string_control[15],all_string_control[16],all_string_control[17],all_string_control[18],all_string_control[19],all_string_control[20],all_string_control[21],all_string_control[22],all_string_control[23],all_string_control[24],all_string_control[25],all_string_control[26],all_string_control[27],all_string_control[28],all_string_control[29],all_string_control[30],all_string_control[31],all_string_control[32],all_string_control[33],all_string_control[34],all_string_control[35],all_string_control[36],all_string_control[37],all_string_control[38],all_string_control[39],all_string_control[40],all_string_control[41],all_string_control[42],all_string_control[43],all_string_control[44],all_string_control[45],all_string_control[46],all_string_control[47],final_x,final_z,final_displ,final_angle,avg_angle,score')
             
         with open(log_file_name, 'w') as file:
             file.write('PSO run with the following params:\n')
