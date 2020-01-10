@@ -8,7 +8,7 @@ class TensegrityController:
         self.port = port
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.REQ)
-        self.socket.connect("tcp://{ip_address}:{port}".format(ip_address, self.port))
+        self.socket.connect("tcp://{}:{}".format(ip_address, self.port))
 
         # Command messages parameters
         if simulation:
@@ -17,9 +17,9 @@ class TensegrityController:
             self.string_tag_template = "M{:02d}:"
 
         self.string_number = string_number
-        self.string_tags = [self.string_tag_template.format() for i in range(24)]
+        self.string_tags = [self.string_tag_template.format(i) for i in range(1, string_number+1)]
         print("String tags:")
-        print(string_names)
+        print(self.string_tags)
 
         # Internal info
         self.state = {"t": 0, "com_pos": None}
@@ -38,7 +38,7 @@ class TensegrityController:
         print(state_msg)
 
         # Decoding simulation state message
-        state_msg_split = state_msg_split.split()
+        state_msg_split = state_msg.split()
         self.state["t"] = float(state_msg_split[0])
         self.state["com_pos"] = (
             float(state_msg_split[1]),

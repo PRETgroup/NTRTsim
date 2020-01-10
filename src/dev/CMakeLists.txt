@@ -25,4 +25,5 @@ subdirs(
     #ezhu
     #mcdaly
     laika
+    lrenaud
 )

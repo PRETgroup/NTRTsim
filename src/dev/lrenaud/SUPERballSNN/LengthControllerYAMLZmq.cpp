@@ -178,7 +178,7 @@ void LengthControllerYAMLZmq::onStep(TensegrityModel& subject, double dt)
     command_string = name_with_command.substr(name_with_command.find(":")+1);
     com.value = std::stod(command_string);
 
-    //std::cout << "string_name:" << name << ", command:" << command << std::endl;
+    std::cout << "string_name:" << com.name << ", command:" << com.value << std::endl;
     commands.push_back(com);
   }
 
