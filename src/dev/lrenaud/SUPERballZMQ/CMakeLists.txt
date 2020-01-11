@@ -15,7 +15,7 @@ link_libraries(tgcreator
 		TensegrityModel
         zmq)
 
-add_executable(AppSUPERballSNN
-    AppSUPERballSNN.cpp
-    LengthControllerYAMLZmq.cpp
+add_executable(AppSUPERballZMQ
+    AppSUPERballZMQ.cpp
+    LengthControllerYAMLZMQ.cpp
 )

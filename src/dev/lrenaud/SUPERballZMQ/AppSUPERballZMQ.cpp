@@ -17,10 +17,11 @@
 */
 
 /**
- * @file AppSUPERballChain.cpp
+ * @file AppSUPERballZMQ.cpp
  * @brief Contains the definition function main() for
- * AppSUPERballChain which builds a YAML SUPERball 2.0.
- * @author Marc Leroy
+ * AppSUPERballSNN which builds a YAML SUPERball 2.0 controlled via a ZeroMQ socket.
+ * @author Louis-Dominique Renaud, based on code written by Marc Leroy and Hammond Pearce
+ * @date Juanuary 2020
  * $Id$
  */
 
@@ -28,7 +29,7 @@
 #include "config.h"
 
 #include "yamlbuilder/TensegrityModel.h"
-#include "LengthControllerYAMLZmq.h"
+#include "LengthControllerYAMLZMQ.h"
 
 // This library
 #include "core/terrain/tgBoxGround.h"

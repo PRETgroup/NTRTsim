@@ -1,5 +1,5 @@
 Project(lrenaud)
 
 Subdirs(
-  SUPERballSNN
+  SUPERballZMQ
 )

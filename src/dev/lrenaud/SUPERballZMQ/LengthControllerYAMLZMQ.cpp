@@ -19,13 +19,13 @@
 /**
  * @file LengthControllerYAMLZmq.cpp
  * @brief Implementation of LengthControllerYAMLZmq.
- * @author Hammond Pearce, based on code written by Marc Leroy
- * @date Summer 2019
+ * @author Hammond Pearce, based on code written by Marc Leroy (modified by Louis-Dominique Renaud)
+ * @date Juanuary 2020
  * $Id$
  */
 
 // This module
-#include "LengthControllerYAMLZmq.h"
+#include "LengthControllerYAMLZMQ.h"
 // This application
 #include "yamlbuilder/TensegrityModel.h"
 // This library
@@ -231,9 +231,28 @@ void LengthControllerYAMLZmq::onStep(TensegrityModel& subject, double dt)
 
   msg << m_timePassed << " " << ball_com[0] << " " << ball_com[1] << " " << ball_com[2];
 
+  //get the length for each cable in order
+  for(size_t i = 0; i < cablesWithTags.size(); i++) {
+    std::string full_tag, tag_first_part;
+    size_t first_part_end;
+    
+    full_tag = cablesWithTags[i]->getTagStr();
+    first_part_end = full_tag.find(" ");
+    tag_first_part = full_tag.substr(0, first_part_end);
+    
+    msg << " " << tag_first_part << ":" << cablesWithTags[i]->getCurrentLength() / initialRL[cablesWithTags[i]->getTags()];
+  }
+  
   //get the tensions for each cable in order
   for(size_t i = 0; i < cablesWithTags.size(); i++) {
-    msg << " " << cablesWithTags[i]->getTagStr() << ":" << cablesWithTags[i]->getTension();
+    std::string full_tag, tag_first_part;
+    size_t first_part_end;
+    
+    full_tag = cablesWithTags[i]->getTagStr();
+    first_part_end = full_tag.find(" ");
+    tag_first_part = full_tag.substr(0, first_part_end);
+    
+    msg << " " << tag_first_part << ":" << cablesWithTags[i]->getTension();
   }
 
   std::string msg_str(buffer.str());
