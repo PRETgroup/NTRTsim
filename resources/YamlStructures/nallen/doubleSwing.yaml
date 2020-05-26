@@ -1,0 +1,77 @@
+nodes:
+  topFrontLeft: [5, 12, 0]
+  topMidLeft: [0, 12, 0]
+  topBackLeft: [-5, 12, 0]
+  bottomFrontLeft: [5, 2, 0]
+  bottomBackLeft: [-5, 2, 0]
+
+  topFrontRight: [5, 12, 10]
+  topMidRight: [0, 12, 10]
+  topBackRight: [-5, 12, 10]
+  bottomFrontRight: [5, 2, 10]
+  bottomBackRight: [-5, 2, 10]
+
+  hangTopLeft: [4, 12, 1]
+  hangTopRight: [4, 12, 9]
+
+  hangBottomLeft: [8, 12, 1]
+  hangBottomRight: [8, 12, 9]
+
+pair_groups:
+  prism_rod:
+    - [topFrontLeft, topMidLeft]
+    - [topBackLeft, topMidLeft]
+    - [topFrontLeft, bottomFrontLeft]
+    - [topBackLeft, bottomBackLeft]
+
+    - [topFrontRight, topMidRight]
+    - [topBackRight, topMidRight]
+    - [topFrontRight, bottomFrontRight]
+    - [topBackRight, bottomBackRight]
+
+    - [topFrontLeft, topFrontRight]
+    - [topBackLeft, topBackRight]
+
+  prism_rod hanger_top:
+    - [hangTopLeft, hangTopRight]
+  prism_rod hanger_bottom:
+    - [hangBottomLeft, hangBottomRight]
+
+  rope:
+    - [topMidLeft, hangTopLeft]
+    - [topMidRight, hangTopRight]
+
+    - [hangTopLeft, hangBottomLeft]
+    - [hangTopRight, hangBottomRight]
+  
+  control_string front_left:
+    - [topFrontLeft, hangTopLeft]
+  control_string back_left:
+    - [topBackLeft, hangTopLeft]
+  control_string front_right:
+    - [topFrontRight, hangTopRight]
+  control_string back_right:
+    - [topBackRight, hangTopRight]
+
+builders:
+  prism_rod:
+    class: tgRodInfo
+    parameters:
+      density: 0.688
+      radius: 0.31
+  rope:
+    class: tgBasicActuatorInfo
+    parameters:
+      moveCablePointAToEdge: false
+      moveCablePointBToEdge: false
+      stiffness: 10000
+      damping: 10000
+      pretension: 0
+  control_string:
+    class: tgBasicActuatorInfo
+    parameters:
+      moveCablePointAToEdge: false
+      moveCablePointBToEdge: false
+      # max_tension: 100000
+      # minActualLength
+      # minRestLength

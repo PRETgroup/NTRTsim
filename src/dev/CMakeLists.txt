@@ -26,4 +26,5 @@ subdirs(
     #mcdaly
     laika
     lrenaud
+    nallen
 )
