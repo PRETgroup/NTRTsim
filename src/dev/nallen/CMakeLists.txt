@@ -23,3 +23,9 @@ add_executable(AppDoubleSwing
     AppDoubleSwing.cpp
     ZmqInterface.cpp
 ) 
+
+add_executable(AppHangingBar
+    AppHangingBar.cpp
+    ZmqInterface.cpp
+    HangingMarkers.cpp
+) 

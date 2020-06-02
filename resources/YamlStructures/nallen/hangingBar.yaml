@@ -1,0 +1,49 @@
+nodes:
+  topFront: [8, 12, 0] # [8 * cos(0), h, 0]
+  topLeft: [-4, 12, -6.93] # [-8 * sin(30), h, -8 * cos(30)]
+  topRight: [-4, 12, 6.93] # [-8 * sin(30), h, 8 * cos(30)]
+
+  bottomFront: [12, 2, 0] # [12 * cos(0), h, 0]
+  bottomLeft: [-6, 2, -10.39] # [-12 * sin(30), h, -12 * cos(30)]
+  bottomRight: [-6, 2, 10.39] # [-12 * sin(30), h, 12 * cos(30)]
+
+  hangTop: [0, 10, 0]
+  hangBottom: [0, 4, 0]
+
+pair_groups:
+  structure:
+    - [topFront, bottomFront]
+    - [topLeft, bottomLeft]
+    - [topRight, bottomRight]
+
+    - [bottomFront, bottomRight]
+    - [bottomFront, bottomLeft]
+    - [bottomLeft, bottomRight]
+
+  hanger:
+    - [hangTop, hangBottom]
+  
+  control_string front:
+    - [topFront, hangTop]
+  control_string left:
+    - [topLeft, hangTop]
+  control_string right:
+    - [topRight, hangTop]
+
+builders:
+  structure:
+    class: tgRodInfo
+    parameters:
+      density: 10
+      radius: 0.3
+  hanger:
+    class: tgRodInfo
+    parameters:
+      density: 0.5
+      radius: 0.3
+  control_string:
+    class: tgBasicActuatorInfo
+    parameters:
+      moveCablePointAToEdge: false
+      moveCablePointBToEdge: false
+      damping: 100

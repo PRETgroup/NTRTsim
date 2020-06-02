@@ -13,6 +13,9 @@ class ThreeDimensionalVector:
         self.x = x
         self.y = y
         self.z = z
+    
+    def getAsList(self):
+        return [self.x, self.y, self.z]
 
 class MarkerData:
     def __init__(self, node_number, position):
