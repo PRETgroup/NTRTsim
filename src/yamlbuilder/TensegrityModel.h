@@ -130,6 +130,14 @@ public:
      */
     static constexpr double stringStiffness = 1000.0;
     /*
+     * Default string initial tension.
+     */
+    static constexpr double stringInitialTension = 0.0;
+    /*
+     * Default string initial tension length.
+     */
+    static constexpr double stringInitialTensionLength = 0.1;
+    /*
      * Default string damping.
      */
     static constexpr double stringDamping = 10.0;

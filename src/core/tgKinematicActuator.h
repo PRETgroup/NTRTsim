@@ -54,7 +54,9 @@ public:
 				double tVel = 100.0,
 				double mnAL = 0.1,
 				double mnRL = 0.1,
-				double rot = 0);
+				double rot = 0,
+                double it = 0.0,
+                double itl = 0.1);
 		
 		/**
 		 * Scale parameters that depend on the length of the simulation.

@@ -84,6 +84,8 @@ public:
 				tgWorld& world,
 				const std::vector<tgBulletSpringCableAnchor*>& anchors,
 				double coefK,
+                double initialTension,
+                double initialTensionLength,
 				double dampingCoefficient,
 				double pretension = 0.0,
 				double thickness = 0.001,

@@ -136,6 +136,6 @@ tgBulletContactSpringCable* tgBasicContactCableInfo::createTgBulletContactSpring
 	btDynamicsWorld& m_dynamicsWorld = tgBulletUtil::worldToDynamicsWorld(world);
 	m_dynamicsWorld.addCollisionObject(m_ghostObject,btBroadphaseProxy::CharacterFilter, btBroadphaseProxy::StaticFilter|btBroadphaseProxy::DefaultFilter);
 	
-    return new tgBulletContactSpringCable(m_ghostObject, world, anchorList, m_config.stiffness, m_config.damping, m_config.pretension);
+    return new tgBulletContactSpringCable(m_ghostObject, world, anchorList, m_config.stiffness, m_config.initialTension, m_config.initialTensionLength, m_config.damping, m_config.pretension);
 }
     

@@ -42,10 +42,14 @@ tgSpringCableActuator::Config::Config(double s,
                    double tVel,
                    double mnAL,
                    double mnRL,
-		   double rot,
-   	           bool moveCPA,
-		   bool moveCPB) :
+		           double rot,
+   	               bool moveCPA,
+		           bool moveCPB,
+                   double it,
+                   double itl) :
   stiffness(s),
+  initialTension(it),
+  initialTensionLength(itl),
   damping(d),
   pretension(p),
   hist(h),
@@ -61,6 +65,14 @@ tgSpringCableActuator::Config::Config(double s,
     if (s < 0.0)
     {
         throw std::invalid_argument("stiffness is negative.");
+    }
+    else if (it < 0.0)
+    {
+        throw std::invalid_argument("initial tension is negative.");
+    }
+    else if (itl < 0.0)
+    {
+        throw std::invalid_argument("initial tension length is negative.");
     }
     else if (d < 0.0)
     {

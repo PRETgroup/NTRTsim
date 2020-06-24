@@ -64,9 +64,11 @@ public:
         double tVel = 100.0,
         double mnAL = 0.1,
         double mnRL = 0.1,
-	double rot = 0,
-	bool moveCPA = true,
-	bool moveCPB = true);
+	    double rot = 0,
+	    bool moveCPA = true,
+	    bool moveCPB = true,
+        double it = 0.0,
+        double itl = 0.1);
       
       /**
        * Scale parameters that depend on the length of the simulation.
@@ -84,6 +86,20 @@ public:
        * Units are mass / seconds^2
        */
       double stiffness;
+      /**
+       * Initial tension of the spring (IT / Beta). Must be non-negative.
+       * Upper limit depends on the timestep - Springs with higher initial
+       * tension require a lower timestep.
+       * Units are force
+       */
+      double initialTension;
+      /**
+       * The length over which the initial tension is applied. Must be non-negative.
+       * This value can be made larger in order to allow for larger timesteps to be used,
+       * however it may introduce inaccuracy for larger values.
+       * Units are distance
+       */
+      double initialTensionLength;
       /**
        * Specifies the damping (b) term in the linear force equation.
        * Units are mass / seconds

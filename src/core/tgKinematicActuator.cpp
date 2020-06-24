@@ -52,9 +52,11 @@ tgKinematicActuator::Config::Config(double s,
 				    double tVel,
 				    double mnAL,
 				    double mnRL,
-				    double rot) :
+				    double rot,
+                    double it,
+                    double itl) :
   tgSpringCableActuator::Config::Config(s, d, p, h,
-					mf, tVel, mnAL, mnRL, rot),
+					mf, tVel, mnAL, mnRL, rot, it, itl),
   radius(rad),
   motorFriction(moFric),
   motorInertia(moInert),
