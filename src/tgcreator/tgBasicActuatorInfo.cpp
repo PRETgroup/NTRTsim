@@ -121,6 +121,6 @@ tgBulletSpringCable* tgBasicActuatorInfo::createTgBulletSpringCable()
     tgBulletSpringCableAnchor* anchor2 = new tgBulletSpringCableAnchor(toBody, to);
     anchorList.push_back(anchor2);
 	
-    return new tgBulletSpringCable(anchorList, m_config.stiffness, m_config.damping, m_config.pretension);
+    return new tgBulletSpringCable(anchorList, m_config.stiffness, m_config.initialTension, m_config.initialTensionLength, m_config.damping, m_config.pretension);
 }
     

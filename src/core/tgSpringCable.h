@@ -52,6 +52,8 @@ public:
      */
     tgSpringCable( const std::vector<tgSpringCableAnchor*>& anchors,
                 double coefK,
+                double initialTension,
+                double initialTensionLength,
                 double dampingCoefficient,
                 double pretension = 0.0);
     
@@ -95,6 +97,22 @@ public:
     virtual const double getCoefK() const
     {
         return m_coefK;
+    }
+    
+    /**
+     * Get the initial tension
+     */
+    virtual const double getInitialTension() const
+    {
+        return m_initialTension;
+    }
+    
+    /**
+     * Get the initial tension length
+     */
+    virtual const double getInitialTensionLength() const
+    {
+        return m_initialTensionLength;
     }
     
     /**
@@ -147,6 +165,20 @@ protected:
      * Must be positive
      */
     const double m_coefK;
+
+    /**
+     * The initial tension
+     * Units of force
+     * Must be non-negative
+     */
+    const double m_initialTension;
+
+    /**
+     * The length that can be extended for the initial tension
+     * Units of distance
+     * Must be non-negative
+     */
+    const double m_initialTensionLength;
 
     /**
      * The damping coefficient.

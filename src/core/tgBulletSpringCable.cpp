@@ -34,10 +34,12 @@
 
 tgBulletSpringCable::tgBulletSpringCable( const std::vector<tgBulletSpringCableAnchor*>& anchors,
                 double coefK,
+                double initialTension,
+                double initialTensionLength,
                 double dampingCoefficient,
                 double pretension) :
 tgSpringCable(tgCast::filter<tgBulletSpringCableAnchor, tgSpringCableAnchor>(anchors),
-                coefK, dampingCoefficient, pretension),
+                coefK, initialTension, initialTensionLength, dampingCoefficient, pretension),
 m_anchors(anchors),
 anchor1(anchors.front()),
 anchor2(anchors.back())
@@ -90,16 +92,14 @@ void tgBulletSpringCable::step(double dt)
 void tgBulletSpringCable::calculateAndApplyForce(double dt)
 {
     btVector3 force(0.0, 0.0, 0.0);
-    double magnitude = 0.0;
     const btVector3 dist =
       anchor2->getWorldPosition() - anchor1->getWorldPosition();
       
     // These computations should occur for history regardless of motion
-    const double currLength = dist.length();
+    const double currLength = getActualLength();
     const btVector3 unitVector = dist / currLength;
-    const double stretch = currLength - m_restLength;
-    
-    magnitude =  m_coefK * stretch;
+
+    double magnitude = getTension();
     
     const double deltaStretch = currLength - m_prevLength;
     m_velocity = deltaStretch / dt;
@@ -118,14 +118,7 @@ void tgBulletSpringCable::calculateAndApplyForce(double dt)
     std::cout << "Length: " << dist.length() << " rl: " << m_restLength <<std::endl; 
     #endif
       
-    if (dist.length() > m_restLength)
-    {   
-        force = unitVector * magnitude; 
-    }
-    else
-    {
-        // Leave force as the zero vector
-    }
+    force = unitVector * (magnitude);
     
     // Finished calculating, so can store things
     m_prevLength = currLength;
@@ -149,9 +142,15 @@ const double tgBulletSpringCable::getActualLength() const
 
 const double tgBulletSpringCable::getTension() const
 {
-    double tension = (getActualLength() - m_restLength) * m_coefK;
-    tension = (tension < 0.0) ? 0.0 : tension;
-    return tension;
+    double stretch = getActualLength() - m_restLength;
+    if(stretch > m_initialTensionLength) {
+        return m_coefK * stretch + m_initialTension;
+    }
+    else if(stretch > 0) {
+        return ((m_initialTension / m_initialTensionLength) + m_coefK) * stretch;
+    }
+
+    return 0.0;
 }
 
 const std::vector<const tgSpringCableAnchor*> tgBulletSpringCable::getAnchors() const
@@ -162,6 +161,8 @@ const std::vector<const tgSpringCableAnchor*> tgBulletSpringCable::getAnchors() 
 bool tgBulletSpringCable::invariant(void) const
 {
     return (m_coefK > 0.0 &&
+    m_initialTension >= 0.0 &&
+    m_initialTensionLength >= 0.0 &&
     m_dampingCoefficient >= 0.0 &&
     m_prevLength >= 0.0 &&
     m_restLength >= 0.0 &&

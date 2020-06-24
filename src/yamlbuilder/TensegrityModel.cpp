@@ -665,6 +665,8 @@ void TensegrityModel::addBasicActuatorBuilder(const std::string& builderClass, c
     std::map<std::string, double> bap_doubles;
     std::map<std::string, bool> bap_booleans;
     bap_doubles["stiffness"] = stringStiffness;
+    bap_doubles["initial_tension"] = stringInitialTension;
+    bap_doubles["initial_tension_length"] = stringInitialTensionLength;
     bap_doubles["damping"] = stringDamping;
     bap_doubles["pretension"] = stringPretension;
     bap_doubles["history"] = stringHistory;
@@ -723,7 +725,9 @@ void TensegrityModel::addBasicActuatorBuilder(const std::string& builderClass, c
 			      bap_doubles["min_rest_length"],
 			      bap_doubles["rotation"],
 			      bap_booleans["moveCablePointAToEdge"],
-			      bap_booleans["moveCablePointBToEdge"]);
+			      bap_booleans["moveCablePointBToEdge"],
+                  bap_doubles["initial_tension"],
+                  bap_doubles["initial_tension_length"]);
     if (builderClass == "tgBasicActuatorInfo") {
         // tgBuildSpec takes ownership of the tgBasicActuatorInfo object
         spec.addBuilder(tagMatch, new tgBasicActuatorInfo(basicActuatorConfig));
@@ -739,6 +743,8 @@ void TensegrityModel::addKinematicActuatorBuilder(const std::string& builderClas
     // kinematicActuatorParameters
     std::map<std::string, double> kap;
     kap["stiffness"] = stringStiffness;
+    kap["initial_tension"] = stringInitialTension;
+    kap["initial_tension_length"] = stringInitialTensionLength;
     kap["damping"] = stringDamping;
     kap["pretension"] = stringPretension;
     kap["radius"] = stringRadius;
@@ -766,7 +772,8 @@ void TensegrityModel::addKinematicActuatorBuilder(const std::string& builderClas
     const tgKinematicActuator::Config kinematicActuatorConfig =
         tgKinematicActuator::Config(kap["stiffness"], kap["damping"], kap["pretension"], kap["radius"],
         kap["motor_friction"], kap["motor_inertia"],  kap["back_drivable"], kap["history"], kap["max_tension"],
-        kap["target_velocity"],kap["min_actual_length"], kap["min_rest_length"], kap["rotation"]);
+        kap["target_velocity"],kap["min_actual_length"], kap["min_rest_length"], kap["rotation"],
+        kap["initial_tension"], kap["initial_tension_length"]);
     if (builderClass == "tgKinematicContactCableInfo") {
         // tgBuildSpec takes ownership of the tgKinematicContactCableInfo object
         spec.addBuilder(tagMatch, new tgKinematicContactCableInfo(kinematicActuatorConfig));

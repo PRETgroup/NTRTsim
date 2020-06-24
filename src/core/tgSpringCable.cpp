@@ -32,11 +32,15 @@
 
 tgSpringCable::tgSpringCable( const std::vector<tgSpringCableAnchor*>& anchors,
 				double coefK,
+				double initialTension,
+				double initialTensionLength,
 				double dampingCoefficient,
 				double pretension) :
 m_damping(0.0),
 m_velocity(0.0),
 m_coefK (coefK),
+m_initialTension(initialTension),
+m_initialTensionLength(initialTensionLength),
 m_dampingCoefficient(dampingCoefficient)
 {
 	// Anchors will be stored in child classes

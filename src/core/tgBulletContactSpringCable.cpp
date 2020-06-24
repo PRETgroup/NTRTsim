@@ -58,11 +58,13 @@ tgBulletContactSpringCable::tgBulletContactSpringCable(btPairCachingGhostObject*
  tgWorld& world,
  const std::vector<tgBulletSpringCableAnchor*>& anchors,
  double coefK,
+ double initialTension,
+ double initialTensionLength,
  double dampingCoefficient,
  double pretension,
  double thickness,
  double resolution) :
-tgBulletSpringCable (anchors, coefK, dampingCoefficient, pretension),
+tgBulletSpringCable (anchors, coefK, initialTension, initialTensionLength, dampingCoefficient, pretension),
 m_ghostObject(ghostObject),
 m_world(world),
 m_thickness(thickness),
@@ -980,6 +982,8 @@ bool tgBulletContactSpringCable::anchorCompare::comparePoints(btVector3& pt2, bt
 bool tgBulletContactSpringCable::invariant(void) const
 {
     return (m_coefK > 0.0 &&
+	m_initialTension >= 0.0 &&
+	m_initialTensionLength >= 0.0 &&
     m_dampingCoefficient >= 0.0 &&
     m_prevLength >= 0.0 &&
     m_restLength >= 0.0 &&
