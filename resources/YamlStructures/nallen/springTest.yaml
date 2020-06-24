@@ -1,0 +1,57 @@
+nodes:
+  topFront: [4, 32, 0]
+
+  midFront: [9.24, 18.90, 0]
+
+  bottomFront: [16, 2, 0]
+  bottomLeft: [0, 2, -8]
+  bottomRight: [0, 2, 8] 
+
+  ball: [4, 22, 0]
+  
+  analyticalLeft: [0, 22, -8]
+  analyticalRight: [0, 22, 8]
+
+#  analyticalLeft: [0, 8.3, -8]
+#  analyticalRight: [0, 8.3, 8]
+
+pair_groups:
+  structure:
+    - [topFront, bottomFront]
+
+    - [bottomFront, bottomRight]
+    - [bottomFront, bottomLeft]
+
+    - [midFront, bottomRight]
+    - [midFront, bottomLeft]
+
+    - [bottomLeft, analyticalLeft]
+    - [bottomRight, analyticalRight]
+  
+  control_string:
+    - [topFront, ball]
+
+builders:
+  structure:
+    class: tgRodInfo
+    parameters:
+      density: 10
+      radius: 0.5
+  ball:
+    class: tgSphereInfo
+    parameters:
+      density: 0.01
+      radius: 1
+  control_string:
+    class: tgBasicActuatorInfo
+    parameters:
+      stiffness: 3 # spring k - kg/s^2 (N/m)
+      initial_tension: 0 # spring initial tension - N
+      # initial_tension_length: 0.1 # spring initial tension length - m
+      damping: 1 # damper b - kg/s (Ns/m)
+      pretension: 0 # pretension - N
+      history: 0 # history
+      # max_tension: 1000 # motor force - N
+      # target_velocity: 100 # max motor speed - cm/s
+      # min_actual_length: 0.1 # minimum length (compressed spring) - cm
+      # min_rest_length: 0.1 # minimum rest length (rest spring) - cm

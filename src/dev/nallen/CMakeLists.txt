@@ -29,3 +29,7 @@ add_executable(AppHangingBar
     ZmqInterface.cpp
     HangingMarkers.cpp
 ) 
+
+add_executable(AppStringTest
+    AppStringTest.cpp
+) 

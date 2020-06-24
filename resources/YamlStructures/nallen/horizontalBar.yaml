@@ -45,9 +45,9 @@ builders:
   vertical_string:
     class: tgBasicActuatorInfo
     parameters:
-      stiffness: 1000
+      stiffness: 60
       damping: 100
-      pretension: 1000
+      pretension: 60
   horizontal_string:
     class: tgBasicActuatorInfo
     parameters:
