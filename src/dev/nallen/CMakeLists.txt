@@ -30,6 +30,11 @@ add_executable(AppHangingBar
     HangingMarkers.cpp
 ) 
 
+add_executable(AppRollingCylinder
+    AppRollingCylinder.cpp
+    ZmqInterface.cpp
+) 
+
 add_executable(AppStringTest
     AppStringTest.cpp
 ) 

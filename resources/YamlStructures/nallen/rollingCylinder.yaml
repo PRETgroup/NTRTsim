@@ -1,0 +1,83 @@
+nodes:
+  leftOuter: [11, 5, 0]
+  leftInner: [10, 5, 0]
+
+  leftA: [10, 9, 0]
+  leftB: [10, 3, 3.464]
+  leftC: [10, 3, -3.464]
+
+  leftBar: [8, 5, 0]
+
+  rightOuter: [-11, 5, 0]
+  rightInner: [-10, 5, 0]
+
+  rightA: [-10, 9, 0]
+  rightB: [-10, 3, 3.464]
+  rightC: [-10, 3, -3.464]
+
+  rightBar: [-8, 5, 0]
+
+pair_groups:
+  wheel:
+    - [leftOuter, leftInner]
+    - [rightOuter, rightInner]
+
+  structure:
+    - [leftA, leftInner]
+    - [leftB, leftInner]
+    - [leftC, leftInner]
+
+    - [rightA, rightInner]
+    - [rightB, rightInner]
+    - [rightC, rightInner]
+
+    - [leftA, rightA]
+    - [leftB, rightB]
+    - [leftC, rightC]
+  
+  control_bar:
+    - [leftBar, rightBar]
+  
+  control_string left_a:
+    - [leftA, leftBar]
+  control_string left_b:
+    - [leftB, leftBar]
+  control_string left_c:
+    - [leftC, leftBar]
+
+  control_string right_a:
+    - [rightA, rightBar]
+  control_string right_b:
+    - [rightB, rightBar]
+  control_string right_c:
+    - [rightC, rightBar]
+
+builders:
+  wheel:
+    class: tgRodInfo
+    parameters:
+      density: 0.1
+      radius: 5
+  structure:
+    class: tgRodInfo
+    parameters:
+      density: 0.1
+      radius: 0.1
+  control_bar:
+    class: tgRodInfo
+    parameters:
+      density: 0.2
+      radius: 0.2
+  control_string:
+    class: tgBasicActuatorInfo
+    parameters:
+      stiffness: 6000 # spring k - kg/s^2 (N/m)
+      # initial_tension: 426 # spring initial tension - cN
+      # initial_tension_length: 0.1 # spring initial tension length - cm
+      damping: 100 # damper b - kg/s (Ns/m)
+      pretension: 0 # pretension - cN
+      history: 0 # history
+      # max_tension: 1000 # motor force - cN
+      # target_velocity: 100 # max motor speed - cm/s
+      # min_actual_length: 2.8 # minimum length (compressed spring) - cm
+      # min_rest_length: 2.8 # minimum rest length (rest spring) - cm
