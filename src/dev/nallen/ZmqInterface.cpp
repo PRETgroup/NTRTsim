@@ -63,6 +63,7 @@ void ZmqInterface::onStep(TensegrityModel& subject, double dt)
 
     // And send a response
     std::ostringstream stringStream;
+    stringStream.precision(std::numeric_limits<double>::max_digits10);
     stringStream << "time:" << time_elapsed << ":" << dt;
 
     if(rods_to_send.size() > 0) {
