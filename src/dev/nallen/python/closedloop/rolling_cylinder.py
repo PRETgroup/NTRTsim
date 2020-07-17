@@ -15,14 +15,6 @@ client.connect("localhost", 5555)
 
 client.reset()
 
-# String lengths
-left_a = 4
-left_b = 4
-left_c = 4
-right_a = 4
-right_b = 4
-right_c = 4
-
 # Generate the pygame UI to control the cylinder
 pygame.init()
 BLACK = (0,0,0)
@@ -40,20 +32,25 @@ keys = {
     'd': False
 }
 
-# Speed history
-prev_z = [0] * 100
+# Position and Speed smoothing
+position_smoothing = 100
+speed_smoothing = 100
+
+# History to enable smoothing
+prev_z = [0] * max(position_smoothing, speed_smoothing)
 
 # PID variables
 pid = {
+    "setpoint": 20,
     "integral": 0,
     "previous": 0,
     "output": 0
 }
 
 # PID constants
-P_CONSTANT = 0.5
-I_CONSTANT = 0
-D_CONSTANT = 0.01
+P_CONSTANT = 0.3  # 0.5
+I_CONSTANT = 0.0  # 0.01
+D_CONSTANT = 0.5  # 0.02
 
 # Actuators
 sides = [
@@ -163,11 +160,17 @@ while True:
     # Receive data over ZMQ
     data = client.receive()
 
-    # Calculate the average speed
+    # Calculate the current position (smoothed)
+    position = 0
+    for i in range(position_smoothing):
+        position += prev_z[len(prev_z)-i-1]
+    position /= position_smoothing
+
+    # Calculate the current speed (smoothed)
     speed = 0
-    for i in range(len(prev_z)):
-        speed += (data.rods[0].position.z - prev_z[i]) / (data.time.dt * (i + 1))
-    speed /= len(prev_z)
+    for i in range(speed_smoothing):
+        speed += (position - prev_z[i]) / (data.time.dt * (i + 1))
+    speed /= speed_smoothing
 
     # Keep the history of locations for speed
     for i in range(len(prev_z) - 1):
@@ -176,7 +179,8 @@ while True:
 
     # If we should maintain position with PID
     if doPID:
-        error = -speed
+        # error = pid["setpoint"] - speed
+        error = pid["setpoint"] - position
 
         pid["integral"] += error * data.time.dt
 
