@@ -130,10 +130,28 @@ void tgSimView::teardown()
 }
 
 void tgSimView::run()
+{
+    // This will run forever
+    if (m_pSimulation != NULL)
     {
-        // This would normally run forever, but this is just for testing
-        run(10);
+            // The tgSimView has been passed to a tgSimulation
+        std::cout << "SimView::run()" << std::endl;
+        m_renderTime = 0;
+        double totalTime = 0.0;
+        while(1) {
+            m_pSimulation->step(m_stepSize);    
+            m_renderTime += m_stepSize;
+            totalTime += m_stepSize;
+            //std::cout << "totalTime=" << totalTime << std::endl;
+            
+            if (m_renderTime >= m_renderRate) {
+                render();
+                //std::cout << totalTime << std::endl;
+                m_renderTime = 0;
+            }
+        }
     }
+}
 
 void tgSimView::run(int steps) 
 {
