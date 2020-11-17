@@ -25,16 +25,17 @@ speed_smoothing = 1
 prev_z = [0] * max(position_smoothing, speed_smoothing)
 
 # Nengo settings
-learning_time = 180
+learning_time = 6000
 simulation_time = -1
-learning_rate = 1e-5
+learning_rate = 5e-6
 num_neurons = 100
+probe_sample_every = 1
 
 # Setpoint
 setpoint = 2
 
 # Reached thresholds
-reached_threshold = 0.1
+reached_threshold = 0.2
 reached_time = 5
 
 # Actuators
@@ -231,13 +232,13 @@ with model:
     nengo.Connection(output, zmq, synapse=0.01)
 
     # Probes
-    setpoint_p = nengo.Probe(setpoint_node, synapse=0)
-    inputs_p = nengo.Probe(zmq, synapse=0)
-    error_p = nengo.Probe(error_ens, synapse=0.01)
-    learn_error_p = nengo.Probe(learn_error_ens, synapse=0.01)
-    main_p = nengo.Probe(main_ens, synapse=0.01)
-    main2_p = nengo.Probe(main2_ens, synapse=0.01)
-    output_p = nengo.Probe(output, synapse=0.01)
+    setpoint_p = nengo.Probe(setpoint_node, sample_every=probe_sample_every, synapse=0)
+    inputs_p = nengo.Probe(zmq, sample_every=probe_sample_every, synapse=0)
+    error_p = nengo.Probe(error_ens, sample_every=probe_sample_every, synapse=0.01)
+    learn_error_p = nengo.Probe(learn_error_ens, sample_every=probe_sample_every, synapse=0.01)
+    main_p = nengo.Probe(main_ens, sample_every=probe_sample_every, synapse=0.01)
+    main2_p = nengo.Probe(main2_ens, sample_every=probe_sample_every, synapse=0.01)
+    output_p = nengo.Probe(output, sample_every=probe_sample_every, synapse=0.01)
 
     #weights_p = nengo.Probe(conn, 'weights', synapse=0.01)
 
@@ -266,22 +267,22 @@ with nengo.Simulator(model) as sim:
 
 plt.figure()
 plt.subplot(5, 1, 1)
-#plt.plot(sim.trange(), sim.data[setpoint_p], label='Setpoint')
-plt.plot(sim.trange(), sim.data[inputs_p][:, 0], label='Position')
+#plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[setpoint_p], label='Setpoint')
+plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[inputs_p][:, 0], label='Position')
 plt.legend(loc='best')
 plt.subplot(5, 1, 2)
-plt.plot(sim.trange(), sim.data[setpoint_p], label='Setpoint')
-plt.plot(sim.trange(), sim.data[inputs_p][:, 1], label='Speed')
+plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[setpoint_p], label='Setpoint')
+plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[inputs_p][:, 1], label='Speed')
 plt.legend(loc='best')
 plt.subplot(5, 1, 3)
-plt.plot(sim.trange(), sim.data[inputs_p][:, 2], label='Orientation')
+plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[inputs_p][:, 2], label='Orientation')
 plt.legend(loc='best')
 plt.subplot(5, 1, 4)
-plt.plot(sim.trange(), sim.data[error_p], label='Error')
-plt.plot(sim.trange(), sim.data[learn_error_p], label='Learning Error')
+plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[error_p], label='Error')
+plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[learn_error_p], label='Learning Error')
 plt.legend(loc='best')
 plt.subplot(5, 1, 5)
-plt.plot(sim.trange(), sim.data[main2_p], label='Output')
+plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[main2_p], label='Output')
 plt.legend(loc='best')
 
 plt.show()

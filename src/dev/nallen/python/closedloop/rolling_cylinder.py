@@ -192,6 +192,7 @@ while True:
         control["left"] = pid["output"]
         control["right"] = pid["output"]
     
+        print(round(position, 2), " / ", round(speed, 2), " / ", round(pid["output"], 2))
 
     # For each side, do the logic
     for side in sides:
