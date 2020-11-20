@@ -1,39 +1,66 @@
 nodes:
-  leftOuter: [11, 5, 0]
-  leftInner: [10, 5, 0]
+  leftA: [0, 35.5, 0]
+  leftB: [0, 10, 14.722]
+  leftC: [0, 10, -14.722]
 
-  leftA: [10, 9, 0]
-  leftB: [10, 3, 3.464]
-  leftC: [10, 3, -3.464]
+  leftBar: [1.5, 18.333, 0]
+  rightBar: [29.5, 18.333, 0]
 
-  leftBar: [8, 5, 0]
+  rightA: [31, 35.5, 0]
+  rightB: [31, 10, 14.722]
+  rightC: [31, 10, -14.722]
 
-  rightOuter: [-11, 5, 0]
-  rightInner: [-10, 5, 0]
+  leftOuter: [-1.6, 18.333, 0]
+  leftInner: [-1.2, 18.333, 0]
+  leftInnerA: [-1.2, 35.5, 0]
+  leftInnerB: [-1.2, 10, 14.722]
+  leftInnerC: [-1.2, 10, -14.722]
 
-  rightA: [-10, 9, 0]
-  rightB: [-10, 3, 3.464]
-  rightC: [-10, 3, -3.464]
-
-  rightBar: [-8, 5, 0]
+  rightOuter: [32.6, 18.333, 0]
+  rightInner: [32.2, 18.333, 0]
+  rightInnerA: [32.2, 35.5, 0]
+  rightInnerB: [32.2, 10, 14.722]
+  rightInnerC: [32.2, 10, -14.722]
 
 pair_groups:
   wheel:
     - [leftOuter, leftInner]
     - [rightOuter, rightInner]
+  
+  spacer:
+    - [leftInnerA, leftA]
+    - [leftInnerB, leftB]
+    - [leftInnerC, leftC]
+
+    - [rightInnerA, rightA]
+    - [rightInnerB, rightB]
+    - [rightInnerC, rightC]
+
+  rigidconnection:
+    - [leftInnerA, leftInner]
+    - [leftInnerB, leftInner]
+    - [leftInnerC, leftInner]
+
+    - [rightInnerA, rightInner]
+    - [rightInnerB, rightInner]
+    - [rightInnerC, rightInner]
 
   structure:
-    - [leftA, leftInner]
-    - [leftB, leftInner]
-    - [leftC, leftInner]
+    - [leftA, leftB]
+    - [leftB, leftC]
+    - [leftC, leftA]
 
-    - [rightA, rightInner]
-    - [rightB, rightInner]
-    - [rightC, rightInner]
+    - [rightA, rightB]
+    - [rightB, rightC]
+    - [rightC, rightA]
 
     - [leftA, rightA]
     - [leftB, rightB]
     - [leftC, rightC]
+
+    - [leftA, rightC]
+    - [leftB, rightA]
+    - [leftC, rightB]
   
   control_bar:
     - [leftBar, rightBar]
@@ -57,17 +84,33 @@ builders:
     class: tgRodInfo
     parameters:
       density: 0.1
-      radius: 5
-  structure:
+      radius: 18.1
+    
+  spacer:
     class: tgRodInfo
     parameters:
       density: 0.1
-      radius: 0.1
+      radius: 0.5
+  
+  rigidconnection:
+    class: tgRodInfo
+    parameters:
+      density: 0.1
+      radius: 0.000001
+
+  structure:
+    class: tgBoxInfo
+    parameters:
+      density: 0.1
+      width: 0.5
+      height: 0.5
+
   control_bar:
     class: tgRodInfo
     parameters:
       density: 0.2
-      radius: 0.2
+      radius: 0.925
+
   control_string:
     class: tgBasicActuatorInfo
     parameters:
