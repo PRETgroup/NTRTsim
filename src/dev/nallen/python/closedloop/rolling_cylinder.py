@@ -59,17 +59,17 @@ sides = [
         "actuators": [
             {
                 "name": "left_a",
-                "position": [0, -4],
+                "position": [0, -17],
                 "output": 4,
             },
             {
                 "name": "left_b",
-                "position": [-3.464, 2],
+                "position": [-14.722, 8.5],
                 "output": 4,
             },
             {
                 "name": "left_c",
-                "position": [3.464, 2],
+                "position": [14.722, 8.5],
                 "output": 4,
             }
         ]
@@ -79,17 +79,17 @@ sides = [
         "actuators": [
             {
                 "name": "right_a",
-                "position": [0, -4],
+                "position": [0, -17],
                 "output": 4,
             },
             {
                 "name": "right_b",
-                "position": [-3.464, 2],
+                "position": [-14.722, 8.5],
                 "output": 4,
             },
             {
                 "name": "right_c",
-                "position": [3.464, 2],
+                "position": [14.722, 8.5],
                 "output": 4,
             }
         ]
@@ -101,6 +101,7 @@ while True:
     output = []
     for side in sides:
         for actuator in side["actuators"]:
+            print(actuator["name"], actuator["output"])
             output.append(Actuation(actuator["name"], actuator["output"]))
 
     client.send(output)
@@ -207,7 +208,10 @@ while True:
 
         # Which then gets mapped relative to the wheel
         relative_angle = desired_angle - data.rods[0].orientation.z
-        relative_position = [2 * math.sin(relative_angle), 2 * math.cos(relative_angle)]
+        relative_position = [4 * math.sin(relative_angle), 4 * math.cos(relative_angle)]
+
+        # print(relative_angle)
+        # print(relative_position)
 
         # Calculate the lengths for each string
         for actuator in side["actuators"]:
@@ -216,3 +220,7 @@ while True:
 
             # And then the length
             actuator["output"] = math.sqrt(math.pow(position[0], 2) + math.pow(position[1], 2))
+
+        #     print(actuator["name"], actuator["output"])
+        
+        # sys.exit()
