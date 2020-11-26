@@ -35,9 +35,11 @@ keys = {
 # Position and Speed smoothing
 position_smoothing = 100
 speed_smoothing = 100
+orientation_smoothing = 1
 
 # History to enable smoothing
 prev_z = [0] * max(position_smoothing, speed_smoothing)
+prev_orientation = [0] * orientation_smoothing
 
 # PID variables
 pid = {
@@ -48,9 +50,9 @@ pid = {
 }
 
 # PID constants
-P_CONSTANT = 0.3  # 0.5
+P_CONSTANT = 0.2  # 0.5
 I_CONSTANT = 0.0  # 0.01
-D_CONSTANT = 0.5  # 0.02
+D_CONSTANT = 0.1  # 0.02
 
 # Actuators
 sides = [
@@ -178,6 +180,19 @@ while True:
         prev_z[len(prev_z)-i-1] = prev_z[len(prev_z)-i-2]
     prev_z[0] = data.rods[0].position.z
 
+
+    # Calculate the current orientation (smoothed)
+    orientation = 0
+    for i in range(orientation_smoothing):
+        orientation += prev_orientation[len(prev_orientation)-i-1]
+    orientation /= orientation_smoothing
+
+    # Keep the current history of orientations
+    for i in range(len(prev_orientation) - 1):
+        prev_orientation[len(prev_orientation)-i-1] = prev_orientation[len(prev_orientation)-i-2]
+    prev_orientation[0] = data.rods[0].orientation.z
+
+
     # If we should maintain position with PID
     if doPID:
         # error = pid["setpoint"] - speed
@@ -193,7 +208,7 @@ while True:
         control["left"] = pid["output"]
         control["right"] = pid["output"]
     
-        print(round(position, 2), " / ", round(speed, 2), " / ", round(pid["output"], 2))
+        print(round(position, 2), " / ", round(speed, 2), " / ", round(pid["output"], 2), " / ", round(orientation, 2))
 
     # For each side, do the logic
     for side in sides:
@@ -207,11 +222,8 @@ while True:
         desired_angle = math.pi - (control[side["side"]] * math.pi / 2)
 
         # Which then gets mapped relative to the wheel
-        relative_angle = desired_angle - data.rods[0].orientation.z
-        relative_position = [4 * math.sin(relative_angle), 4 * math.cos(relative_angle)]
-
-        # print(relative_angle)
-        # print(relative_position)
+        relative_angle = desired_angle - orientation
+        relative_position = [3 * math.sin(relative_angle), 3 * math.cos(relative_angle)]
 
         # Calculate the lengths for each string
         for actuator in side["actuators"]:
@@ -220,7 +232,3 @@ while True:
 
             # And then the length
             actuator["output"] = math.sqrt(math.pow(position[0], 2) + math.pow(position[1], 2))
-
-        #     print(actuator["name"], actuator["output"])
-        
-        # sys.exit()

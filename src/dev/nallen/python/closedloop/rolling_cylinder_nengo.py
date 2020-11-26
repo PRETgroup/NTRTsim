@@ -20,14 +20,16 @@ client.reset()
 # Position and Speed smoothing
 position_smoothing = 1
 speed_smoothing = 1
+orientation_smoothing = 1
 
 # History to enable smoothing
 prev_z = [0] * max(position_smoothing, speed_smoothing)
+prev_orientation = [0] * orientation_smoothing
 
 # Nengo settings
 learning_time = 6000
 simulation_time = -1
-learning_rate = 5e-6
+learning_rate = 5e-7
 num_neurons = 100
 probe_sample_every = 1
 
@@ -45,17 +47,17 @@ sides = [
         "actuators": [
             {
                 "name": "left_a",
-                "position": [0, -4],
+                "position": [0, -17],
                 "output": 4,
             },
             {
                 "name": "left_b",
-                "position": [-3.464, 2],
+                "position": [-14.722, 8.5],
                 "output": 4,
             },
             {
                 "name": "left_c",
-                "position": [3.464, 2],
+                "position": [14.722, 8.5],
                 "output": 4,
             }
         ]
@@ -65,27 +67,29 @@ sides = [
         "actuators": [
             {
                 "name": "right_a",
-                "position": [0, -4],
+                "position": [0, -17],
                 "output": 4,
             },
             {
                 "name": "right_b",
-                "position": [-3.464, 2],
+                "position": [-14.722, 8.5],
                 "output": 4,
             },
             {
                 "name": "right_c",
-                "position": [3.464, 2],
+                "position": [14.722, 8.5],
                 "output": 4,
             }
         ]
     }
 ]
 
+out = []
+
 within_range_time = 0.0
 def zmq_func(t, data):
     global setpoint, within_range_time
-    global prev_z, position_smoothing, speed_smoothing
+    global prev_z, position_smoothing, speed_smoothing, prev_orientation, orientation_smoothing
 
     # Send the current actuator values over ZMQ
     output = []
@@ -96,6 +100,8 @@ def zmq_func(t, data):
             i += 1
 
     client.send(output)
+
+    #input()
 
     # Receive data over ZMQ
     data = client.receive()
@@ -117,6 +123,18 @@ def zmq_func(t, data):
         prev_z[len(prev_z)-i-1] = prev_z[len(prev_z)-i-2]
     prev_z[0] = data.rods[0].position.z
 
+
+    # Calculate the current orientation (smoothed)
+    orientation = 0
+    for i in range(orientation_smoothing):
+        orientation += prev_orientation[len(prev_orientation)-i-1]
+    orientation /= orientation_smoothing
+
+    # Keep the current history of orientations
+    for i in range(len(prev_orientation) - 1):
+        prev_orientation[len(prev_orientation)-i-1] = prev_orientation[len(prev_orientation)-i-2]
+    prev_orientation[0] = data.rods[0].orientation.z
+
     # Check if we've reached the setpoint
     if abs(setpoint - speed) < reached_threshold:
         if data.time.abs - within_range_time > reached_time:
@@ -136,14 +154,15 @@ def zmq_func(t, data):
     else:
         within_range_time = data.time.abs
 
+    out.append([data.rods[1].position.y, data.rods[1].position.z])
     # Return the position, speed, and current orientation
-    return (position, speed, data.rods[0].orientation.z)
+    return (position, speed, orientation)
 
 def output_func(t, data):
     # Assign control signals
     control = {
-        "left": data[0],
-        "right": data[0],
+        "left": 0.03,#data[0],
+        "right": 0.03,#data[0],
     }
 
     # For each side, do the logic
@@ -160,7 +179,7 @@ def output_func(t, data):
 
         # Which then gets mapped relative to the wheel
         relative_angle = desired_angle - data[1]
-        relative_position = [2 * math.sin(relative_angle), 2 * math.cos(relative_angle)]
+        relative_position = [3 * math.sin(relative_angle), 3 * math.cos(relative_angle)]
 
         # Calculate the lengths for each string
         for actuator in side["actuators"]:
@@ -260,6 +279,14 @@ with nengo.Simulator(model) as sim:
         else:
             sim.run(simulation_time)
     except KeyboardInterrupt as e:
+        f = open("out.csv", "w")
+        f.write("step,y,z\n")
+        i = 0
+        for item in out:
+            f.write(str(i) + "," + str(round(item[0], 2)) + "," + str(round(item[1], 2)) + "\n")
+            i = i+1
+        f.close()
+
         if sim.trange()[-1] < learning_time:
             print("Program exited before learning complete at time %.3f, showing results." % sim.trange()[-1])
         else:

@@ -83,44 +83,44 @@ builders:
   wheel:
     class: tgRodInfo
     parameters:
-      density: 0.1
+      density: 0.001
       radius: 18.1
     
   spacer:
     class: tgRodInfo
     parameters:
-      density: 0.1
+      density: 0.001
       radius: 0.5
   
   rigidconnection:
     class: tgRodInfo
     parameters:
-      density: 0.1
+      density: 0.001
       radius: 0.000001
 
   structure:
     class: tgBoxInfo
     parameters:
-      density: 0.1
+      density: 0.001
       width: 0.5
       height: 0.5
 
   control_bar:
     class: tgRodInfo
     parameters:
-      density: 0.2
+      density: 0.002
       radius: 0.925
 
   control_string:
     class: tgBasicActuatorInfo
     parameters:
-      stiffness: 6000 # spring k - kg/s^2 (N/m)
-      # initial_tension: 426 # spring initial tension - cN
+      stiffness: 60 # spring k - kg/s^2 (N/m)
+      initial_tension: 426 # spring initial tension - cN
       # initial_tension_length: 0.1 # spring initial tension length - cm
-      damping: 100 # damper b - kg/s (Ns/m)
+      damping: 1000 # damper b - kg/s (Ns/m)
       pretension: 0 # pretension - cN
       history: 0 # history
-      # max_tension: 1000 # motor force - cN
+      max_tension: 2300 # motor force - cN
       # target_velocity: 100 # max motor speed - cm/s
-      # min_actual_length: 2.8 # minimum length (compressed spring) - cm
-      # min_rest_length: 2.8 # minimum rest length (rest spring) - cm
+      min_actual_length: 2.8 # minimum length (compressed spring) - cm
+      min_rest_length: 2.8 # minimum rest length (rest spring) - cm
