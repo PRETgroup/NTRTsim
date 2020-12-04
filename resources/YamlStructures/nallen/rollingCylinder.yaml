@@ -3,21 +3,21 @@ nodes:
   leftB: [0, 10, 14.722]
   leftC: [0, 10, -14.722]
 
-  leftBar: [1.5, 18.333, 0]
-  rightBar: [29.5, 18.333, 0]
+  leftBar: [0, 18.5, 0]
+  rightBar: [31, 18.5, 0]
 
   rightA: [31, 35.5, 0]
   rightB: [31, 10, 14.722]
   rightC: [31, 10, -14.722]
 
-  leftOuter: [-1.6, 18.333, 0]
-  leftInner: [-1.2, 18.333, 0]
+  leftOuter: [-1.6, 18.5, 0]
+  leftInner: [-1.2, 18.5, 0]
   leftInnerA: [-1.2, 35.5, 0]
   leftInnerB: [-1.2, 10, 14.722]
   leftInnerC: [-1.2, 10, -14.722]
 
-  rightOuter: [32.6, 18.333, 0]
-  rightInner: [32.2, 18.333, 0]
+  rightOuter: [32.6, 18.5, 0]
+  rightInner: [32.2, 18.5, 0]
   rightInnerA: [32.2, 35.5, 0]
   rightInnerB: [32.2, 10, 14.722]
   rightInnerC: [32.2, 10, -14.722]
@@ -83,32 +83,34 @@ builders:
   wheel:
     class: tgRodInfo
     parameters:
-      density: 0.001
-      radius: 18.1
+      density: 0.01
+      radius: 18.4
+      roll_friction: 1.0
+      friction: 1.0
     
   spacer:
     class: tgRodInfo
     parameters:
-      density: 0.001
+      density: 0.01
       radius: 0.5
   
   rigidconnection:
     class: tgRodInfo
     parameters:
-      density: 0.001
+      density: 0.01
       radius: 0.000001
 
   structure:
     class: tgBoxInfo
     parameters:
-      density: 0.001
+      density: 0.01
       width: 0.5
       height: 0.5
 
   control_bar:
     class: tgRodInfo
     parameters:
-      density: 0.002
+      density: 0.012
       radius: 0.925
 
   control_string:
@@ -116,8 +118,8 @@ builders:
     parameters:
       stiffness: 60 # spring k - kg/s^2 (N/m)
       initial_tension: 426 # spring initial tension - cN
-      # initial_tension_length: 0.1 # spring initial tension length - cm
-      damping: 1000 # damper b - kg/s (Ns/m)
+      initial_tension_length: 0.01 # spring initial tension length - cm
+      damping: 100 # damper b - kg/s (Ns/m)
       pretension: 0 # pretension - cN
       history: 0 # history
       max_tension: 2300 # motor force - cN
