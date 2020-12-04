@@ -147,7 +147,7 @@ const double tgBulletSpringCable::getTension() const
         return m_coefK * stretch + m_initialTension;
     }
     else if(stretch > 0) {
-        return ((m_initialTension / m_initialTensionLength) + m_coefK) * stretch;
+        return (m_initialTension / m_initialTensionLength) * stretch;
     }
 
     return 0.0;
