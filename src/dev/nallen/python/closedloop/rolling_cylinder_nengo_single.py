@@ -23,7 +23,10 @@ client.reset()
 position_smoothing = 100
 speed_smoothing = 100
 orientation_smoothing = 100
+
+position = 0
 speed = 0
+orientation = 0
 
 # History to enable smoothing
 prev_z = [0] * position_smoothing
@@ -31,7 +34,7 @@ prev_speed = [0] * speed_smoothing
 prev_orientation = [0] * orientation_smoothing
 
 # Nengo settings
-learning_time = 120
+learning_time = 100
 simulation_time = -1
 learning_rate = 4e-6
 num_neurons = 100
@@ -182,7 +185,7 @@ within_range_time = 0.0
 def zmq_func(t, data):
     global setpoint, within_range_time
     global prev_z, position_smoothing, speed_smoothing, prev_orientation, orientation_smoothing
-    global speed
+    global position, speed, orientation
     global trial
 
     # Send the current actuator values over ZMQ
@@ -241,30 +244,31 @@ def zmq_func(t, data):
             # Create a new setpoint
             setpoint = (random.random() * 10) - 5
             print("Reached setpoint. New setpoint:", round(setpoint, 2))
+            within_range_time = data.time.abs
 
             trial += 1
 
-            # Reset the position history
-            for i in range(len(prev_z)):
-                prev_z[i] = 0
+            # # Reset the position history
+            # for i in range(len(prev_z)):
+            #     prev_z[i] = 0
 
-            # Reset the speed history
-            for i in range(len(prev_speed)):
-                prev_speed[i] = 0
+            # # Reset the speed history
+            # for i in range(len(prev_speed)):
+            #     prev_speed[i] = 0
 
-            # Reset the orientation history
-            for i in range(len(prev_orientation)):
-                prev_orientation[i] = 0
+            # # Reset the orientation history
+            # for i in range(len(prev_orientation)):
+            #     prev_orientation[i] = 0
 
-            # Reset the simulation
-            client.reset()
+            # # Reset the simulation
+            # client.reset()
 
-            # Reset the smoothing variables
-            for i in range(len(prev_z)):
-                prev_z[i] = 0
+            # # Reset the smoothing variables
+            # for i in range(len(prev_z)):
+            #     prev_z[i] = 0
             
-            # And send the initial values
-            return (0, 0, 0)
+            # # And send the initial values
+            # return (0, 0, 0)
     else:
         within_range_time = data.time.abs
 
@@ -274,8 +278,8 @@ def zmq_func(t, data):
 def output_func(t, data):
     # Assign control signals
     control = {
-        "left": data[0],
-        "right": data[0],
+        "left": data,
+        "right": data,
     }
 
     # For each side, do the logic
@@ -292,7 +296,7 @@ def output_func(t, data):
         desired_position = [4 * math.sin(desired_angle), 4 * -1 * math.cos(desired_angle)]
 
         # Calculate the lengths for each string
-        lengths = convertPositionToRestLengths(side, desired_position, data[1])
+        lengths = convertPositionToRestLengths(side, desired_position, orientation_func(t))
 
         # Set each length
         i = 0
@@ -301,15 +305,26 @@ def output_func(t, data):
             outputs.append(actuator["output"])
             i += 1
     
+    zmq_func(t, outputs)
+
     # Return the six outputs
-    return outputs
+    #return outputs
+
+def position_func(t):
+    global position
+    return position
+
+def speed_func(t):
+    global speed
+    return speed
+
+def orientation_func(t):
+    global orientation
+    return orientation
 
 def setpoint_func(t):
     global setpoint
     return setpoint
-
-def error_func(t, data):
-    return data[1] - data[0]
 
 def stop_learning_func(t):
     global trial
@@ -319,7 +334,6 @@ model = nengo.Network(label="rolling_cylinder")
 with model:
     # SNN Ensembles
     error_ens = nengo.Ensemble(n_neurons=num_neurons, dimensions=1, radius=5)
-    speed_ens = nengo.Ensemble(n_neurons=num_neurons, dimensions=1, radius=10)
 
     main_ens = nengo.Ensemble(n_neurons=num_neurons, dimensions=1, radius=10)
 
@@ -329,7 +343,6 @@ with model:
 
     # SNN Connections
     conn1 = nengo.Connection(error_ens, main_ens, synapse=0.01, function=lambda x: np.zeros(1))
-    conn3 = nengo.Connection(main_ens, main2_ens, synapse=0.01, function=lambda x: np.zeros(1))
     conn3 = nengo.Connection(main_ens.neurons, main2_ens, synapse=0.01, transform=0 * np.ones((main2_ens.dimensions, main_ens.n_neurons)))
 
     nengo.Connection(error_ens, learn_error_ens, synapse=0.01)
@@ -340,7 +353,7 @@ with model:
     conn3.learning_rule_type = nengo.PES(learning_rate=learning_rate)
     nengo.Connection(learn_error_ens, conn3.learning_rule, synapse=0.01)
 
-    stop_learning = nengo.Node(output=stop_learning_func)
+    stop_learning = nengo.Node(output=stop_learning_func, label="stop_learning")
     nengo.Connection(
         stop_learning,
         learn_error_ens.neurons,
@@ -348,31 +361,27 @@ with model:
 
     # External Nodes
     setpoint_node = nengo.Node(output=setpoint_func, size_in=0, label="setpoint")
-    zmq = nengo.Node(output=zmq_func, size_in=6, label="zmq")
-    output = nengo.Node(output=output_func, size_in=2, label="output")
+    position_node = nengo.Node(output=position_func, size_in=0, label="position")
+    speed_node = nengo.Node(output=speed_func, size_in=0, label="speed")
+    orientation_node = nengo.Node(output=orientation_func, size_in=0, label="orientation")
 
-    error = nengo.Node(output=error_func, size_in=2, label="error")
+    output = nengo.Node(output=output_func, size_in=1, label="output")
 
     # External Connections
-    nengo.Connection(zmq[1], error[1], synapse=0)
-    nengo.Connection(zmq[1], speed_ens, synapse=0)
-    nengo.Connection(setpoint_node, error[0], synapse=0)
-    nengo.Connection(error, error_ens, synapse=0)
-
-    nengo.Connection(main2_ens, output[0], synapse=0.1)
-    nengo.Connection(zmq[2], output[1], synapse=0)
-    nengo.Connection(output, zmq, synapse=0.01)
+    nengo.Connection(speed_node, error_ens, synapse=0)
+    nengo.Connection(setpoint_node, error_ens, transform=-1, synapse=0)
+    nengo.Connection(main2_ens, output, synapse=0.1)
 
     # Probes
     setpoint_p = nengo.Probe(setpoint_node, sample_every=probe_sample_every, synapse=0, label="setpoint_p")
-    inputs_p = nengo.Probe(zmq, sample_every=probe_sample_every, synapse=0, label="input_p")
+    position_p = nengo.Probe(position_node, sample_every=probe_sample_every, synapse=0, label="position_p")
+    speed_p = nengo.Probe(speed_node, sample_every=probe_sample_every, synapse=0, label="speed_p")
+    orientation_p = nengo.Probe(orientation_node, sample_every=probe_sample_every, synapse=0, label="orientation_p")
+
     error_p = nengo.Probe(error_ens, sample_every=probe_sample_every, synapse=0.01, label="error_p")
     learn_error_p = nengo.Probe(learn_error_ens, sample_every=probe_sample_every, synapse=0.01, label="learn_error_p")
     main_p = nengo.Probe(main_ens, sample_every=probe_sample_every, synapse=0.01, label="main_p")
     main2_p = nengo.Probe(main2_ens, sample_every=probe_sample_every, synapse=0.01, label="main2_p")
-    output_p = nengo.Probe(output, sample_every=probe_sample_every, synapse=0.01, label="output_p")
-
-    #weights_p = nengo.Probe(conn, 'weights', synapse=0.01)
 
 with nengo.Simulator(model) as sim:
     # Check if we should run forever
@@ -401,15 +410,14 @@ with nengo.Simulator(model) as sim:
 
 plt.figure()
 plt.subplot(5, 1, 1)
-#plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[setpoint_p], label='Setpoint')
-plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[inputs_p][:, 0], label='Position')
+plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[position_p], label='Position')
 plt.legend(loc='best')
 plt.subplot(5, 1, 2)
 plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[setpoint_p], label='Setpoint')
-plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[inputs_p][:, 1], label='Speed')
+plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[speed_p], label='Speed')
 plt.legend(loc='best')
 plt.subplot(5, 1, 3)
-plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[inputs_p][:, 2], label='Orientation')
+plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[orientation_p], label='Orientation')
 plt.legend(loc='best')
 plt.subplot(5, 1, 4)
 plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[error_p], label='Error')

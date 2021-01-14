@@ -61,17 +61,17 @@ sides = [
         "actuators": [
             {
                 "name": "left_a",
-                "position": [0, -17],
+                "position": [0, 17],
                 "output": 4,
             },
             {
                 "name": "left_b",
-                "position": [-14.722, 8.5],
+                "position": [14.722, -8.5],
                 "output": 4,
             },
             {
                 "name": "left_c",
-                "position": [14.722, 8.5],
+                "position": [-14.722, -8.5],
                 "output": 4,
             }
         ]
@@ -81,29 +81,109 @@ sides = [
         "actuators": [
             {
                 "name": "right_a",
-                "position": [0, -17],
+                "position": [0, 17],
                 "output": 4,
             },
             {
                 "name": "right_b",
-                "position": [-14.722, 8.5],
+                "position": [14.722, -8.5],
                 "output": 4,
             },
             {
                 "name": "right_c",
-                "position": [14.722, 8.5],
+                "position": [-14.722, -8.5],
                 "output": 4,
             }
         ]
     }
 ]
 
+def convertPositionToRestLengths(side, pos, orientation):
+    rest_lengths = [0, 0, 0]
+    
+    equ1 = [
+        {"weights": [ 0, 0, 0 ], "result": 0 }, # X - Balanced
+        {"weights": [ 0, 0, 0 ], "result": 2 }, # Y - Bar weight
+        {"weights": [ 0, 0, 0 ], "result": 1 }, # Z - Cross force
+    ]
+
+    pos.append(-1)
+
+    i = 0
+    for actuator in side["actuators"]:
+        actuator_pos = [0, 0, 0]
+        actuator_pos[0] = (actuator["position"][0] * math.cos(orientation)) + (actuator["position"][1] * math.sin(orientation))
+        actuator_pos[1] = (actuator["position"][1] * math.cos(orientation)) - (actuator["position"][0] * math.sin(orientation))
+        actuator_pos[2] = 0
+
+        difference = [0, 0, 0]
+        difference[0] = actuator_pos[0] - pos[0]
+        difference[1] = actuator_pos[1] - pos[1]
+        difference[2] = actuator_pos[2] - pos[2]
+
+        sum = 0
+        for dimension in difference:
+            sum += math.pow(dimension, 2)
+        length = math.sqrt(sum)
+
+        equ1[0]["weights"][i] = difference[0] / length
+        equ1[1]["weights"][i] = difference[1] / length
+        equ1[2]["weights"][i] = difference[2] / length
+
+        rest_lengths[i] = length
+
+        i += 1
+
+    # Temporary equations
+    equ2 = [
+        {"weights": [ 0, 0, 0 ], "result": 0 },
+        {"weights": [ 0, 0, 0 ], "result": 0 },
+    ]
+    equ3 = [
+        {"weights": [ 0, 0, 0 ], "result": 0 },
+    ]
+
+    # A - B
+    equ2[0]["result"] = equ1[0]["result"] * equ1[1]["weights"][2] - equ1[1]["result"] * equ1[0]["weights"][2]
+    equ2[0]["weights"][0] = equ1[0]["weights"][0] * equ1[1]["weights"][2] - equ1[1]["weights"][0] * equ1[0]["weights"][2]
+    equ2[0]["weights"][1] = equ1[0]["weights"][1] * equ1[1]["weights"][2] - equ1[1]["weights"][1] * equ1[0]["weights"][2]
+    equ2[0]["weights"][2] = 0
+
+    # B - C
+    equ2[1]["result"] = equ1[1]["result"] * equ1[2]["weights"][2] - equ1[2]["result"] * equ1[1]["weights"][2]
+    equ2[1]["weights"][0] = equ1[1]["weights"][0] * equ1[2]["weights"][2] - equ1[2]["weights"][0] * equ1[1]["weights"][2]
+    equ2[1]["weights"][1] = equ1[1]["weights"][1] * equ1[2]["weights"][2] - equ1[2]["weights"][1] * equ1[1]["weights"][2]
+    equ2[1]["weights"][2] = 0
+
+    # D - E
+    equ3[0]["result"] = equ2[0]["result"] * equ2[1]["weights"][1] - equ2[1]["result"] * equ2[0]["weights"][1]
+    equ3[0]["weights"][0] = equ2[0]["weights"][0] * equ2[1]["weights"][1] - equ2[1]["weights"][0] * equ2[0]["weights"][1]
+    equ3[0]["weights"][1] = 0
+    equ3[0]["weights"][2] = 0
+
+    result = [0, 0, 0]
+    result[0] = equ3[0]["result"] / equ3[0]["weights"][0]
+    result[1] = (equ2[0]["result"] - equ2[0]["weights"][0] * result[0]) / equ2[0]["weights"][1]
+    result[2] = (equ1[0]["result"] - equ1[0]["weights"][0] * result[0] - equ1[0]["weights"][1] * result[1]) / equ1[0]["weights"][2]
+
+    SPRING_K = 0.6
+    SPRING_F0 = 4.26
+    SPRING_FMAX = 8.37
+
+    for i in range(len(result)):
+        if result[i] > SPRING_F0:
+            if result[i] >= SPRING_FMAX:
+                rest_lengths[i] -= (SPRING_FMAX - SPRING_F0) / SPRING_K
+            else:
+                rest_lengths[i] -= (result[i] - SPRING_F0) / SPRING_K
+
+    return rest_lengths
+
 while True:
     # Send the current actuator values over ZMQ
     output = []
     for side in sides:
         for actuator in side["actuators"]:
-            print(actuator["name"], actuator["output"])
             output.append(Actuation(actuator["name"], actuator["output"]))
 
     client.send(output)
@@ -218,17 +298,15 @@ while True:
         elif control[side["side"]] > 1:
             control[side["side"]] = 1
 
-        # Now map the control signal to an angle
-        desired_angle = math.pi - (control[side["side"]] * math.pi / 2)
-
-        # Which then gets mapped relative to the wheel
-        relative_angle = desired_angle - orientation
-        relative_position = [3 * math.sin(relative_angle), 3 * math.cos(relative_angle)]
+        # Work out the desired position of the bar
+        desired_angle = control[side["side"]] * math.pi / 2
+        desired_position = [3 * math.sin(desired_angle), 3 * -1 * math.cos(desired_angle)]
 
         # Calculate the lengths for each string
-        for actuator in side["actuators"]:
-            # Calculate the relative vector
-            position = [actuator["position"][0] + relative_position[0], actuator["position"][1] + relative_position[1]]
+        lengths = convertPositionToRestLengths(side, desired_position, orientation)
 
-            # And then the length
-            actuator["output"] = math.sqrt(math.pow(position[0], 2) + math.pow(position[1], 2))
+        # Set each length
+        i = 0
+        for actuator in side["actuators"]:
+            actuator["output"] = lengths[i]
+            i += 1

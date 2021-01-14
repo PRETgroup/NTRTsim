@@ -1,0 +1,69 @@
+inputs:
+  in: REAL
+outputs:
+  v: REAL
+  spike: BOOLEAN
+parameters:
+  tau:
+    type: REAL
+    default: 1
+  t_ref:
+    type: REAL
+    default: 1
+  threshold:
+    type: REAL
+    default: 1
+  reset:
+    type: REAL
+    default: 0
+locations:
+  integrate:
+    invariant: v < threshold && v >= reset
+    flow:
+      v: (1 / tau) * (in - v)
+    transitions:
+      - to: spike
+        guard: v == threshold
+        update:
+          v: reset
+          spike: true
+          t: 0
+      - to: limit
+        guard: v == reset && in < reset
+        update:
+          v: reset
+  limit:
+    invariant: in < reset
+    update:
+      v: reset
+    transitions:
+      - to: integrate
+        guard: in >= reset
+        update:
+          v: reset
+  spike:
+    invariant: t == 0
+    flow:
+      t: 1
+    transitions:
+      - to: integrate
+        guard: t == t_ref
+        update:
+          spike: false
+      - to: refractory
+        guard: t < t_ref
+        update:
+          spike: false
+  refractory:
+    invariant: t < t_ref
+    flow:
+      t: 1
+    transitions:
+      - to: integrate
+        guard: t == t_ref
+initialisation:
+  state: integrate
+  valuations:
+    v: reset
+    spike: false
+    t: 0

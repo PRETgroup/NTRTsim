@@ -1,0 +1,17 @@
+inputs:
+  in: REAL
+outputs:
+  out: REAL
+parameters:
+  tau:
+    type: REAL
+    default: 0.05
+locations:
+  l:
+    update:
+      out: alpha * in + (1 - alpha) * out
+initialisation:
+  state: l
+  valuations:
+    out: 0
+    alpha: 0.001 / (tau + 0.001)

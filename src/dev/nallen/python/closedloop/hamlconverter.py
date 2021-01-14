@@ -1,6 +1,8 @@
 import nengo
 import ruamel.yaml
 
+import numpy as np
+
 class HamlConverter:
 
     class Include(ruamel.yaml.YAMLObject):
@@ -202,15 +204,16 @@ class HamlConverter:
                 exit()
 
             # Nodes will be turned into input or output signals in HAML
-            if n.size_in == 0:
-                # Input signal
-                haml["system"]["inputs"][self.get_label(n, label_map)] = "REAL"
-                signal_map[n]["outputs"].append(self.get_label(n, label_map))
+            if n.size_in == 1:
+                # Output signal
+                haml["system"]["outputs"][self.get_label(n, label_map) + "_out"] = "REAL"
+                haml["system"]["mappings"][self.get_label(n, label_map) + "_out"] = str(0)
+                signal_map[n]["inputs"].append(self.get_label(n, label_map) + "_out")
 
-            else:
-                # Both directions? Error for now, not sure how to handle
-                print("Node which is both inputs and outputs, can't handle")
-                exit()
+            if n.size_out == 1:
+                # Input signal
+                haml["system"]["inputs"][self.get_label(n, label_map) + "_in"] = "REAL"
+                signal_map[n]["outputs"].append(self.get_label(n, label_map) + "_in")
 
         # Parse all connections
         for c in self.network.all_connections:
@@ -282,6 +285,9 @@ class HamlConverter:
                     elif isinstance(item, nengo.Probe):
                         total = sum(1 if isinstance(key, nengo.Probe) else 0 for key in label_map.keys())
                         label_map[item] = "probe" + str(total)
+                    elif isinstance(item, nengo.Connection):
+                        total = sum(1 if isinstance(key, nengo.Connection) else 0 for key in label_map.keys())
+                        label_map[item] = "connection" + str(total)
                     else:
                         print("Unable to generate name for " + item.__class__.__name__)
                         exit()
@@ -290,6 +296,20 @@ class HamlConverter:
             return label_map[item]
         
         return label_map[item] + "_" + str(index)
+
+    def get_weights(self, original, width, height):
+        if not isinstance(original, np.ndarray):
+            print("Unexpected type while parsing weights")
+            exit()
+
+        if len(original.shape) == 0:
+            return np.ones((width, height))
+        
+        elif len(original) == width and len(original[0]) == height:
+            return original
+
+        print("Unexpected error while parsing weights")
+        exit()
 
     def add_connection(self, conn, haml, signal_map, label_map, neuron_amplitudes):
         if isinstance(conn.post_obj, nengo.connection.LearningRule):
@@ -304,89 +324,88 @@ class HamlConverter:
         if not decoded and conn.function != None:
             print("Unable to handle direct connections with custom functions")
             exit()
-        
-        synapses = []
 
-        # Create the correct type of synapse
+        # Get the input signals that we have
+        inputs = []
+
+        if isinstance(conn.pre_obj, nengo.Node):
+            # Nodes
+            inputs.append(signal_map[conn.pre_obj]["outputs"][0])
+        
+        elif isinstance(conn.pre_obj, nengo.Ensemble):
+            # Ensembles
+            for i in range(0, len(signal_map[conn.pre_obj]["outputs"])):
+                inputs.append("check_spike(" + signal_map[conn.pre_obj]["outputs"][i] + ", " + str(neuron_amplitudes[conn.pre_obj]) + ")")
+        
+        elif isinstance(conn.pre_obj, nengo.ensemble.Neurons):
+            # Neurons of an ensemble
+            for i in range(0, len(signal_map[conn.pre_obj.ensemble]["outputs"])):
+                inputs.append("check_spike(" + signal_map[conn.pre_obj.ensemble]["outputs"][i] + ", " + str(neuron_amplitudes[conn.pre_obj.ensemble]) + ")")
+
+        else:
+            # Otherwise we don't handle this input type, so error out
+            print("Unhandled input type to connection (" + conn.pre_obj.__class__.__name__ + ")")
+            exit()
+
+        # Now we get all the synapsed signals
+        synapsed = []
+
         if conn.synapse == None:
-            if isinstance(conn.pre_obj, nengo.Node):
-                name = self.get_label(conn.pre_obj, label_map)
-                synapses.append({
-                    "out": signal_map[conn.pre_obj]["outputs"][0],
-                    "weight": self.sim.signals[self.sim.model.sig[conn]["weights"]]
-                })
-            else:
-                for i in range(0, len(self.sim.signals[self.sim.model.sig[conn]["weights"]][0])):
-                    name = self.get_label(conn.pre_obj, label_map, i)
-                    synapses.append({
-                        "out": "check_spike(" + signal_map[conn.pre_obj]["outputs"][i] + ".spike, " + str(neuron_amplitudes[conn.pre_obj]) + ")",
-                        "weight": self.sim.signals[self.sim.model.sig[conn]["weights"]][0][i]
-                    })
+            # If no synapse, we simply use the input signals
+            synapsed = inputs
         
         elif isinstance(conn.synapse, nengo.Lowpass):
+            # A lowpass filter, we need to ensure we have the definition
             if not "Lowpass" in haml["system"]["definitions"]:
                 haml["system"]["definitions"]["LowPass"] = HamlConverter.Include("definitions/lowpass.yaml")
-            
-            if isinstance(conn.pre_obj, nengo.Node):
-                name = self.get_label(conn.pre_obj, label_map) + "_synapse"
-                synapses.append({
-                    "out": name + ".out",
-                    "weight": self.sim.signals[self.sim.model.sig[conn]["weights"]]
-                })
+        
+            # Now we create the synapse for each input
+            for i in range(0, len(inputs)):
+                name = self.get_label(conn, label_map) + "_synapse" + str(i)
                 haml["system"]["instances"][name] = {
                     "type": "LowPass",
                     "parameters": {
                         "tau": conn.synapse.tau
                     }
                 }
-                haml["system"]["mappings"][name + ".in"] = signal_map[conn.pre_obj]["outputs"][0]
-            else:
-                neurons = conn.pre_obj.size_out
-                if isinstance(conn.pre_obj, nengo.Ensemble):
-                    neurons = conn.pre_obj.n_neurons
-                
-                for i in range(0, neurons):
-                    name = self.get_label(conn.pre_obj, label_map, i) + "_synapse"
-                    
-                    weight = 1.0
-                    if isinstance(conn.pre_obj, nengo.Ensemble):
-                        weight = self.sim.signals[self.sim.model.sig[conn]["weights"]][0][i]
+                haml["system"]["mappings"][name + ".in"] = inputs[i]
+                synapsed.append(name + ".out")
 
-                    synapses.append({
-                        "out": name + ".out",
-                        "weight": weight
-                    })
-                    haml["system"]["instances"][name] = {
-                        "type": "LowPass",
-                        "parameters": {
-                            "tau": conn.synapse.tau
-                        }
-                    }
-                    if isinstance(conn.pre_obj, nengo.ensemble.Neurons):
-                        haml["system"]["mappings"][name + ".in"] = "check_spike(" + signal_map[conn.pre_obj.ensemble]["outputs"][i] + ", " + str(neuron_amplitudes[conn.pre_obj.ensemble]) + ")"
-                    else:
-                        haml["system"]["mappings"][name + ".in"] = "check_spike(" + signal_map[conn.pre_obj]["outputs"][i] + ", " + str(neuron_amplitudes[conn.pre_obj]) + ")"
-        
         else:
             # Otherwise we don't handle this synapse type, so error out
             print("Unhandled synapse type (" + conn.synapse.__class__.__name__ + ")")
             exit()
 
-        to_obj = conn.post_obj
-        if isinstance(conn.post_obj, nengo.ensemble.Neurons):
-            to_obj = conn.post_obj.ensemble
+        # Next, we map the ouputs
+        weights = self.sim.signals[self.sim.model.sig[conn]["weights"]]
+        if isinstance(conn.post_obj, nengo.Node):
+            # Nodes
+            weights = self.get_weights(weights, 1, len(synapsed))
+            for i in range(0, len(synapsed)):
+                haml["system"]["mappings"][signal_map[conn.post_obj]["inputs"][0]] += " + " + synapsed[i] + " * " + str(weights[0][i])
+        
+        elif isinstance(conn.post_obj, nengo.Ensemble):
+            # Ensembles
+            weights = self.get_weights(weights, 1, len(synapsed))
+            encoders =  self.sim.signals[self.sim.model.sig[conn.post_obj]["encoders"]]
+            for j in range(0, len(signal_map[conn.post_obj]["inputs"])):
+                for i in range(0, len(synapsed)):
+                    haml["system"]["mappings"][signal_map[conn.post_obj]["inputs"][j]] += " + " + synapsed[i] + " * " + str(weights[0][i] * encoders[j][0])
+        
+        elif isinstance(conn.post_obj, nengo.ensemble.Neurons):
+            # Neurons of an ensemble
+            weights = self.get_weights(weights, len(signal_map[conn.post_obj.ensemble]["inputs"]), len(synapsed))
+            for j in range(0, len(signal_map[conn.post_obj.ensemble]["inputs"])):
+                for i in range(0, len(synapsed)):
+                    haml["system"]["mappings"][signal_map[conn.post_obj.ensemble]["inputs"][j]] += " + " + synapsed[i] + " * " + str(weights[j][i])
 
-        for j in range(0, len(synapses)):
-            synapse = synapses[j]
-            for i in range(0, len(signal_map[to_obj]["inputs"])):
-                actual_weight = synapse["weight"]
-                if isinstance(conn.post_obj, nengo.ensemble.Neurons):
-                    actual_weight = synapse["weight"][i][0]
-                elif isinstance(conn.post_obj, nengo.Ensemble):
-                    actual_weight = actual_weight * self.sim.signals[self.sim.model.sig[conn.post_obj]["encoders"]][i][0]
-
-                if isinstance(conn.pre_obj, nengo.ensemble.Neurons):
-                    if j != i:
-                        continue
-
-                haml["system"]["mappings"][signal_map[to_obj]["inputs"][i]] += " + " + synapse["out"] + " * " + str(actual_weight)
+        elif isinstance(conn.post_obj, nengo.Probe):
+            # Probes
+            weights = self.get_weights(weights, 1, len(synapsed))
+            for i in range(0, len(synapsed)):
+                haml["system"]["mappings"][signal_map[conn.post_obj]["inputs"][0]] += " + " + synapsed[i] + " * " + str(weights[0][i])
+        
+        else:
+            # Otherwise we don't handle this output type, so error out
+            print("Unhandled output type of connection (" + conn.post_obj.__class__.__name__ + ")")
+            exit()

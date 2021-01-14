@@ -235,10 +235,6 @@ def zmq_func(t, data):
         prev_orientation[len(prev_orientation)-i-1] = prev_orientation[len(prev_orientation)-i-2]
     prev_orientation[0] = data.rods[0].orientation.z
 
-    # log.append([data.rods[2].position.z, data.rods[2].position.y-19.9])
-    # print(data.rods[2].position.z - data.rods[0].position.z, data.rods[2].position.y-data.rods[0].position.y)
-    # print()
-
     # Check if we've reached the setpoint
     if abs(setpoint - speed) < reached_threshold:
         if data.time.abs - within_range_time > reached_time:
@@ -272,28 +268,15 @@ def zmq_func(t, data):
     else:
         within_range_time = data.time.abs
 
-    # out.append([data.rods[1].position.y, data.rods[1].position.z])
     # Return the position, speed, and current orientation
     return (position, speed, orientation)
 
 def output_func(t, data):
     # Assign control signals
-    # if t < 1:
-    #     control = {
-    #         "left": 0.1,#data[0],
-    #         "right": 0.1,#data[0],
-    #     }
-    # else:
-    #     control = {
-    #         "left": -0.1,#data[0],
-    #         "right": -0.1,#data[0],
-    #     }
     control = {
         "left": data[0],
         "right": data[0],
     }
-
-    # out.append(control["left"])
 
     # For each side, do the logic
     outputs = []
@@ -307,11 +290,6 @@ def output_func(t, data):
         # Work out the desired position of the bar
         desired_angle = control[side["side"]] * math.pi / 2
         desired_position = [4 * math.sin(desired_angle), 4 * -1 * math.cos(desired_angle)]
-
-        # if t < 10:
-        #     desired_position = [0, -4]
-        # else:
-        #     desired_position = [-2, -2]
 
         # Calculate the lengths for each string
         lengths = convertPositionToRestLengths(side, desired_position, data[1])
@@ -416,14 +394,6 @@ with nengo.Simulator(model) as sim:
         else:
             sim.run(simulation_time)
     except KeyboardInterrupt as e:
-        # f = open("out.csv", "w")
-        # f.write("step,y,z\n")
-        # i = 0
-        # for item in log:
-        #     f.write(str(i) + "," + str(round(item[0], 2)) + "," + str(round(item[1], 2)) + "\n")
-        #     i = i+1
-        # f.close()
-
         # HamlConverter(sim).convert("out.yaml")
 
         if sim.trange()[-1] < learning_time:
@@ -449,7 +419,6 @@ plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[learn_error_p], l
 plt.legend(loc='best')
 plt.subplot(5, 1, 5)
 plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[main2_p], label='Output')
-# plt.plot(sim.trange(), out[len(out)-len(sim.trange()):], label='Output')
 plt.legend(loc='best')
 
 plt.show()
