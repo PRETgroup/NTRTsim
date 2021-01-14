@@ -35,6 +35,15 @@ add_executable(AppRollingCylinder
     ZmqInterface.cpp
 ) 
 
+file(GLOB_RECURSE SRCS RollingCylinderNetwork/*.c)
+include_directories(.)
+link_libraries(ncurses)
+add_executable(AppRollingCylinderNengo
+    AppRollingCylinderNengo.cpp
+    NengoController.cpp
+    ${SRCS}
+) 
+
 add_executable(AppStringTest
     AppStringTest.cpp
 ) 
