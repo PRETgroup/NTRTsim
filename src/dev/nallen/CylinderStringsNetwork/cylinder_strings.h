@@ -407,9 +407,7 @@
 #include "LowPass/strings_conn_synapse198.h"
 #include "LowPass/strings_conn_synapse199.h"
 
-typedef int bool;
-#define false 0
-#define true 1
+#include <stdbool.h>
 
 #include "config.h"
 

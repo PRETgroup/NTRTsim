@@ -6,9 +6,7 @@
 #include <stdio.h>
 #include <math.h>
 
-typedef int bool;
-#define false 0
-#define true 1
+#include <stdbool.h>
 
 #include "config.h"
 
