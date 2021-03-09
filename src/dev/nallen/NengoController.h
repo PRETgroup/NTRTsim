@@ -44,6 +44,7 @@
 // The actual controller
 extern "C" {
 #include "RollingCylinderNetwork/rolling_cylinder.h"
+#include "CylinderStringsNetwork/cylinder_strings.h"
 }
 
 #define WHEEL_RADIUS 18.4 // cm
@@ -59,7 +60,7 @@ extern "C" {
 #define SPRING_F0 426 // cN
 #define SPRING_FMAX 837 // cN
 
-#define OUTPUT_PERIOD 0.01 // s
+#define OUTPUT_PERIOD 0.05 // s
 
 typedef struct {
 	double x;
@@ -127,6 +128,7 @@ private:
   double* convertPositionToRestLengths(Position position, double orientation);
 	
   RollingCylinder rolling_cylinder_data;
+  CylinderStrings cylinder_strings_data;
 
   double output_timer;
   double setpoint;

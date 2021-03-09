@@ -85,13 +85,13 @@ void Ensemble093Run(Ensemble093* me) {
         case ENSEMBLE0_93_INTEGRATE: // Intra-location logic for state integrate
             v_u = me->v + (1.0 / 0.02) * (me->in - me->v) * STEP_SIZE;
 
-            if((v_u > 1.0 && me->v < 1.0) || (v_u < 1.0 && me->v > 1.0)) {
-                // Need to saturate v to 1.0
-                v_u = 1.0;
-            }
             if((v_u > 0.0 && me->v < 0.0) || (v_u < 0.0 && me->v > 0.0)) {
                 // Need to saturate v to 0.0
                 v_u = 0.0;
+            }
+            if((v_u > 1.0 && me->v < 1.0) || (v_u < 1.0 && me->v > 1.0)) {
+                // Need to saturate v to 1.0
+                v_u = 1.0;
             }
 
             break;
@@ -102,11 +102,11 @@ void Ensemble093Run(Ensemble093* me) {
         case ENSEMBLE0_93_SPIKE: // Intra-location logic for state spike
             t_u = me->t + 1.0 * STEP_SIZE;
 
-            if(t_u < 0.002 && me->t > 0.002) {
+            if((t_u > 0.002 && me->t < 0.002) || (t_u < 0.002 && me->t > 0.002)) {
                 // Need to saturate t to 0.002
                 t_u = 0.002;
             }
-            if((t_u > 0.002 && me->t < 0.002) || (t_u < 0.002 && me->t > 0.002)) {
+            if(t_u < 0.002 && me->t > 0.002) {
                 // Need to saturate t to 0.002
                 t_u = 0.002;
             }

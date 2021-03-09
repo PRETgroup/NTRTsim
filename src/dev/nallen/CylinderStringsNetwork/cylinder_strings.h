@@ -1,0 +1,840 @@
+#ifndef CYLINDER_STRINGS_H_
+#define CYLINDER_STRINGS_H_
+
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+
+#include "LifNeuron/strings_input_0.h"
+#include "LifNeuron/strings_input_1.h"
+#include "LifNeuron/strings_input_2.h"
+#include "LifNeuron/strings_input_3.h"
+#include "LifNeuron/strings_input_4.h"
+#include "LifNeuron/strings_input_5.h"
+#include "LifNeuron/strings_input_6.h"
+#include "LifNeuron/strings_input_7.h"
+#include "LifNeuron/strings_input_8.h"
+#include "LifNeuron/strings_input_9.h"
+#include "LifNeuron/strings_input_10.h"
+#include "LifNeuron/strings_input_11.h"
+#include "LifNeuron/strings_input_12.h"
+#include "LifNeuron/strings_input_13.h"
+#include "LifNeuron/strings_input_14.h"
+#include "LifNeuron/strings_input_15.h"
+#include "LifNeuron/strings_input_16.h"
+#include "LifNeuron/strings_input_17.h"
+#include "LifNeuron/strings_input_18.h"
+#include "LifNeuron/strings_input_19.h"
+#include "LifNeuron/strings_input_20.h"
+#include "LifNeuron/strings_input_21.h"
+#include "LifNeuron/strings_input_22.h"
+#include "LifNeuron/strings_input_23.h"
+#include "LifNeuron/strings_input_24.h"
+#include "LifNeuron/strings_input_25.h"
+#include "LifNeuron/strings_input_26.h"
+#include "LifNeuron/strings_input_27.h"
+#include "LifNeuron/strings_input_28.h"
+#include "LifNeuron/strings_input_29.h"
+#include "LifNeuron/strings_input_30.h"
+#include "LifNeuron/strings_input_31.h"
+#include "LifNeuron/strings_input_32.h"
+#include "LifNeuron/strings_input_33.h"
+#include "LifNeuron/strings_input_34.h"
+#include "LifNeuron/strings_input_35.h"
+#include "LifNeuron/strings_input_36.h"
+#include "LifNeuron/strings_input_37.h"
+#include "LifNeuron/strings_input_38.h"
+#include "LifNeuron/strings_input_39.h"
+#include "LifNeuron/strings_input_40.h"
+#include "LifNeuron/strings_input_41.h"
+#include "LifNeuron/strings_input_42.h"
+#include "LifNeuron/strings_input_43.h"
+#include "LifNeuron/strings_input_44.h"
+#include "LifNeuron/strings_input_45.h"
+#include "LifNeuron/strings_input_46.h"
+#include "LifNeuron/strings_input_47.h"
+#include "LifNeuron/strings_input_48.h"
+#include "LifNeuron/strings_input_49.h"
+#include "LifNeuron/strings_input_50.h"
+#include "LifNeuron/strings_input_51.h"
+#include "LifNeuron/strings_input_52.h"
+#include "LifNeuron/strings_input_53.h"
+#include "LifNeuron/strings_input_54.h"
+#include "LifNeuron/strings_input_55.h"
+#include "LifNeuron/strings_input_56.h"
+#include "LifNeuron/strings_input_57.h"
+#include "LifNeuron/strings_input_58.h"
+#include "LifNeuron/strings_input_59.h"
+#include "LifNeuron/strings_input_60.h"
+#include "LifNeuron/strings_input_61.h"
+#include "LifNeuron/strings_input_62.h"
+#include "LifNeuron/strings_input_63.h"
+#include "LifNeuron/strings_input_64.h"
+#include "LifNeuron/strings_input_65.h"
+#include "LifNeuron/strings_input_66.h"
+#include "LifNeuron/strings_input_67.h"
+#include "LifNeuron/strings_input_68.h"
+#include "LifNeuron/strings_input_69.h"
+#include "LifNeuron/strings_input_70.h"
+#include "LifNeuron/strings_input_71.h"
+#include "LifNeuron/strings_input_72.h"
+#include "LifNeuron/strings_input_73.h"
+#include "LifNeuron/strings_input_74.h"
+#include "LifNeuron/strings_input_75.h"
+#include "LifNeuron/strings_input_76.h"
+#include "LifNeuron/strings_input_77.h"
+#include "LifNeuron/strings_input_78.h"
+#include "LifNeuron/strings_input_79.h"
+#include "LifNeuron/strings_input_80.h"
+#include "LifNeuron/strings_input_81.h"
+#include "LifNeuron/strings_input_82.h"
+#include "LifNeuron/strings_input_83.h"
+#include "LifNeuron/strings_input_84.h"
+#include "LifNeuron/strings_input_85.h"
+#include "LifNeuron/strings_input_86.h"
+#include "LifNeuron/strings_input_87.h"
+#include "LifNeuron/strings_input_88.h"
+#include "LifNeuron/strings_input_89.h"
+#include "LifNeuron/strings_input_90.h"
+#include "LifNeuron/strings_input_91.h"
+#include "LifNeuron/strings_input_92.h"
+#include "LifNeuron/strings_input_93.h"
+#include "LifNeuron/strings_input_94.h"
+#include "LifNeuron/strings_input_95.h"
+#include "LifNeuron/strings_input_96.h"
+#include "LifNeuron/strings_input_97.h"
+#include "LifNeuron/strings_input_98.h"
+#include "LifNeuron/strings_input_99.h"
+#include "LifNeuron/strings_input_100.h"
+#include "LifNeuron/strings_input_101.h"
+#include "LifNeuron/strings_input_102.h"
+#include "LifNeuron/strings_input_103.h"
+#include "LifNeuron/strings_input_104.h"
+#include "LifNeuron/strings_input_105.h"
+#include "LifNeuron/strings_input_106.h"
+#include "LifNeuron/strings_input_107.h"
+#include "LifNeuron/strings_input_108.h"
+#include "LifNeuron/strings_input_109.h"
+#include "LifNeuron/strings_input_110.h"
+#include "LifNeuron/strings_input_111.h"
+#include "LifNeuron/strings_input_112.h"
+#include "LifNeuron/strings_input_113.h"
+#include "LifNeuron/strings_input_114.h"
+#include "LifNeuron/strings_input_115.h"
+#include "LifNeuron/strings_input_116.h"
+#include "LifNeuron/strings_input_117.h"
+#include "LifNeuron/strings_input_118.h"
+#include "LifNeuron/strings_input_119.h"
+#include "LifNeuron/strings_input_120.h"
+#include "LifNeuron/strings_input_121.h"
+#include "LifNeuron/strings_input_122.h"
+#include "LifNeuron/strings_input_123.h"
+#include "LifNeuron/strings_input_124.h"
+#include "LifNeuron/strings_input_125.h"
+#include "LifNeuron/strings_input_126.h"
+#include "LifNeuron/strings_input_127.h"
+#include "LifNeuron/strings_input_128.h"
+#include "LifNeuron/strings_input_129.h"
+#include "LifNeuron/strings_input_130.h"
+#include "LifNeuron/strings_input_131.h"
+#include "LifNeuron/strings_input_132.h"
+#include "LifNeuron/strings_input_133.h"
+#include "LifNeuron/strings_input_134.h"
+#include "LifNeuron/strings_input_135.h"
+#include "LifNeuron/strings_input_136.h"
+#include "LifNeuron/strings_input_137.h"
+#include "LifNeuron/strings_input_138.h"
+#include "LifNeuron/strings_input_139.h"
+#include "LifNeuron/strings_input_140.h"
+#include "LifNeuron/strings_input_141.h"
+#include "LifNeuron/strings_input_142.h"
+#include "LifNeuron/strings_input_143.h"
+#include "LifNeuron/strings_input_144.h"
+#include "LifNeuron/strings_input_145.h"
+#include "LifNeuron/strings_input_146.h"
+#include "LifNeuron/strings_input_147.h"
+#include "LifNeuron/strings_input_148.h"
+#include "LifNeuron/strings_input_149.h"
+#include "LifNeuron/strings_input_150.h"
+#include "LifNeuron/strings_input_151.h"
+#include "LifNeuron/strings_input_152.h"
+#include "LifNeuron/strings_input_153.h"
+#include "LifNeuron/strings_input_154.h"
+#include "LifNeuron/strings_input_155.h"
+#include "LifNeuron/strings_input_156.h"
+#include "LifNeuron/strings_input_157.h"
+#include "LifNeuron/strings_input_158.h"
+#include "LifNeuron/strings_input_159.h"
+#include "LifNeuron/strings_input_160.h"
+#include "LifNeuron/strings_input_161.h"
+#include "LifNeuron/strings_input_162.h"
+#include "LifNeuron/strings_input_163.h"
+#include "LifNeuron/strings_input_164.h"
+#include "LifNeuron/strings_input_165.h"
+#include "LifNeuron/strings_input_166.h"
+#include "LifNeuron/strings_input_167.h"
+#include "LifNeuron/strings_input_168.h"
+#include "LifNeuron/strings_input_169.h"
+#include "LifNeuron/strings_input_170.h"
+#include "LifNeuron/strings_input_171.h"
+#include "LifNeuron/strings_input_172.h"
+#include "LifNeuron/strings_input_173.h"
+#include "LifNeuron/strings_input_174.h"
+#include "LifNeuron/strings_input_175.h"
+#include "LifNeuron/strings_input_176.h"
+#include "LifNeuron/strings_input_177.h"
+#include "LifNeuron/strings_input_178.h"
+#include "LifNeuron/strings_input_179.h"
+#include "LifNeuron/strings_input_180.h"
+#include "LifNeuron/strings_input_181.h"
+#include "LifNeuron/strings_input_182.h"
+#include "LifNeuron/strings_input_183.h"
+#include "LifNeuron/strings_input_184.h"
+#include "LifNeuron/strings_input_185.h"
+#include "LifNeuron/strings_input_186.h"
+#include "LifNeuron/strings_input_187.h"
+#include "LifNeuron/strings_input_188.h"
+#include "LifNeuron/strings_input_189.h"
+#include "LifNeuron/strings_input_190.h"
+#include "LifNeuron/strings_input_191.h"
+#include "LifNeuron/strings_input_192.h"
+#include "LifNeuron/strings_input_193.h"
+#include "LifNeuron/strings_input_194.h"
+#include "LifNeuron/strings_input_195.h"
+#include "LifNeuron/strings_input_196.h"
+#include "LifNeuron/strings_input_197.h"
+#include "LifNeuron/strings_input_198.h"
+#include "LifNeuron/strings_input_199.h"
+#include "LowPass/strings_conn_synapse0.h"
+#include "LowPass/strings_conn_synapse1.h"
+#include "LowPass/strings_conn_synapse2.h"
+#include "LowPass/strings_conn_synapse3.h"
+#include "LowPass/strings_conn_synapse4.h"
+#include "LowPass/strings_conn_synapse5.h"
+#include "LowPass/strings_conn_synapse6.h"
+#include "LowPass/strings_conn_synapse7.h"
+#include "LowPass/strings_conn_synapse8.h"
+#include "LowPass/strings_conn_synapse9.h"
+#include "LowPass/strings_conn_synapse10.h"
+#include "LowPass/strings_conn_synapse11.h"
+#include "LowPass/strings_conn_synapse12.h"
+#include "LowPass/strings_conn_synapse13.h"
+#include "LowPass/strings_conn_synapse14.h"
+#include "LowPass/strings_conn_synapse15.h"
+#include "LowPass/strings_conn_synapse16.h"
+#include "LowPass/strings_conn_synapse17.h"
+#include "LowPass/strings_conn_synapse18.h"
+#include "LowPass/strings_conn_synapse19.h"
+#include "LowPass/strings_conn_synapse20.h"
+#include "LowPass/strings_conn_synapse21.h"
+#include "LowPass/strings_conn_synapse22.h"
+#include "LowPass/strings_conn_synapse23.h"
+#include "LowPass/strings_conn_synapse24.h"
+#include "LowPass/strings_conn_synapse25.h"
+#include "LowPass/strings_conn_synapse26.h"
+#include "LowPass/strings_conn_synapse27.h"
+#include "LowPass/strings_conn_synapse28.h"
+#include "LowPass/strings_conn_synapse29.h"
+#include "LowPass/strings_conn_synapse30.h"
+#include "LowPass/strings_conn_synapse31.h"
+#include "LowPass/strings_conn_synapse32.h"
+#include "LowPass/strings_conn_synapse33.h"
+#include "LowPass/strings_conn_synapse34.h"
+#include "LowPass/strings_conn_synapse35.h"
+#include "LowPass/strings_conn_synapse36.h"
+#include "LowPass/strings_conn_synapse37.h"
+#include "LowPass/strings_conn_synapse38.h"
+#include "LowPass/strings_conn_synapse39.h"
+#include "LowPass/strings_conn_synapse40.h"
+#include "LowPass/strings_conn_synapse41.h"
+#include "LowPass/strings_conn_synapse42.h"
+#include "LowPass/strings_conn_synapse43.h"
+#include "LowPass/strings_conn_synapse44.h"
+#include "LowPass/strings_conn_synapse45.h"
+#include "LowPass/strings_conn_synapse46.h"
+#include "LowPass/strings_conn_synapse47.h"
+#include "LowPass/strings_conn_synapse48.h"
+#include "LowPass/strings_conn_synapse49.h"
+#include "LowPass/strings_conn_synapse50.h"
+#include "LowPass/strings_conn_synapse51.h"
+#include "LowPass/strings_conn_synapse52.h"
+#include "LowPass/strings_conn_synapse53.h"
+#include "LowPass/strings_conn_synapse54.h"
+#include "LowPass/strings_conn_synapse55.h"
+#include "LowPass/strings_conn_synapse56.h"
+#include "LowPass/strings_conn_synapse57.h"
+#include "LowPass/strings_conn_synapse58.h"
+#include "LowPass/strings_conn_synapse59.h"
+#include "LowPass/strings_conn_synapse60.h"
+#include "LowPass/strings_conn_synapse61.h"
+#include "LowPass/strings_conn_synapse62.h"
+#include "LowPass/strings_conn_synapse63.h"
+#include "LowPass/strings_conn_synapse64.h"
+#include "LowPass/strings_conn_synapse65.h"
+#include "LowPass/strings_conn_synapse66.h"
+#include "LowPass/strings_conn_synapse67.h"
+#include "LowPass/strings_conn_synapse68.h"
+#include "LowPass/strings_conn_synapse69.h"
+#include "LowPass/strings_conn_synapse70.h"
+#include "LowPass/strings_conn_synapse71.h"
+#include "LowPass/strings_conn_synapse72.h"
+#include "LowPass/strings_conn_synapse73.h"
+#include "LowPass/strings_conn_synapse74.h"
+#include "LowPass/strings_conn_synapse75.h"
+#include "LowPass/strings_conn_synapse76.h"
+#include "LowPass/strings_conn_synapse77.h"
+#include "LowPass/strings_conn_synapse78.h"
+#include "LowPass/strings_conn_synapse79.h"
+#include "LowPass/strings_conn_synapse80.h"
+#include "LowPass/strings_conn_synapse81.h"
+#include "LowPass/strings_conn_synapse82.h"
+#include "LowPass/strings_conn_synapse83.h"
+#include "LowPass/strings_conn_synapse84.h"
+#include "LowPass/strings_conn_synapse85.h"
+#include "LowPass/strings_conn_synapse86.h"
+#include "LowPass/strings_conn_synapse87.h"
+#include "LowPass/strings_conn_synapse88.h"
+#include "LowPass/strings_conn_synapse89.h"
+#include "LowPass/strings_conn_synapse90.h"
+#include "LowPass/strings_conn_synapse91.h"
+#include "LowPass/strings_conn_synapse92.h"
+#include "LowPass/strings_conn_synapse93.h"
+#include "LowPass/strings_conn_synapse94.h"
+#include "LowPass/strings_conn_synapse95.h"
+#include "LowPass/strings_conn_synapse96.h"
+#include "LowPass/strings_conn_synapse97.h"
+#include "LowPass/strings_conn_synapse98.h"
+#include "LowPass/strings_conn_synapse99.h"
+#include "LowPass/strings_conn_synapse100.h"
+#include "LowPass/strings_conn_synapse101.h"
+#include "LowPass/strings_conn_synapse102.h"
+#include "LowPass/strings_conn_synapse103.h"
+#include "LowPass/strings_conn_synapse104.h"
+#include "LowPass/strings_conn_synapse105.h"
+#include "LowPass/strings_conn_synapse106.h"
+#include "LowPass/strings_conn_synapse107.h"
+#include "LowPass/strings_conn_synapse108.h"
+#include "LowPass/strings_conn_synapse109.h"
+#include "LowPass/strings_conn_synapse110.h"
+#include "LowPass/strings_conn_synapse111.h"
+#include "LowPass/strings_conn_synapse112.h"
+#include "LowPass/strings_conn_synapse113.h"
+#include "LowPass/strings_conn_synapse114.h"
+#include "LowPass/strings_conn_synapse115.h"
+#include "LowPass/strings_conn_synapse116.h"
+#include "LowPass/strings_conn_synapse117.h"
+#include "LowPass/strings_conn_synapse118.h"
+#include "LowPass/strings_conn_synapse119.h"
+#include "LowPass/strings_conn_synapse120.h"
+#include "LowPass/strings_conn_synapse121.h"
+#include "LowPass/strings_conn_synapse122.h"
+#include "LowPass/strings_conn_synapse123.h"
+#include "LowPass/strings_conn_synapse124.h"
+#include "LowPass/strings_conn_synapse125.h"
+#include "LowPass/strings_conn_synapse126.h"
+#include "LowPass/strings_conn_synapse127.h"
+#include "LowPass/strings_conn_synapse128.h"
+#include "LowPass/strings_conn_synapse129.h"
+#include "LowPass/strings_conn_synapse130.h"
+#include "LowPass/strings_conn_synapse131.h"
+#include "LowPass/strings_conn_synapse132.h"
+#include "LowPass/strings_conn_synapse133.h"
+#include "LowPass/strings_conn_synapse134.h"
+#include "LowPass/strings_conn_synapse135.h"
+#include "LowPass/strings_conn_synapse136.h"
+#include "LowPass/strings_conn_synapse137.h"
+#include "LowPass/strings_conn_synapse138.h"
+#include "LowPass/strings_conn_synapse139.h"
+#include "LowPass/strings_conn_synapse140.h"
+#include "LowPass/strings_conn_synapse141.h"
+#include "LowPass/strings_conn_synapse142.h"
+#include "LowPass/strings_conn_synapse143.h"
+#include "LowPass/strings_conn_synapse144.h"
+#include "LowPass/strings_conn_synapse145.h"
+#include "LowPass/strings_conn_synapse146.h"
+#include "LowPass/strings_conn_synapse147.h"
+#include "LowPass/strings_conn_synapse148.h"
+#include "LowPass/strings_conn_synapse149.h"
+#include "LowPass/strings_conn_synapse150.h"
+#include "LowPass/strings_conn_synapse151.h"
+#include "LowPass/strings_conn_synapse152.h"
+#include "LowPass/strings_conn_synapse153.h"
+#include "LowPass/strings_conn_synapse154.h"
+#include "LowPass/strings_conn_synapse155.h"
+#include "LowPass/strings_conn_synapse156.h"
+#include "LowPass/strings_conn_synapse157.h"
+#include "LowPass/strings_conn_synapse158.h"
+#include "LowPass/strings_conn_synapse159.h"
+#include "LowPass/strings_conn_synapse160.h"
+#include "LowPass/strings_conn_synapse161.h"
+#include "LowPass/strings_conn_synapse162.h"
+#include "LowPass/strings_conn_synapse163.h"
+#include "LowPass/strings_conn_synapse164.h"
+#include "LowPass/strings_conn_synapse165.h"
+#include "LowPass/strings_conn_synapse166.h"
+#include "LowPass/strings_conn_synapse167.h"
+#include "LowPass/strings_conn_synapse168.h"
+#include "LowPass/strings_conn_synapse169.h"
+#include "LowPass/strings_conn_synapse170.h"
+#include "LowPass/strings_conn_synapse171.h"
+#include "LowPass/strings_conn_synapse172.h"
+#include "LowPass/strings_conn_synapse173.h"
+#include "LowPass/strings_conn_synapse174.h"
+#include "LowPass/strings_conn_synapse175.h"
+#include "LowPass/strings_conn_synapse176.h"
+#include "LowPass/strings_conn_synapse177.h"
+#include "LowPass/strings_conn_synapse178.h"
+#include "LowPass/strings_conn_synapse179.h"
+#include "LowPass/strings_conn_synapse180.h"
+#include "LowPass/strings_conn_synapse181.h"
+#include "LowPass/strings_conn_synapse182.h"
+#include "LowPass/strings_conn_synapse183.h"
+#include "LowPass/strings_conn_synapse184.h"
+#include "LowPass/strings_conn_synapse185.h"
+#include "LowPass/strings_conn_synapse186.h"
+#include "LowPass/strings_conn_synapse187.h"
+#include "LowPass/strings_conn_synapse188.h"
+#include "LowPass/strings_conn_synapse189.h"
+#include "LowPass/strings_conn_synapse190.h"
+#include "LowPass/strings_conn_synapse191.h"
+#include "LowPass/strings_conn_synapse192.h"
+#include "LowPass/strings_conn_synapse193.h"
+#include "LowPass/strings_conn_synapse194.h"
+#include "LowPass/strings_conn_synapse195.h"
+#include "LowPass/strings_conn_synapse196.h"
+#include "LowPass/strings_conn_synapse197.h"
+#include "LowPass/strings_conn_synapse198.h"
+#include "LowPass/strings_conn_synapse199.h"
+
+typedef int bool;
+#define false 0
+#define true 1
+
+#include "config.h"
+
+// cylinder_strings Data Struct
+typedef struct {
+    
+    // Declare Inputs
+    double strings_0_in;
+    double strings_1_in;
+    double strings_2_in;
+    double setpoint_in;
+    double orientation_in;
+    
+    // Declare Outputs
+    double strings_0_out;
+    double strings_1_out;
+    double strings_2_out;
+
+    // Declare Daughter Automata
+    StringsInput0 strings_input_0_data;
+    StringsInput1 strings_input_1_data;
+    StringsInput2 strings_input_2_data;
+    StringsInput3 strings_input_3_data;
+    StringsInput4 strings_input_4_data;
+    StringsInput5 strings_input_5_data;
+    StringsInput6 strings_input_6_data;
+    StringsInput7 strings_input_7_data;
+    StringsInput8 strings_input_8_data;
+    StringsInput9 strings_input_9_data;
+    StringsInput10 strings_input_10_data;
+    StringsInput11 strings_input_11_data;
+    StringsInput12 strings_input_12_data;
+    StringsInput13 strings_input_13_data;
+    StringsInput14 strings_input_14_data;
+    StringsInput15 strings_input_15_data;
+    StringsInput16 strings_input_16_data;
+    StringsInput17 strings_input_17_data;
+    StringsInput18 strings_input_18_data;
+    StringsInput19 strings_input_19_data;
+    StringsInput20 strings_input_20_data;
+    StringsInput21 strings_input_21_data;
+    StringsInput22 strings_input_22_data;
+    StringsInput23 strings_input_23_data;
+    StringsInput24 strings_input_24_data;
+    StringsInput25 strings_input_25_data;
+    StringsInput26 strings_input_26_data;
+    StringsInput27 strings_input_27_data;
+    StringsInput28 strings_input_28_data;
+    StringsInput29 strings_input_29_data;
+    StringsInput30 strings_input_30_data;
+    StringsInput31 strings_input_31_data;
+    StringsInput32 strings_input_32_data;
+    StringsInput33 strings_input_33_data;
+    StringsInput34 strings_input_34_data;
+    StringsInput35 strings_input_35_data;
+    StringsInput36 strings_input_36_data;
+    StringsInput37 strings_input_37_data;
+    StringsInput38 strings_input_38_data;
+    StringsInput39 strings_input_39_data;
+    StringsInput40 strings_input_40_data;
+    StringsInput41 strings_input_41_data;
+    StringsInput42 strings_input_42_data;
+    StringsInput43 strings_input_43_data;
+    StringsInput44 strings_input_44_data;
+    StringsInput45 strings_input_45_data;
+    StringsInput46 strings_input_46_data;
+    StringsInput47 strings_input_47_data;
+    StringsInput48 strings_input_48_data;
+    StringsInput49 strings_input_49_data;
+    StringsInput50 strings_input_50_data;
+    StringsInput51 strings_input_51_data;
+    StringsInput52 strings_input_52_data;
+    StringsInput53 strings_input_53_data;
+    StringsInput54 strings_input_54_data;
+    StringsInput55 strings_input_55_data;
+    StringsInput56 strings_input_56_data;
+    StringsInput57 strings_input_57_data;
+    StringsInput58 strings_input_58_data;
+    StringsInput59 strings_input_59_data;
+    StringsInput60 strings_input_60_data;
+    StringsInput61 strings_input_61_data;
+    StringsInput62 strings_input_62_data;
+    StringsInput63 strings_input_63_data;
+    StringsInput64 strings_input_64_data;
+    StringsInput65 strings_input_65_data;
+    StringsInput66 strings_input_66_data;
+    StringsInput67 strings_input_67_data;
+    StringsInput68 strings_input_68_data;
+    StringsInput69 strings_input_69_data;
+    StringsInput70 strings_input_70_data;
+    StringsInput71 strings_input_71_data;
+    StringsInput72 strings_input_72_data;
+    StringsInput73 strings_input_73_data;
+    StringsInput74 strings_input_74_data;
+    StringsInput75 strings_input_75_data;
+    StringsInput76 strings_input_76_data;
+    StringsInput77 strings_input_77_data;
+    StringsInput78 strings_input_78_data;
+    StringsInput79 strings_input_79_data;
+    StringsInput80 strings_input_80_data;
+    StringsInput81 strings_input_81_data;
+    StringsInput82 strings_input_82_data;
+    StringsInput83 strings_input_83_data;
+    StringsInput84 strings_input_84_data;
+    StringsInput85 strings_input_85_data;
+    StringsInput86 strings_input_86_data;
+    StringsInput87 strings_input_87_data;
+    StringsInput88 strings_input_88_data;
+    StringsInput89 strings_input_89_data;
+    StringsInput90 strings_input_90_data;
+    StringsInput91 strings_input_91_data;
+    StringsInput92 strings_input_92_data;
+    StringsInput93 strings_input_93_data;
+    StringsInput94 strings_input_94_data;
+    StringsInput95 strings_input_95_data;
+    StringsInput96 strings_input_96_data;
+    StringsInput97 strings_input_97_data;
+    StringsInput98 strings_input_98_data;
+    StringsInput99 strings_input_99_data;
+    StringsInput100 strings_input_100_data;
+    StringsInput101 strings_input_101_data;
+    StringsInput102 strings_input_102_data;
+    StringsInput103 strings_input_103_data;
+    StringsInput104 strings_input_104_data;
+    StringsInput105 strings_input_105_data;
+    StringsInput106 strings_input_106_data;
+    StringsInput107 strings_input_107_data;
+    StringsInput108 strings_input_108_data;
+    StringsInput109 strings_input_109_data;
+    StringsInput110 strings_input_110_data;
+    StringsInput111 strings_input_111_data;
+    StringsInput112 strings_input_112_data;
+    StringsInput113 strings_input_113_data;
+    StringsInput114 strings_input_114_data;
+    StringsInput115 strings_input_115_data;
+    StringsInput116 strings_input_116_data;
+    StringsInput117 strings_input_117_data;
+    StringsInput118 strings_input_118_data;
+    StringsInput119 strings_input_119_data;
+    StringsInput120 strings_input_120_data;
+    StringsInput121 strings_input_121_data;
+    StringsInput122 strings_input_122_data;
+    StringsInput123 strings_input_123_data;
+    StringsInput124 strings_input_124_data;
+    StringsInput125 strings_input_125_data;
+    StringsInput126 strings_input_126_data;
+    StringsInput127 strings_input_127_data;
+    StringsInput128 strings_input_128_data;
+    StringsInput129 strings_input_129_data;
+    StringsInput130 strings_input_130_data;
+    StringsInput131 strings_input_131_data;
+    StringsInput132 strings_input_132_data;
+    StringsInput133 strings_input_133_data;
+    StringsInput134 strings_input_134_data;
+    StringsInput135 strings_input_135_data;
+    StringsInput136 strings_input_136_data;
+    StringsInput137 strings_input_137_data;
+    StringsInput138 strings_input_138_data;
+    StringsInput139 strings_input_139_data;
+    StringsInput140 strings_input_140_data;
+    StringsInput141 strings_input_141_data;
+    StringsInput142 strings_input_142_data;
+    StringsInput143 strings_input_143_data;
+    StringsInput144 strings_input_144_data;
+    StringsInput145 strings_input_145_data;
+    StringsInput146 strings_input_146_data;
+    StringsInput147 strings_input_147_data;
+    StringsInput148 strings_input_148_data;
+    StringsInput149 strings_input_149_data;
+    StringsInput150 strings_input_150_data;
+    StringsInput151 strings_input_151_data;
+    StringsInput152 strings_input_152_data;
+    StringsInput153 strings_input_153_data;
+    StringsInput154 strings_input_154_data;
+    StringsInput155 strings_input_155_data;
+    StringsInput156 strings_input_156_data;
+    StringsInput157 strings_input_157_data;
+    StringsInput158 strings_input_158_data;
+    StringsInput159 strings_input_159_data;
+    StringsInput160 strings_input_160_data;
+    StringsInput161 strings_input_161_data;
+    StringsInput162 strings_input_162_data;
+    StringsInput163 strings_input_163_data;
+    StringsInput164 strings_input_164_data;
+    StringsInput165 strings_input_165_data;
+    StringsInput166 strings_input_166_data;
+    StringsInput167 strings_input_167_data;
+    StringsInput168 strings_input_168_data;
+    StringsInput169 strings_input_169_data;
+    StringsInput170 strings_input_170_data;
+    StringsInput171 strings_input_171_data;
+    StringsInput172 strings_input_172_data;
+    StringsInput173 strings_input_173_data;
+    StringsInput174 strings_input_174_data;
+    StringsInput175 strings_input_175_data;
+    StringsInput176 strings_input_176_data;
+    StringsInput177 strings_input_177_data;
+    StringsInput178 strings_input_178_data;
+    StringsInput179 strings_input_179_data;
+    StringsInput180 strings_input_180_data;
+    StringsInput181 strings_input_181_data;
+    StringsInput182 strings_input_182_data;
+    StringsInput183 strings_input_183_data;
+    StringsInput184 strings_input_184_data;
+    StringsInput185 strings_input_185_data;
+    StringsInput186 strings_input_186_data;
+    StringsInput187 strings_input_187_data;
+    StringsInput188 strings_input_188_data;
+    StringsInput189 strings_input_189_data;
+    StringsInput190 strings_input_190_data;
+    StringsInput191 strings_input_191_data;
+    StringsInput192 strings_input_192_data;
+    StringsInput193 strings_input_193_data;
+    StringsInput194 strings_input_194_data;
+    StringsInput195 strings_input_195_data;
+    StringsInput196 strings_input_196_data;
+    StringsInput197 strings_input_197_data;
+    StringsInput198 strings_input_198_data;
+    StringsInput199 strings_input_199_data;
+    StringsConnSynapse0 strings_conn_synapse0_data;
+    StringsConnSynapse1 strings_conn_synapse1_data;
+    StringsConnSynapse2 strings_conn_synapse2_data;
+    StringsConnSynapse3 strings_conn_synapse3_data;
+    StringsConnSynapse4 strings_conn_synapse4_data;
+    StringsConnSynapse5 strings_conn_synapse5_data;
+    StringsConnSynapse6 strings_conn_synapse6_data;
+    StringsConnSynapse7 strings_conn_synapse7_data;
+    StringsConnSynapse8 strings_conn_synapse8_data;
+    StringsConnSynapse9 strings_conn_synapse9_data;
+    StringsConnSynapse10 strings_conn_synapse10_data;
+    StringsConnSynapse11 strings_conn_synapse11_data;
+    StringsConnSynapse12 strings_conn_synapse12_data;
+    StringsConnSynapse13 strings_conn_synapse13_data;
+    StringsConnSynapse14 strings_conn_synapse14_data;
+    StringsConnSynapse15 strings_conn_synapse15_data;
+    StringsConnSynapse16 strings_conn_synapse16_data;
+    StringsConnSynapse17 strings_conn_synapse17_data;
+    StringsConnSynapse18 strings_conn_synapse18_data;
+    StringsConnSynapse19 strings_conn_synapse19_data;
+    StringsConnSynapse20 strings_conn_synapse20_data;
+    StringsConnSynapse21 strings_conn_synapse21_data;
+    StringsConnSynapse22 strings_conn_synapse22_data;
+    StringsConnSynapse23 strings_conn_synapse23_data;
+    StringsConnSynapse24 strings_conn_synapse24_data;
+    StringsConnSynapse25 strings_conn_synapse25_data;
+    StringsConnSynapse26 strings_conn_synapse26_data;
+    StringsConnSynapse27 strings_conn_synapse27_data;
+    StringsConnSynapse28 strings_conn_synapse28_data;
+    StringsConnSynapse29 strings_conn_synapse29_data;
+    StringsConnSynapse30 strings_conn_synapse30_data;
+    StringsConnSynapse31 strings_conn_synapse31_data;
+    StringsConnSynapse32 strings_conn_synapse32_data;
+    StringsConnSynapse33 strings_conn_synapse33_data;
+    StringsConnSynapse34 strings_conn_synapse34_data;
+    StringsConnSynapse35 strings_conn_synapse35_data;
+    StringsConnSynapse36 strings_conn_synapse36_data;
+    StringsConnSynapse37 strings_conn_synapse37_data;
+    StringsConnSynapse38 strings_conn_synapse38_data;
+    StringsConnSynapse39 strings_conn_synapse39_data;
+    StringsConnSynapse40 strings_conn_synapse40_data;
+    StringsConnSynapse41 strings_conn_synapse41_data;
+    StringsConnSynapse42 strings_conn_synapse42_data;
+    StringsConnSynapse43 strings_conn_synapse43_data;
+    StringsConnSynapse44 strings_conn_synapse44_data;
+    StringsConnSynapse45 strings_conn_synapse45_data;
+    StringsConnSynapse46 strings_conn_synapse46_data;
+    StringsConnSynapse47 strings_conn_synapse47_data;
+    StringsConnSynapse48 strings_conn_synapse48_data;
+    StringsConnSynapse49 strings_conn_synapse49_data;
+    StringsConnSynapse50 strings_conn_synapse50_data;
+    StringsConnSynapse51 strings_conn_synapse51_data;
+    StringsConnSynapse52 strings_conn_synapse52_data;
+    StringsConnSynapse53 strings_conn_synapse53_data;
+    StringsConnSynapse54 strings_conn_synapse54_data;
+    StringsConnSynapse55 strings_conn_synapse55_data;
+    StringsConnSynapse56 strings_conn_synapse56_data;
+    StringsConnSynapse57 strings_conn_synapse57_data;
+    StringsConnSynapse58 strings_conn_synapse58_data;
+    StringsConnSynapse59 strings_conn_synapse59_data;
+    StringsConnSynapse60 strings_conn_synapse60_data;
+    StringsConnSynapse61 strings_conn_synapse61_data;
+    StringsConnSynapse62 strings_conn_synapse62_data;
+    StringsConnSynapse63 strings_conn_synapse63_data;
+    StringsConnSynapse64 strings_conn_synapse64_data;
+    StringsConnSynapse65 strings_conn_synapse65_data;
+    StringsConnSynapse66 strings_conn_synapse66_data;
+    StringsConnSynapse67 strings_conn_synapse67_data;
+    StringsConnSynapse68 strings_conn_synapse68_data;
+    StringsConnSynapse69 strings_conn_synapse69_data;
+    StringsConnSynapse70 strings_conn_synapse70_data;
+    StringsConnSynapse71 strings_conn_synapse71_data;
+    StringsConnSynapse72 strings_conn_synapse72_data;
+    StringsConnSynapse73 strings_conn_synapse73_data;
+    StringsConnSynapse74 strings_conn_synapse74_data;
+    StringsConnSynapse75 strings_conn_synapse75_data;
+    StringsConnSynapse76 strings_conn_synapse76_data;
+    StringsConnSynapse77 strings_conn_synapse77_data;
+    StringsConnSynapse78 strings_conn_synapse78_data;
+    StringsConnSynapse79 strings_conn_synapse79_data;
+    StringsConnSynapse80 strings_conn_synapse80_data;
+    StringsConnSynapse81 strings_conn_synapse81_data;
+    StringsConnSynapse82 strings_conn_synapse82_data;
+    StringsConnSynapse83 strings_conn_synapse83_data;
+    StringsConnSynapse84 strings_conn_synapse84_data;
+    StringsConnSynapse85 strings_conn_synapse85_data;
+    StringsConnSynapse86 strings_conn_synapse86_data;
+    StringsConnSynapse87 strings_conn_synapse87_data;
+    StringsConnSynapse88 strings_conn_synapse88_data;
+    StringsConnSynapse89 strings_conn_synapse89_data;
+    StringsConnSynapse90 strings_conn_synapse90_data;
+    StringsConnSynapse91 strings_conn_synapse91_data;
+    StringsConnSynapse92 strings_conn_synapse92_data;
+    StringsConnSynapse93 strings_conn_synapse93_data;
+    StringsConnSynapse94 strings_conn_synapse94_data;
+    StringsConnSynapse95 strings_conn_synapse95_data;
+    StringsConnSynapse96 strings_conn_synapse96_data;
+    StringsConnSynapse97 strings_conn_synapse97_data;
+    StringsConnSynapse98 strings_conn_synapse98_data;
+    StringsConnSynapse99 strings_conn_synapse99_data;
+    StringsConnSynapse100 strings_conn_synapse100_data;
+    StringsConnSynapse101 strings_conn_synapse101_data;
+    StringsConnSynapse102 strings_conn_synapse102_data;
+    StringsConnSynapse103 strings_conn_synapse103_data;
+    StringsConnSynapse104 strings_conn_synapse104_data;
+    StringsConnSynapse105 strings_conn_synapse105_data;
+    StringsConnSynapse106 strings_conn_synapse106_data;
+    StringsConnSynapse107 strings_conn_synapse107_data;
+    StringsConnSynapse108 strings_conn_synapse108_data;
+    StringsConnSynapse109 strings_conn_synapse109_data;
+    StringsConnSynapse110 strings_conn_synapse110_data;
+    StringsConnSynapse111 strings_conn_synapse111_data;
+    StringsConnSynapse112 strings_conn_synapse112_data;
+    StringsConnSynapse113 strings_conn_synapse113_data;
+    StringsConnSynapse114 strings_conn_synapse114_data;
+    StringsConnSynapse115 strings_conn_synapse115_data;
+    StringsConnSynapse116 strings_conn_synapse116_data;
+    StringsConnSynapse117 strings_conn_synapse117_data;
+    StringsConnSynapse118 strings_conn_synapse118_data;
+    StringsConnSynapse119 strings_conn_synapse119_data;
+    StringsConnSynapse120 strings_conn_synapse120_data;
+    StringsConnSynapse121 strings_conn_synapse121_data;
+    StringsConnSynapse122 strings_conn_synapse122_data;
+    StringsConnSynapse123 strings_conn_synapse123_data;
+    StringsConnSynapse124 strings_conn_synapse124_data;
+    StringsConnSynapse125 strings_conn_synapse125_data;
+    StringsConnSynapse126 strings_conn_synapse126_data;
+    StringsConnSynapse127 strings_conn_synapse127_data;
+    StringsConnSynapse128 strings_conn_synapse128_data;
+    StringsConnSynapse129 strings_conn_synapse129_data;
+    StringsConnSynapse130 strings_conn_synapse130_data;
+    StringsConnSynapse131 strings_conn_synapse131_data;
+    StringsConnSynapse132 strings_conn_synapse132_data;
+    StringsConnSynapse133 strings_conn_synapse133_data;
+    StringsConnSynapse134 strings_conn_synapse134_data;
+    StringsConnSynapse135 strings_conn_synapse135_data;
+    StringsConnSynapse136 strings_conn_synapse136_data;
+    StringsConnSynapse137 strings_conn_synapse137_data;
+    StringsConnSynapse138 strings_conn_synapse138_data;
+    StringsConnSynapse139 strings_conn_synapse139_data;
+    StringsConnSynapse140 strings_conn_synapse140_data;
+    StringsConnSynapse141 strings_conn_synapse141_data;
+    StringsConnSynapse142 strings_conn_synapse142_data;
+    StringsConnSynapse143 strings_conn_synapse143_data;
+    StringsConnSynapse144 strings_conn_synapse144_data;
+    StringsConnSynapse145 strings_conn_synapse145_data;
+    StringsConnSynapse146 strings_conn_synapse146_data;
+    StringsConnSynapse147 strings_conn_synapse147_data;
+    StringsConnSynapse148 strings_conn_synapse148_data;
+    StringsConnSynapse149 strings_conn_synapse149_data;
+    StringsConnSynapse150 strings_conn_synapse150_data;
+    StringsConnSynapse151 strings_conn_synapse151_data;
+    StringsConnSynapse152 strings_conn_synapse152_data;
+    StringsConnSynapse153 strings_conn_synapse153_data;
+    StringsConnSynapse154 strings_conn_synapse154_data;
+    StringsConnSynapse155 strings_conn_synapse155_data;
+    StringsConnSynapse156 strings_conn_synapse156_data;
+    StringsConnSynapse157 strings_conn_synapse157_data;
+    StringsConnSynapse158 strings_conn_synapse158_data;
+    StringsConnSynapse159 strings_conn_synapse159_data;
+    StringsConnSynapse160 strings_conn_synapse160_data;
+    StringsConnSynapse161 strings_conn_synapse161_data;
+    StringsConnSynapse162 strings_conn_synapse162_data;
+    StringsConnSynapse163 strings_conn_synapse163_data;
+    StringsConnSynapse164 strings_conn_synapse164_data;
+    StringsConnSynapse165 strings_conn_synapse165_data;
+    StringsConnSynapse166 strings_conn_synapse166_data;
+    StringsConnSynapse167 strings_conn_synapse167_data;
+    StringsConnSynapse168 strings_conn_synapse168_data;
+    StringsConnSynapse169 strings_conn_synapse169_data;
+    StringsConnSynapse170 strings_conn_synapse170_data;
+    StringsConnSynapse171 strings_conn_synapse171_data;
+    StringsConnSynapse172 strings_conn_synapse172_data;
+    StringsConnSynapse173 strings_conn_synapse173_data;
+    StringsConnSynapse174 strings_conn_synapse174_data;
+    StringsConnSynapse175 strings_conn_synapse175_data;
+    StringsConnSynapse176 strings_conn_synapse176_data;
+    StringsConnSynapse177 strings_conn_synapse177_data;
+    StringsConnSynapse178 strings_conn_synapse178_data;
+    StringsConnSynapse179 strings_conn_synapse179_data;
+    StringsConnSynapse180 strings_conn_synapse180_data;
+    StringsConnSynapse181 strings_conn_synapse181_data;
+    StringsConnSynapse182 strings_conn_synapse182_data;
+    StringsConnSynapse183 strings_conn_synapse183_data;
+    StringsConnSynapse184 strings_conn_synapse184_data;
+    StringsConnSynapse185 strings_conn_synapse185_data;
+    StringsConnSynapse186 strings_conn_synapse186_data;
+    StringsConnSynapse187 strings_conn_synapse187_data;
+    StringsConnSynapse188 strings_conn_synapse188_data;
+    StringsConnSynapse189 strings_conn_synapse189_data;
+    StringsConnSynapse190 strings_conn_synapse190_data;
+    StringsConnSynapse191 strings_conn_synapse191_data;
+    StringsConnSynapse192 strings_conn_synapse192_data;
+    StringsConnSynapse193 strings_conn_synapse193_data;
+    StringsConnSynapse194 strings_conn_synapse194_data;
+    StringsConnSynapse195 strings_conn_synapse195_data;
+    StringsConnSynapse196 strings_conn_synapse196_data;
+    StringsConnSynapse197 strings_conn_synapse197_data;
+    StringsConnSynapse198 strings_conn_synapse198_data;
+    StringsConnSynapse199 strings_conn_synapse199_data;
+} CylinderStrings;
+
+// cylinder_strings Initialisation function
+void CylinderStringsInit(CylinderStrings* me);
+
+// cylinder_strings Execution function
+void CylinderStringsRun(CylinderStrings* me);
+
+#endif // CYLINDER_STRINGS_H_
