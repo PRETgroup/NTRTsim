@@ -45,6 +45,7 @@
 extern "C" {
 #include "RollingCylinderNetwork/rolling_cylinder.h"
 #include "CylinderStringsNetwork/cylinder_strings.h"
+#include "RollingCylinderStringsNetwork/rolling_cylinder_strings.h"
 }
 
 #define WHEEL_RADIUS 18.4 // cm
@@ -129,12 +130,14 @@ private:
 	
   RollingCylinder rolling_cylinder_data;
   CylinderStrings cylinder_strings_data;
+  RollingCylinderStrings rolling_cylinder_strings_data;
 
   double output_timer;
   double setpoint;
   double prev_orientation;
   double prev_distance;
   double cycles;
+  int mode;
 
 };
 

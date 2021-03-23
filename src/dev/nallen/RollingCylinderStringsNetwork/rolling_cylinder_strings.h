@@ -1,0 +1,1638 @@
+#ifndef ROLLING_CYLINDER_STRINGS_H_
+#define ROLLING_CYLINDER_STRINGS_H_
+
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+
+#include "LifNeuron/position_inputs_0.h"
+#include "LifNeuron/position_inputs_1.h"
+#include "LifNeuron/position_inputs_2.h"
+#include "LifNeuron/position_inputs_3.h"
+#include "LifNeuron/position_inputs_4.h"
+#include "LifNeuron/position_inputs_5.h"
+#include "LifNeuron/position_inputs_6.h"
+#include "LifNeuron/position_inputs_7.h"
+#include "LifNeuron/position_inputs_8.h"
+#include "LifNeuron/position_inputs_9.h"
+#include "LifNeuron/position_inputs_10.h"
+#include "LifNeuron/position_inputs_11.h"
+#include "LifNeuron/position_inputs_12.h"
+#include "LifNeuron/position_inputs_13.h"
+#include "LifNeuron/position_inputs_14.h"
+#include "LifNeuron/position_inputs_15.h"
+#include "LifNeuron/position_inputs_16.h"
+#include "LifNeuron/position_inputs_17.h"
+#include "LifNeuron/position_inputs_18.h"
+#include "LifNeuron/position_inputs_19.h"
+#include "LifNeuron/position_inputs_20.h"
+#include "LifNeuron/position_inputs_21.h"
+#include "LifNeuron/position_inputs_22.h"
+#include "LifNeuron/position_inputs_23.h"
+#include "LifNeuron/position_inputs_24.h"
+#include "LifNeuron/position_inputs_25.h"
+#include "LifNeuron/position_inputs_26.h"
+#include "LifNeuron/position_inputs_27.h"
+#include "LifNeuron/position_inputs_28.h"
+#include "LifNeuron/position_inputs_29.h"
+#include "LifNeuron/position_inputs_30.h"
+#include "LifNeuron/position_inputs_31.h"
+#include "LifNeuron/position_inputs_32.h"
+#include "LifNeuron/position_inputs_33.h"
+#include "LifNeuron/position_inputs_34.h"
+#include "LifNeuron/position_inputs_35.h"
+#include "LifNeuron/position_inputs_36.h"
+#include "LifNeuron/position_inputs_37.h"
+#include "LifNeuron/position_inputs_38.h"
+#include "LifNeuron/position_inputs_39.h"
+#include "LifNeuron/position_inputs_40.h"
+#include "LifNeuron/position_inputs_41.h"
+#include "LifNeuron/position_inputs_42.h"
+#include "LifNeuron/position_inputs_43.h"
+#include "LifNeuron/position_inputs_44.h"
+#include "LifNeuron/position_inputs_45.h"
+#include "LifNeuron/position_inputs_46.h"
+#include "LifNeuron/position_inputs_47.h"
+#include "LifNeuron/position_inputs_48.h"
+#include "LifNeuron/position_inputs_49.h"
+#include "LifNeuron/position_inputs_50.h"
+#include "LifNeuron/position_inputs_51.h"
+#include "LifNeuron/position_inputs_52.h"
+#include "LifNeuron/position_inputs_53.h"
+#include "LifNeuron/position_inputs_54.h"
+#include "LifNeuron/position_inputs_55.h"
+#include "LifNeuron/position_inputs_56.h"
+#include "LifNeuron/position_inputs_57.h"
+#include "LifNeuron/position_inputs_58.h"
+#include "LifNeuron/position_inputs_59.h"
+#include "LifNeuron/position_inputs_60.h"
+#include "LifNeuron/position_inputs_61.h"
+#include "LifNeuron/position_inputs_62.h"
+#include "LifNeuron/position_inputs_63.h"
+#include "LifNeuron/position_inputs_64.h"
+#include "LifNeuron/position_inputs_65.h"
+#include "LifNeuron/position_inputs_66.h"
+#include "LifNeuron/position_inputs_67.h"
+#include "LifNeuron/position_inputs_68.h"
+#include "LifNeuron/position_inputs_69.h"
+#include "LifNeuron/position_inputs_70.h"
+#include "LifNeuron/position_inputs_71.h"
+#include "LifNeuron/position_inputs_72.h"
+#include "LifNeuron/position_inputs_73.h"
+#include "LifNeuron/position_inputs_74.h"
+#include "LifNeuron/position_inputs_75.h"
+#include "LifNeuron/position_inputs_76.h"
+#include "LifNeuron/position_inputs_77.h"
+#include "LifNeuron/position_inputs_78.h"
+#include "LifNeuron/position_inputs_79.h"
+#include "LifNeuron/position_inputs_80.h"
+#include "LifNeuron/position_inputs_81.h"
+#include "LifNeuron/position_inputs_82.h"
+#include "LifNeuron/position_inputs_83.h"
+#include "LifNeuron/position_inputs_84.h"
+#include "LifNeuron/position_inputs_85.h"
+#include "LifNeuron/position_inputs_86.h"
+#include "LifNeuron/position_inputs_87.h"
+#include "LifNeuron/position_inputs_88.h"
+#include "LifNeuron/position_inputs_89.h"
+#include "LifNeuron/position_inputs_90.h"
+#include "LifNeuron/position_inputs_91.h"
+#include "LifNeuron/position_inputs_92.h"
+#include "LifNeuron/position_inputs_93.h"
+#include "LifNeuron/position_inputs_94.h"
+#include "LifNeuron/position_inputs_95.h"
+#include "LifNeuron/position_inputs_96.h"
+#include "LifNeuron/position_inputs_97.h"
+#include "LifNeuron/position_inputs_98.h"
+#include "LifNeuron/position_inputs_99.h"
+#include "LifNeuron/position_inputs_100.h"
+#include "LifNeuron/position_inputs_101.h"
+#include "LifNeuron/position_inputs_102.h"
+#include "LifNeuron/position_inputs_103.h"
+#include "LifNeuron/position_inputs_104.h"
+#include "LifNeuron/position_inputs_105.h"
+#include "LifNeuron/position_inputs_106.h"
+#include "LifNeuron/position_inputs_107.h"
+#include "LifNeuron/position_inputs_108.h"
+#include "LifNeuron/position_inputs_109.h"
+#include "LifNeuron/position_inputs_110.h"
+#include "LifNeuron/position_inputs_111.h"
+#include "LifNeuron/position_inputs_112.h"
+#include "LifNeuron/position_inputs_113.h"
+#include "LifNeuron/position_inputs_114.h"
+#include "LifNeuron/position_inputs_115.h"
+#include "LifNeuron/position_inputs_116.h"
+#include "LifNeuron/position_inputs_117.h"
+#include "LifNeuron/position_inputs_118.h"
+#include "LifNeuron/position_inputs_119.h"
+#include "LifNeuron/position_inputs_120.h"
+#include "LifNeuron/position_inputs_121.h"
+#include "LifNeuron/position_inputs_122.h"
+#include "LifNeuron/position_inputs_123.h"
+#include "LifNeuron/position_inputs_124.h"
+#include "LifNeuron/position_inputs_125.h"
+#include "LifNeuron/position_inputs_126.h"
+#include "LifNeuron/position_inputs_127.h"
+#include "LifNeuron/position_inputs_128.h"
+#include "LifNeuron/position_inputs_129.h"
+#include "LifNeuron/position_inputs_130.h"
+#include "LifNeuron/position_inputs_131.h"
+#include "LifNeuron/position_inputs_132.h"
+#include "LifNeuron/position_inputs_133.h"
+#include "LifNeuron/position_inputs_134.h"
+#include "LifNeuron/position_inputs_135.h"
+#include "LifNeuron/position_inputs_136.h"
+#include "LifNeuron/position_inputs_137.h"
+#include "LifNeuron/position_inputs_138.h"
+#include "LifNeuron/position_inputs_139.h"
+#include "LifNeuron/position_inputs_140.h"
+#include "LifNeuron/position_inputs_141.h"
+#include "LifNeuron/position_inputs_142.h"
+#include "LifNeuron/position_inputs_143.h"
+#include "LifNeuron/position_inputs_144.h"
+#include "LifNeuron/position_inputs_145.h"
+#include "LifNeuron/position_inputs_146.h"
+#include "LifNeuron/position_inputs_147.h"
+#include "LifNeuron/position_inputs_148.h"
+#include "LifNeuron/position_inputs_149.h"
+#include "LifNeuron/position_inputs_150.h"
+#include "LifNeuron/position_inputs_151.h"
+#include "LifNeuron/position_inputs_152.h"
+#include "LifNeuron/position_inputs_153.h"
+#include "LifNeuron/position_inputs_154.h"
+#include "LifNeuron/position_inputs_155.h"
+#include "LifNeuron/position_inputs_156.h"
+#include "LifNeuron/position_inputs_157.h"
+#include "LifNeuron/position_inputs_158.h"
+#include "LifNeuron/position_inputs_159.h"
+#include "LifNeuron/position_inputs_160.h"
+#include "LifNeuron/position_inputs_161.h"
+#include "LifNeuron/position_inputs_162.h"
+#include "LifNeuron/position_inputs_163.h"
+#include "LifNeuron/position_inputs_164.h"
+#include "LifNeuron/position_inputs_165.h"
+#include "LifNeuron/position_inputs_166.h"
+#include "LifNeuron/position_inputs_167.h"
+#include "LifNeuron/position_inputs_168.h"
+#include "LifNeuron/position_inputs_169.h"
+#include "LifNeuron/position_inputs_170.h"
+#include "LifNeuron/position_inputs_171.h"
+#include "LifNeuron/position_inputs_172.h"
+#include "LifNeuron/position_inputs_173.h"
+#include "LifNeuron/position_inputs_174.h"
+#include "LifNeuron/position_inputs_175.h"
+#include "LifNeuron/position_inputs_176.h"
+#include "LifNeuron/position_inputs_177.h"
+#include "LifNeuron/position_inputs_178.h"
+#include "LifNeuron/position_inputs_179.h"
+#include "LifNeuron/position_inputs_180.h"
+#include "LifNeuron/position_inputs_181.h"
+#include "LifNeuron/position_inputs_182.h"
+#include "LifNeuron/position_inputs_183.h"
+#include "LifNeuron/position_inputs_184.h"
+#include "LifNeuron/position_inputs_185.h"
+#include "LifNeuron/position_inputs_186.h"
+#include "LifNeuron/position_inputs_187.h"
+#include "LifNeuron/position_inputs_188.h"
+#include "LifNeuron/position_inputs_189.h"
+#include "LifNeuron/position_inputs_190.h"
+#include "LifNeuron/position_inputs_191.h"
+#include "LifNeuron/position_inputs_192.h"
+#include "LifNeuron/position_inputs_193.h"
+#include "LifNeuron/position_inputs_194.h"
+#include "LifNeuron/position_inputs_195.h"
+#include "LifNeuron/position_inputs_196.h"
+#include "LifNeuron/position_inputs_197.h"
+#include "LifNeuron/position_inputs_198.h"
+#include "LifNeuron/position_inputs_199.h"
+#include "LifNeuron/position_inputs_200.h"
+#include "LifNeuron/position_inputs_201.h"
+#include "LifNeuron/position_inputs_202.h"
+#include "LifNeuron/position_inputs_203.h"
+#include "LifNeuron/position_inputs_204.h"
+#include "LifNeuron/position_inputs_205.h"
+#include "LifNeuron/position_inputs_206.h"
+#include "LifNeuron/position_inputs_207.h"
+#include "LifNeuron/position_inputs_208.h"
+#include "LifNeuron/position_inputs_209.h"
+#include "LifNeuron/position_inputs_210.h"
+#include "LifNeuron/position_inputs_211.h"
+#include "LifNeuron/position_inputs_212.h"
+#include "LifNeuron/position_inputs_213.h"
+#include "LifNeuron/position_inputs_214.h"
+#include "LifNeuron/position_inputs_215.h"
+#include "LifNeuron/position_inputs_216.h"
+#include "LifNeuron/position_inputs_217.h"
+#include "LifNeuron/position_inputs_218.h"
+#include "LifNeuron/position_inputs_219.h"
+#include "LifNeuron/position_inputs_220.h"
+#include "LifNeuron/position_inputs_221.h"
+#include "LifNeuron/position_inputs_222.h"
+#include "LifNeuron/position_inputs_223.h"
+#include "LifNeuron/position_inputs_224.h"
+#include "LifNeuron/position_inputs_225.h"
+#include "LifNeuron/position_inputs_226.h"
+#include "LifNeuron/position_inputs_227.h"
+#include "LifNeuron/position_inputs_228.h"
+#include "LifNeuron/position_inputs_229.h"
+#include "LifNeuron/position_inputs_230.h"
+#include "LifNeuron/position_inputs_231.h"
+#include "LifNeuron/position_inputs_232.h"
+#include "LifNeuron/position_inputs_233.h"
+#include "LifNeuron/position_inputs_234.h"
+#include "LifNeuron/position_inputs_235.h"
+#include "LifNeuron/position_inputs_236.h"
+#include "LifNeuron/position_inputs_237.h"
+#include "LifNeuron/position_inputs_238.h"
+#include "LifNeuron/position_inputs_239.h"
+#include "LifNeuron/position_inputs_240.h"
+#include "LifNeuron/position_inputs_241.h"
+#include "LifNeuron/position_inputs_242.h"
+#include "LifNeuron/position_inputs_243.h"
+#include "LifNeuron/position_inputs_244.h"
+#include "LifNeuron/position_inputs_245.h"
+#include "LifNeuron/position_inputs_246.h"
+#include "LifNeuron/position_inputs_247.h"
+#include "LifNeuron/position_inputs_248.h"
+#include "LifNeuron/position_inputs_249.h"
+#include "LifNeuron/position_inputs_250.h"
+#include "LifNeuron/position_inputs_251.h"
+#include "LifNeuron/position_inputs_252.h"
+#include "LifNeuron/position_inputs_253.h"
+#include "LifNeuron/position_inputs_254.h"
+#include "LifNeuron/position_inputs_255.h"
+#include "LifNeuron/position_inputs_256.h"
+#include "LifNeuron/position_inputs_257.h"
+#include "LifNeuron/position_inputs_258.h"
+#include "LifNeuron/position_inputs_259.h"
+#include "LifNeuron/position_inputs_260.h"
+#include "LifNeuron/position_inputs_261.h"
+#include "LifNeuron/position_inputs_262.h"
+#include "LifNeuron/position_inputs_263.h"
+#include "LifNeuron/position_inputs_264.h"
+#include "LifNeuron/position_inputs_265.h"
+#include "LifNeuron/position_inputs_266.h"
+#include "LifNeuron/position_inputs_267.h"
+#include "LifNeuron/position_inputs_268.h"
+#include "LifNeuron/position_inputs_269.h"
+#include "LifNeuron/position_inputs_270.h"
+#include "LifNeuron/position_inputs_271.h"
+#include "LifNeuron/position_inputs_272.h"
+#include "LifNeuron/position_inputs_273.h"
+#include "LifNeuron/position_inputs_274.h"
+#include "LifNeuron/position_inputs_275.h"
+#include "LifNeuron/position_inputs_276.h"
+#include "LifNeuron/position_inputs_277.h"
+#include "LifNeuron/position_inputs_278.h"
+#include "LifNeuron/position_inputs_279.h"
+#include "LifNeuron/position_inputs_280.h"
+#include "LifNeuron/position_inputs_281.h"
+#include "LifNeuron/position_inputs_282.h"
+#include "LifNeuron/position_inputs_283.h"
+#include "LifNeuron/position_inputs_284.h"
+#include "LifNeuron/position_inputs_285.h"
+#include "LifNeuron/position_inputs_286.h"
+#include "LifNeuron/position_inputs_287.h"
+#include "LifNeuron/position_inputs_288.h"
+#include "LifNeuron/position_inputs_289.h"
+#include "LifNeuron/position_inputs_290.h"
+#include "LifNeuron/position_inputs_291.h"
+#include "LifNeuron/position_inputs_292.h"
+#include "LifNeuron/position_inputs_293.h"
+#include "LifNeuron/position_inputs_294.h"
+#include "LifNeuron/position_inputs_295.h"
+#include "LifNeuron/position_inputs_296.h"
+#include "LifNeuron/position_inputs_297.h"
+#include "LifNeuron/position_inputs_298.h"
+#include "LifNeuron/position_inputs_299.h"
+#include "LifNeuron/position_inputs_300.h"
+#include "LifNeuron/position_inputs_301.h"
+#include "LifNeuron/position_inputs_302.h"
+#include "LifNeuron/position_inputs_303.h"
+#include "LifNeuron/position_inputs_304.h"
+#include "LifNeuron/position_inputs_305.h"
+#include "LifNeuron/position_inputs_306.h"
+#include "LifNeuron/position_inputs_307.h"
+#include "LifNeuron/position_inputs_308.h"
+#include "LifNeuron/position_inputs_309.h"
+#include "LifNeuron/position_inputs_310.h"
+#include "LifNeuron/position_inputs_311.h"
+#include "LifNeuron/position_inputs_312.h"
+#include "LifNeuron/position_inputs_313.h"
+#include "LifNeuron/position_inputs_314.h"
+#include "LifNeuron/position_inputs_315.h"
+#include "LifNeuron/position_inputs_316.h"
+#include "LifNeuron/position_inputs_317.h"
+#include "LifNeuron/position_inputs_318.h"
+#include "LifNeuron/position_inputs_319.h"
+#include "LifNeuron/position_inputs_320.h"
+#include "LifNeuron/position_inputs_321.h"
+#include "LifNeuron/position_inputs_322.h"
+#include "LifNeuron/position_inputs_323.h"
+#include "LifNeuron/position_inputs_324.h"
+#include "LifNeuron/position_inputs_325.h"
+#include "LifNeuron/position_inputs_326.h"
+#include "LifNeuron/position_inputs_327.h"
+#include "LifNeuron/position_inputs_328.h"
+#include "LifNeuron/position_inputs_329.h"
+#include "LifNeuron/position_inputs_330.h"
+#include "LifNeuron/position_inputs_331.h"
+#include "LifNeuron/position_inputs_332.h"
+#include "LifNeuron/position_inputs_333.h"
+#include "LifNeuron/position_inputs_334.h"
+#include "LifNeuron/position_inputs_335.h"
+#include "LifNeuron/position_inputs_336.h"
+#include "LifNeuron/position_inputs_337.h"
+#include "LifNeuron/position_inputs_338.h"
+#include "LifNeuron/position_inputs_339.h"
+#include "LifNeuron/position_inputs_340.h"
+#include "LifNeuron/position_inputs_341.h"
+#include "LifNeuron/position_inputs_342.h"
+#include "LifNeuron/position_inputs_343.h"
+#include "LifNeuron/position_inputs_344.h"
+#include "LifNeuron/position_inputs_345.h"
+#include "LifNeuron/position_inputs_346.h"
+#include "LifNeuron/position_inputs_347.h"
+#include "LifNeuron/position_inputs_348.h"
+#include "LifNeuron/position_inputs_349.h"
+#include "LifNeuron/position_inputs_350.h"
+#include "LifNeuron/position_inputs_351.h"
+#include "LifNeuron/position_inputs_352.h"
+#include "LifNeuron/position_inputs_353.h"
+#include "LifNeuron/position_inputs_354.h"
+#include "LifNeuron/position_inputs_355.h"
+#include "LifNeuron/position_inputs_356.h"
+#include "LifNeuron/position_inputs_357.h"
+#include "LifNeuron/position_inputs_358.h"
+#include "LifNeuron/position_inputs_359.h"
+#include "LifNeuron/position_inputs_360.h"
+#include "LifNeuron/position_inputs_361.h"
+#include "LifNeuron/position_inputs_362.h"
+#include "LifNeuron/position_inputs_363.h"
+#include "LifNeuron/position_inputs_364.h"
+#include "LifNeuron/position_inputs_365.h"
+#include "LifNeuron/position_inputs_366.h"
+#include "LifNeuron/position_inputs_367.h"
+#include "LifNeuron/position_inputs_368.h"
+#include "LifNeuron/position_inputs_369.h"
+#include "LifNeuron/position_inputs_370.h"
+#include "LifNeuron/position_inputs_371.h"
+#include "LifNeuron/position_inputs_372.h"
+#include "LifNeuron/position_inputs_373.h"
+#include "LifNeuron/position_inputs_374.h"
+#include "LifNeuron/position_inputs_375.h"
+#include "LifNeuron/position_inputs_376.h"
+#include "LifNeuron/position_inputs_377.h"
+#include "LifNeuron/position_inputs_378.h"
+#include "LifNeuron/position_inputs_379.h"
+#include "LifNeuron/position_inputs_380.h"
+#include "LifNeuron/position_inputs_381.h"
+#include "LifNeuron/position_inputs_382.h"
+#include "LifNeuron/position_inputs_383.h"
+#include "LifNeuron/position_inputs_384.h"
+#include "LifNeuron/position_inputs_385.h"
+#include "LifNeuron/position_inputs_386.h"
+#include "LifNeuron/position_inputs_387.h"
+#include "LifNeuron/position_inputs_388.h"
+#include "LifNeuron/position_inputs_389.h"
+#include "LifNeuron/position_inputs_390.h"
+#include "LifNeuron/position_inputs_391.h"
+#include "LifNeuron/position_inputs_392.h"
+#include "LifNeuron/position_inputs_393.h"
+#include "LifNeuron/position_inputs_394.h"
+#include "LifNeuron/position_inputs_395.h"
+#include "LifNeuron/position_inputs_396.h"
+#include "LifNeuron/position_inputs_397.h"
+#include "LifNeuron/position_inputs_398.h"
+#include "LifNeuron/position_inputs_399.h"
+#include "LowPass/position_conn_synapse0.h"
+#include "LowPass/position_conn_synapse1.h"
+#include "LowPass/position_conn_synapse2.h"
+#include "LowPass/position_conn_synapse3.h"
+#include "LowPass/position_conn_synapse4.h"
+#include "LowPass/position_conn_synapse5.h"
+#include "LowPass/position_conn_synapse6.h"
+#include "LowPass/position_conn_synapse7.h"
+#include "LowPass/position_conn_synapse8.h"
+#include "LowPass/position_conn_synapse9.h"
+#include "LowPass/position_conn_synapse10.h"
+#include "LowPass/position_conn_synapse11.h"
+#include "LowPass/position_conn_synapse12.h"
+#include "LowPass/position_conn_synapse13.h"
+#include "LowPass/position_conn_synapse14.h"
+#include "LowPass/position_conn_synapse15.h"
+#include "LowPass/position_conn_synapse16.h"
+#include "LowPass/position_conn_synapse17.h"
+#include "LowPass/position_conn_synapse18.h"
+#include "LowPass/position_conn_synapse19.h"
+#include "LowPass/position_conn_synapse20.h"
+#include "LowPass/position_conn_synapse21.h"
+#include "LowPass/position_conn_synapse22.h"
+#include "LowPass/position_conn_synapse23.h"
+#include "LowPass/position_conn_synapse24.h"
+#include "LowPass/position_conn_synapse25.h"
+#include "LowPass/position_conn_synapse26.h"
+#include "LowPass/position_conn_synapse27.h"
+#include "LowPass/position_conn_synapse28.h"
+#include "LowPass/position_conn_synapse29.h"
+#include "LowPass/position_conn_synapse30.h"
+#include "LowPass/position_conn_synapse31.h"
+#include "LowPass/position_conn_synapse32.h"
+#include "LowPass/position_conn_synapse33.h"
+#include "LowPass/position_conn_synapse34.h"
+#include "LowPass/position_conn_synapse35.h"
+#include "LowPass/position_conn_synapse36.h"
+#include "LowPass/position_conn_synapse37.h"
+#include "LowPass/position_conn_synapse38.h"
+#include "LowPass/position_conn_synapse39.h"
+#include "LowPass/position_conn_synapse40.h"
+#include "LowPass/position_conn_synapse41.h"
+#include "LowPass/position_conn_synapse42.h"
+#include "LowPass/position_conn_synapse43.h"
+#include "LowPass/position_conn_synapse44.h"
+#include "LowPass/position_conn_synapse45.h"
+#include "LowPass/position_conn_synapse46.h"
+#include "LowPass/position_conn_synapse47.h"
+#include "LowPass/position_conn_synapse48.h"
+#include "LowPass/position_conn_synapse49.h"
+#include "LowPass/position_conn_synapse50.h"
+#include "LowPass/position_conn_synapse51.h"
+#include "LowPass/position_conn_synapse52.h"
+#include "LowPass/position_conn_synapse53.h"
+#include "LowPass/position_conn_synapse54.h"
+#include "LowPass/position_conn_synapse55.h"
+#include "LowPass/position_conn_synapse56.h"
+#include "LowPass/position_conn_synapse57.h"
+#include "LowPass/position_conn_synapse58.h"
+#include "LowPass/position_conn_synapse59.h"
+#include "LowPass/position_conn_synapse60.h"
+#include "LowPass/position_conn_synapse61.h"
+#include "LowPass/position_conn_synapse62.h"
+#include "LowPass/position_conn_synapse63.h"
+#include "LowPass/position_conn_synapse64.h"
+#include "LowPass/position_conn_synapse65.h"
+#include "LowPass/position_conn_synapse66.h"
+#include "LowPass/position_conn_synapse67.h"
+#include "LowPass/position_conn_synapse68.h"
+#include "LowPass/position_conn_synapse69.h"
+#include "LowPass/position_conn_synapse70.h"
+#include "LowPass/position_conn_synapse71.h"
+#include "LowPass/position_conn_synapse72.h"
+#include "LowPass/position_conn_synapse73.h"
+#include "LowPass/position_conn_synapse74.h"
+#include "LowPass/position_conn_synapse75.h"
+#include "LowPass/position_conn_synapse76.h"
+#include "LowPass/position_conn_synapse77.h"
+#include "LowPass/position_conn_synapse78.h"
+#include "LowPass/position_conn_synapse79.h"
+#include "LowPass/position_conn_synapse80.h"
+#include "LowPass/position_conn_synapse81.h"
+#include "LowPass/position_conn_synapse82.h"
+#include "LowPass/position_conn_synapse83.h"
+#include "LowPass/position_conn_synapse84.h"
+#include "LowPass/position_conn_synapse85.h"
+#include "LowPass/position_conn_synapse86.h"
+#include "LowPass/position_conn_synapse87.h"
+#include "LowPass/position_conn_synapse88.h"
+#include "LowPass/position_conn_synapse89.h"
+#include "LowPass/position_conn_synapse90.h"
+#include "LowPass/position_conn_synapse91.h"
+#include "LowPass/position_conn_synapse92.h"
+#include "LowPass/position_conn_synapse93.h"
+#include "LowPass/position_conn_synapse94.h"
+#include "LowPass/position_conn_synapse95.h"
+#include "LowPass/position_conn_synapse96.h"
+#include "LowPass/position_conn_synapse97.h"
+#include "LowPass/position_conn_synapse98.h"
+#include "LowPass/position_conn_synapse99.h"
+#include "LowPass/position_conn_synapse100.h"
+#include "LowPass/position_conn_synapse101.h"
+#include "LowPass/position_conn_synapse102.h"
+#include "LowPass/position_conn_synapse103.h"
+#include "LowPass/position_conn_synapse104.h"
+#include "LowPass/position_conn_synapse105.h"
+#include "LowPass/position_conn_synapse106.h"
+#include "LowPass/position_conn_synapse107.h"
+#include "LowPass/position_conn_synapse108.h"
+#include "LowPass/position_conn_synapse109.h"
+#include "LowPass/position_conn_synapse110.h"
+#include "LowPass/position_conn_synapse111.h"
+#include "LowPass/position_conn_synapse112.h"
+#include "LowPass/position_conn_synapse113.h"
+#include "LowPass/position_conn_synapse114.h"
+#include "LowPass/position_conn_synapse115.h"
+#include "LowPass/position_conn_synapse116.h"
+#include "LowPass/position_conn_synapse117.h"
+#include "LowPass/position_conn_synapse118.h"
+#include "LowPass/position_conn_synapse119.h"
+#include "LowPass/position_conn_synapse120.h"
+#include "LowPass/position_conn_synapse121.h"
+#include "LowPass/position_conn_synapse122.h"
+#include "LowPass/position_conn_synapse123.h"
+#include "LowPass/position_conn_synapse124.h"
+#include "LowPass/position_conn_synapse125.h"
+#include "LowPass/position_conn_synapse126.h"
+#include "LowPass/position_conn_synapse127.h"
+#include "LowPass/position_conn_synapse128.h"
+#include "LowPass/position_conn_synapse129.h"
+#include "LowPass/position_conn_synapse130.h"
+#include "LowPass/position_conn_synapse131.h"
+#include "LowPass/position_conn_synapse132.h"
+#include "LowPass/position_conn_synapse133.h"
+#include "LowPass/position_conn_synapse134.h"
+#include "LowPass/position_conn_synapse135.h"
+#include "LowPass/position_conn_synapse136.h"
+#include "LowPass/position_conn_synapse137.h"
+#include "LowPass/position_conn_synapse138.h"
+#include "LowPass/position_conn_synapse139.h"
+#include "LowPass/position_conn_synapse140.h"
+#include "LowPass/position_conn_synapse141.h"
+#include "LowPass/position_conn_synapse142.h"
+#include "LowPass/position_conn_synapse143.h"
+#include "LowPass/position_conn_synapse144.h"
+#include "LowPass/position_conn_synapse145.h"
+#include "LowPass/position_conn_synapse146.h"
+#include "LowPass/position_conn_synapse147.h"
+#include "LowPass/position_conn_synapse148.h"
+#include "LowPass/position_conn_synapse149.h"
+#include "LowPass/position_conn_synapse150.h"
+#include "LowPass/position_conn_synapse151.h"
+#include "LowPass/position_conn_synapse152.h"
+#include "LowPass/position_conn_synapse153.h"
+#include "LowPass/position_conn_synapse154.h"
+#include "LowPass/position_conn_synapse155.h"
+#include "LowPass/position_conn_synapse156.h"
+#include "LowPass/position_conn_synapse157.h"
+#include "LowPass/position_conn_synapse158.h"
+#include "LowPass/position_conn_synapse159.h"
+#include "LowPass/position_conn_synapse160.h"
+#include "LowPass/position_conn_synapse161.h"
+#include "LowPass/position_conn_synapse162.h"
+#include "LowPass/position_conn_synapse163.h"
+#include "LowPass/position_conn_synapse164.h"
+#include "LowPass/position_conn_synapse165.h"
+#include "LowPass/position_conn_synapse166.h"
+#include "LowPass/position_conn_synapse167.h"
+#include "LowPass/position_conn_synapse168.h"
+#include "LowPass/position_conn_synapse169.h"
+#include "LowPass/position_conn_synapse170.h"
+#include "LowPass/position_conn_synapse171.h"
+#include "LowPass/position_conn_synapse172.h"
+#include "LowPass/position_conn_synapse173.h"
+#include "LowPass/position_conn_synapse174.h"
+#include "LowPass/position_conn_synapse175.h"
+#include "LowPass/position_conn_synapse176.h"
+#include "LowPass/position_conn_synapse177.h"
+#include "LowPass/position_conn_synapse178.h"
+#include "LowPass/position_conn_synapse179.h"
+#include "LowPass/position_conn_synapse180.h"
+#include "LowPass/position_conn_synapse181.h"
+#include "LowPass/position_conn_synapse182.h"
+#include "LowPass/position_conn_synapse183.h"
+#include "LowPass/position_conn_synapse184.h"
+#include "LowPass/position_conn_synapse185.h"
+#include "LowPass/position_conn_synapse186.h"
+#include "LowPass/position_conn_synapse187.h"
+#include "LowPass/position_conn_synapse188.h"
+#include "LowPass/position_conn_synapse189.h"
+#include "LowPass/position_conn_synapse190.h"
+#include "LowPass/position_conn_synapse191.h"
+#include "LowPass/position_conn_synapse192.h"
+#include "LowPass/position_conn_synapse193.h"
+#include "LowPass/position_conn_synapse194.h"
+#include "LowPass/position_conn_synapse195.h"
+#include "LowPass/position_conn_synapse196.h"
+#include "LowPass/position_conn_synapse197.h"
+#include "LowPass/position_conn_synapse198.h"
+#include "LowPass/position_conn_synapse199.h"
+#include "LowPass/position_conn_synapse200.h"
+#include "LowPass/position_conn_synapse201.h"
+#include "LowPass/position_conn_synapse202.h"
+#include "LowPass/position_conn_synapse203.h"
+#include "LowPass/position_conn_synapse204.h"
+#include "LowPass/position_conn_synapse205.h"
+#include "LowPass/position_conn_synapse206.h"
+#include "LowPass/position_conn_synapse207.h"
+#include "LowPass/position_conn_synapse208.h"
+#include "LowPass/position_conn_synapse209.h"
+#include "LowPass/position_conn_synapse210.h"
+#include "LowPass/position_conn_synapse211.h"
+#include "LowPass/position_conn_synapse212.h"
+#include "LowPass/position_conn_synapse213.h"
+#include "LowPass/position_conn_synapse214.h"
+#include "LowPass/position_conn_synapse215.h"
+#include "LowPass/position_conn_synapse216.h"
+#include "LowPass/position_conn_synapse217.h"
+#include "LowPass/position_conn_synapse218.h"
+#include "LowPass/position_conn_synapse219.h"
+#include "LowPass/position_conn_synapse220.h"
+#include "LowPass/position_conn_synapse221.h"
+#include "LowPass/position_conn_synapse222.h"
+#include "LowPass/position_conn_synapse223.h"
+#include "LowPass/position_conn_synapse224.h"
+#include "LowPass/position_conn_synapse225.h"
+#include "LowPass/position_conn_synapse226.h"
+#include "LowPass/position_conn_synapse227.h"
+#include "LowPass/position_conn_synapse228.h"
+#include "LowPass/position_conn_synapse229.h"
+#include "LowPass/position_conn_synapse230.h"
+#include "LowPass/position_conn_synapse231.h"
+#include "LowPass/position_conn_synapse232.h"
+#include "LowPass/position_conn_synapse233.h"
+#include "LowPass/position_conn_synapse234.h"
+#include "LowPass/position_conn_synapse235.h"
+#include "LowPass/position_conn_synapse236.h"
+#include "LowPass/position_conn_synapse237.h"
+#include "LowPass/position_conn_synapse238.h"
+#include "LowPass/position_conn_synapse239.h"
+#include "LowPass/position_conn_synapse240.h"
+#include "LowPass/position_conn_synapse241.h"
+#include "LowPass/position_conn_synapse242.h"
+#include "LowPass/position_conn_synapse243.h"
+#include "LowPass/position_conn_synapse244.h"
+#include "LowPass/position_conn_synapse245.h"
+#include "LowPass/position_conn_synapse246.h"
+#include "LowPass/position_conn_synapse247.h"
+#include "LowPass/position_conn_synapse248.h"
+#include "LowPass/position_conn_synapse249.h"
+#include "LowPass/position_conn_synapse250.h"
+#include "LowPass/position_conn_synapse251.h"
+#include "LowPass/position_conn_synapse252.h"
+#include "LowPass/position_conn_synapse253.h"
+#include "LowPass/position_conn_synapse254.h"
+#include "LowPass/position_conn_synapse255.h"
+#include "LowPass/position_conn_synapse256.h"
+#include "LowPass/position_conn_synapse257.h"
+#include "LowPass/position_conn_synapse258.h"
+#include "LowPass/position_conn_synapse259.h"
+#include "LowPass/position_conn_synapse260.h"
+#include "LowPass/position_conn_synapse261.h"
+#include "LowPass/position_conn_synapse262.h"
+#include "LowPass/position_conn_synapse263.h"
+#include "LowPass/position_conn_synapse264.h"
+#include "LowPass/position_conn_synapse265.h"
+#include "LowPass/position_conn_synapse266.h"
+#include "LowPass/position_conn_synapse267.h"
+#include "LowPass/position_conn_synapse268.h"
+#include "LowPass/position_conn_synapse269.h"
+#include "LowPass/position_conn_synapse270.h"
+#include "LowPass/position_conn_synapse271.h"
+#include "LowPass/position_conn_synapse272.h"
+#include "LowPass/position_conn_synapse273.h"
+#include "LowPass/position_conn_synapse274.h"
+#include "LowPass/position_conn_synapse275.h"
+#include "LowPass/position_conn_synapse276.h"
+#include "LowPass/position_conn_synapse277.h"
+#include "LowPass/position_conn_synapse278.h"
+#include "LowPass/position_conn_synapse279.h"
+#include "LowPass/position_conn_synapse280.h"
+#include "LowPass/position_conn_synapse281.h"
+#include "LowPass/position_conn_synapse282.h"
+#include "LowPass/position_conn_synapse283.h"
+#include "LowPass/position_conn_synapse284.h"
+#include "LowPass/position_conn_synapse285.h"
+#include "LowPass/position_conn_synapse286.h"
+#include "LowPass/position_conn_synapse287.h"
+#include "LowPass/position_conn_synapse288.h"
+#include "LowPass/position_conn_synapse289.h"
+#include "LowPass/position_conn_synapse290.h"
+#include "LowPass/position_conn_synapse291.h"
+#include "LowPass/position_conn_synapse292.h"
+#include "LowPass/position_conn_synapse293.h"
+#include "LowPass/position_conn_synapse294.h"
+#include "LowPass/position_conn_synapse295.h"
+#include "LowPass/position_conn_synapse296.h"
+#include "LowPass/position_conn_synapse297.h"
+#include "LowPass/position_conn_synapse298.h"
+#include "LowPass/position_conn_synapse299.h"
+#include "LowPass/position_conn_synapse300.h"
+#include "LowPass/position_conn_synapse301.h"
+#include "LowPass/position_conn_synapse302.h"
+#include "LowPass/position_conn_synapse303.h"
+#include "LowPass/position_conn_synapse304.h"
+#include "LowPass/position_conn_synapse305.h"
+#include "LowPass/position_conn_synapse306.h"
+#include "LowPass/position_conn_synapse307.h"
+#include "LowPass/position_conn_synapse308.h"
+#include "LowPass/position_conn_synapse309.h"
+#include "LowPass/position_conn_synapse310.h"
+#include "LowPass/position_conn_synapse311.h"
+#include "LowPass/position_conn_synapse312.h"
+#include "LowPass/position_conn_synapse313.h"
+#include "LowPass/position_conn_synapse314.h"
+#include "LowPass/position_conn_synapse315.h"
+#include "LowPass/position_conn_synapse316.h"
+#include "LowPass/position_conn_synapse317.h"
+#include "LowPass/position_conn_synapse318.h"
+#include "LowPass/position_conn_synapse319.h"
+#include "LowPass/position_conn_synapse320.h"
+#include "LowPass/position_conn_synapse321.h"
+#include "LowPass/position_conn_synapse322.h"
+#include "LowPass/position_conn_synapse323.h"
+#include "LowPass/position_conn_synapse324.h"
+#include "LowPass/position_conn_synapse325.h"
+#include "LowPass/position_conn_synapse326.h"
+#include "LowPass/position_conn_synapse327.h"
+#include "LowPass/position_conn_synapse328.h"
+#include "LowPass/position_conn_synapse329.h"
+#include "LowPass/position_conn_synapse330.h"
+#include "LowPass/position_conn_synapse331.h"
+#include "LowPass/position_conn_synapse332.h"
+#include "LowPass/position_conn_synapse333.h"
+#include "LowPass/position_conn_synapse334.h"
+#include "LowPass/position_conn_synapse335.h"
+#include "LowPass/position_conn_synapse336.h"
+#include "LowPass/position_conn_synapse337.h"
+#include "LowPass/position_conn_synapse338.h"
+#include "LowPass/position_conn_synapse339.h"
+#include "LowPass/position_conn_synapse340.h"
+#include "LowPass/position_conn_synapse341.h"
+#include "LowPass/position_conn_synapse342.h"
+#include "LowPass/position_conn_synapse343.h"
+#include "LowPass/position_conn_synapse344.h"
+#include "LowPass/position_conn_synapse345.h"
+#include "LowPass/position_conn_synapse346.h"
+#include "LowPass/position_conn_synapse347.h"
+#include "LowPass/position_conn_synapse348.h"
+#include "LowPass/position_conn_synapse349.h"
+#include "LowPass/position_conn_synapse350.h"
+#include "LowPass/position_conn_synapse351.h"
+#include "LowPass/position_conn_synapse352.h"
+#include "LowPass/position_conn_synapse353.h"
+#include "LowPass/position_conn_synapse354.h"
+#include "LowPass/position_conn_synapse355.h"
+#include "LowPass/position_conn_synapse356.h"
+#include "LowPass/position_conn_synapse357.h"
+#include "LowPass/position_conn_synapse358.h"
+#include "LowPass/position_conn_synapse359.h"
+#include "LowPass/position_conn_synapse360.h"
+#include "LowPass/position_conn_synapse361.h"
+#include "LowPass/position_conn_synapse362.h"
+#include "LowPass/position_conn_synapse363.h"
+#include "LowPass/position_conn_synapse364.h"
+#include "LowPass/position_conn_synapse365.h"
+#include "LowPass/position_conn_synapse366.h"
+#include "LowPass/position_conn_synapse367.h"
+#include "LowPass/position_conn_synapse368.h"
+#include "LowPass/position_conn_synapse369.h"
+#include "LowPass/position_conn_synapse370.h"
+#include "LowPass/position_conn_synapse371.h"
+#include "LowPass/position_conn_synapse372.h"
+#include "LowPass/position_conn_synapse373.h"
+#include "LowPass/position_conn_synapse374.h"
+#include "LowPass/position_conn_synapse375.h"
+#include "LowPass/position_conn_synapse376.h"
+#include "LowPass/position_conn_synapse377.h"
+#include "LowPass/position_conn_synapse378.h"
+#include "LowPass/position_conn_synapse379.h"
+#include "LowPass/position_conn_synapse380.h"
+#include "LowPass/position_conn_synapse381.h"
+#include "LowPass/position_conn_synapse382.h"
+#include "LowPass/position_conn_synapse383.h"
+#include "LowPass/position_conn_synapse384.h"
+#include "LowPass/position_conn_synapse385.h"
+#include "LowPass/position_conn_synapse386.h"
+#include "LowPass/position_conn_synapse387.h"
+#include "LowPass/position_conn_synapse388.h"
+#include "LowPass/position_conn_synapse389.h"
+#include "LowPass/position_conn_synapse390.h"
+#include "LowPass/position_conn_synapse391.h"
+#include "LowPass/position_conn_synapse392.h"
+#include "LowPass/position_conn_synapse393.h"
+#include "LowPass/position_conn_synapse394.h"
+#include "LowPass/position_conn_synapse395.h"
+#include "LowPass/position_conn_synapse396.h"
+#include "LowPass/position_conn_synapse397.h"
+#include "LowPass/position_conn_synapse398.h"
+#include "LowPass/position_conn_synapse399.h"
+
+#include <stdbool.h>
+
+#include "config.h"
+
+// rolling_cylinder_strings Data Struct
+typedef struct {
+    
+    // Declare Inputs
+    double strings_0_in;
+    double strings_1_in;
+    double strings_2_in;
+    double setpoint_0_in;
+    double setpoint_1_in;
+    
+    // Declare Outputs
+    double strings_0_out;
+    double strings_1_out;
+    double strings_2_out;
+
+    // Declare Daughter Automata
+    PositionInputs0 position_inputs_0_data;
+    PositionInputs1 position_inputs_1_data;
+    PositionInputs2 position_inputs_2_data;
+    PositionInputs3 position_inputs_3_data;
+    PositionInputs4 position_inputs_4_data;
+    PositionInputs5 position_inputs_5_data;
+    PositionInputs6 position_inputs_6_data;
+    PositionInputs7 position_inputs_7_data;
+    PositionInputs8 position_inputs_8_data;
+    PositionInputs9 position_inputs_9_data;
+    PositionInputs10 position_inputs_10_data;
+    PositionInputs11 position_inputs_11_data;
+    PositionInputs12 position_inputs_12_data;
+    PositionInputs13 position_inputs_13_data;
+    PositionInputs14 position_inputs_14_data;
+    PositionInputs15 position_inputs_15_data;
+    PositionInputs16 position_inputs_16_data;
+    PositionInputs17 position_inputs_17_data;
+    PositionInputs18 position_inputs_18_data;
+    PositionInputs19 position_inputs_19_data;
+    PositionInputs20 position_inputs_20_data;
+    PositionInputs21 position_inputs_21_data;
+    PositionInputs22 position_inputs_22_data;
+    PositionInputs23 position_inputs_23_data;
+    PositionInputs24 position_inputs_24_data;
+    PositionInputs25 position_inputs_25_data;
+    PositionInputs26 position_inputs_26_data;
+    PositionInputs27 position_inputs_27_data;
+    PositionInputs28 position_inputs_28_data;
+    PositionInputs29 position_inputs_29_data;
+    PositionInputs30 position_inputs_30_data;
+    PositionInputs31 position_inputs_31_data;
+    PositionInputs32 position_inputs_32_data;
+    PositionInputs33 position_inputs_33_data;
+    PositionInputs34 position_inputs_34_data;
+    PositionInputs35 position_inputs_35_data;
+    PositionInputs36 position_inputs_36_data;
+    PositionInputs37 position_inputs_37_data;
+    PositionInputs38 position_inputs_38_data;
+    PositionInputs39 position_inputs_39_data;
+    PositionInputs40 position_inputs_40_data;
+    PositionInputs41 position_inputs_41_data;
+    PositionInputs42 position_inputs_42_data;
+    PositionInputs43 position_inputs_43_data;
+    PositionInputs44 position_inputs_44_data;
+    PositionInputs45 position_inputs_45_data;
+    PositionInputs46 position_inputs_46_data;
+    PositionInputs47 position_inputs_47_data;
+    PositionInputs48 position_inputs_48_data;
+    PositionInputs49 position_inputs_49_data;
+    PositionInputs50 position_inputs_50_data;
+    PositionInputs51 position_inputs_51_data;
+    PositionInputs52 position_inputs_52_data;
+    PositionInputs53 position_inputs_53_data;
+    PositionInputs54 position_inputs_54_data;
+    PositionInputs55 position_inputs_55_data;
+    PositionInputs56 position_inputs_56_data;
+    PositionInputs57 position_inputs_57_data;
+    PositionInputs58 position_inputs_58_data;
+    PositionInputs59 position_inputs_59_data;
+    PositionInputs60 position_inputs_60_data;
+    PositionInputs61 position_inputs_61_data;
+    PositionInputs62 position_inputs_62_data;
+    PositionInputs63 position_inputs_63_data;
+    PositionInputs64 position_inputs_64_data;
+    PositionInputs65 position_inputs_65_data;
+    PositionInputs66 position_inputs_66_data;
+    PositionInputs67 position_inputs_67_data;
+    PositionInputs68 position_inputs_68_data;
+    PositionInputs69 position_inputs_69_data;
+    PositionInputs70 position_inputs_70_data;
+    PositionInputs71 position_inputs_71_data;
+    PositionInputs72 position_inputs_72_data;
+    PositionInputs73 position_inputs_73_data;
+    PositionInputs74 position_inputs_74_data;
+    PositionInputs75 position_inputs_75_data;
+    PositionInputs76 position_inputs_76_data;
+    PositionInputs77 position_inputs_77_data;
+    PositionInputs78 position_inputs_78_data;
+    PositionInputs79 position_inputs_79_data;
+    PositionInputs80 position_inputs_80_data;
+    PositionInputs81 position_inputs_81_data;
+    PositionInputs82 position_inputs_82_data;
+    PositionInputs83 position_inputs_83_data;
+    PositionInputs84 position_inputs_84_data;
+    PositionInputs85 position_inputs_85_data;
+    PositionInputs86 position_inputs_86_data;
+    PositionInputs87 position_inputs_87_data;
+    PositionInputs88 position_inputs_88_data;
+    PositionInputs89 position_inputs_89_data;
+    PositionInputs90 position_inputs_90_data;
+    PositionInputs91 position_inputs_91_data;
+    PositionInputs92 position_inputs_92_data;
+    PositionInputs93 position_inputs_93_data;
+    PositionInputs94 position_inputs_94_data;
+    PositionInputs95 position_inputs_95_data;
+    PositionInputs96 position_inputs_96_data;
+    PositionInputs97 position_inputs_97_data;
+    PositionInputs98 position_inputs_98_data;
+    PositionInputs99 position_inputs_99_data;
+    PositionInputs100 position_inputs_100_data;
+    PositionInputs101 position_inputs_101_data;
+    PositionInputs102 position_inputs_102_data;
+    PositionInputs103 position_inputs_103_data;
+    PositionInputs104 position_inputs_104_data;
+    PositionInputs105 position_inputs_105_data;
+    PositionInputs106 position_inputs_106_data;
+    PositionInputs107 position_inputs_107_data;
+    PositionInputs108 position_inputs_108_data;
+    PositionInputs109 position_inputs_109_data;
+    PositionInputs110 position_inputs_110_data;
+    PositionInputs111 position_inputs_111_data;
+    PositionInputs112 position_inputs_112_data;
+    PositionInputs113 position_inputs_113_data;
+    PositionInputs114 position_inputs_114_data;
+    PositionInputs115 position_inputs_115_data;
+    PositionInputs116 position_inputs_116_data;
+    PositionInputs117 position_inputs_117_data;
+    PositionInputs118 position_inputs_118_data;
+    PositionInputs119 position_inputs_119_data;
+    PositionInputs120 position_inputs_120_data;
+    PositionInputs121 position_inputs_121_data;
+    PositionInputs122 position_inputs_122_data;
+    PositionInputs123 position_inputs_123_data;
+    PositionInputs124 position_inputs_124_data;
+    PositionInputs125 position_inputs_125_data;
+    PositionInputs126 position_inputs_126_data;
+    PositionInputs127 position_inputs_127_data;
+    PositionInputs128 position_inputs_128_data;
+    PositionInputs129 position_inputs_129_data;
+    PositionInputs130 position_inputs_130_data;
+    PositionInputs131 position_inputs_131_data;
+    PositionInputs132 position_inputs_132_data;
+    PositionInputs133 position_inputs_133_data;
+    PositionInputs134 position_inputs_134_data;
+    PositionInputs135 position_inputs_135_data;
+    PositionInputs136 position_inputs_136_data;
+    PositionInputs137 position_inputs_137_data;
+    PositionInputs138 position_inputs_138_data;
+    PositionInputs139 position_inputs_139_data;
+    PositionInputs140 position_inputs_140_data;
+    PositionInputs141 position_inputs_141_data;
+    PositionInputs142 position_inputs_142_data;
+    PositionInputs143 position_inputs_143_data;
+    PositionInputs144 position_inputs_144_data;
+    PositionInputs145 position_inputs_145_data;
+    PositionInputs146 position_inputs_146_data;
+    PositionInputs147 position_inputs_147_data;
+    PositionInputs148 position_inputs_148_data;
+    PositionInputs149 position_inputs_149_data;
+    PositionInputs150 position_inputs_150_data;
+    PositionInputs151 position_inputs_151_data;
+    PositionInputs152 position_inputs_152_data;
+    PositionInputs153 position_inputs_153_data;
+    PositionInputs154 position_inputs_154_data;
+    PositionInputs155 position_inputs_155_data;
+    PositionInputs156 position_inputs_156_data;
+    PositionInputs157 position_inputs_157_data;
+    PositionInputs158 position_inputs_158_data;
+    PositionInputs159 position_inputs_159_data;
+    PositionInputs160 position_inputs_160_data;
+    PositionInputs161 position_inputs_161_data;
+    PositionInputs162 position_inputs_162_data;
+    PositionInputs163 position_inputs_163_data;
+    PositionInputs164 position_inputs_164_data;
+    PositionInputs165 position_inputs_165_data;
+    PositionInputs166 position_inputs_166_data;
+    PositionInputs167 position_inputs_167_data;
+    PositionInputs168 position_inputs_168_data;
+    PositionInputs169 position_inputs_169_data;
+    PositionInputs170 position_inputs_170_data;
+    PositionInputs171 position_inputs_171_data;
+    PositionInputs172 position_inputs_172_data;
+    PositionInputs173 position_inputs_173_data;
+    PositionInputs174 position_inputs_174_data;
+    PositionInputs175 position_inputs_175_data;
+    PositionInputs176 position_inputs_176_data;
+    PositionInputs177 position_inputs_177_data;
+    PositionInputs178 position_inputs_178_data;
+    PositionInputs179 position_inputs_179_data;
+    PositionInputs180 position_inputs_180_data;
+    PositionInputs181 position_inputs_181_data;
+    PositionInputs182 position_inputs_182_data;
+    PositionInputs183 position_inputs_183_data;
+    PositionInputs184 position_inputs_184_data;
+    PositionInputs185 position_inputs_185_data;
+    PositionInputs186 position_inputs_186_data;
+    PositionInputs187 position_inputs_187_data;
+    PositionInputs188 position_inputs_188_data;
+    PositionInputs189 position_inputs_189_data;
+    PositionInputs190 position_inputs_190_data;
+    PositionInputs191 position_inputs_191_data;
+    PositionInputs192 position_inputs_192_data;
+    PositionInputs193 position_inputs_193_data;
+    PositionInputs194 position_inputs_194_data;
+    PositionInputs195 position_inputs_195_data;
+    PositionInputs196 position_inputs_196_data;
+    PositionInputs197 position_inputs_197_data;
+    PositionInputs198 position_inputs_198_data;
+    PositionInputs199 position_inputs_199_data;
+    PositionInputs200 position_inputs_200_data;
+    PositionInputs201 position_inputs_201_data;
+    PositionInputs202 position_inputs_202_data;
+    PositionInputs203 position_inputs_203_data;
+    PositionInputs204 position_inputs_204_data;
+    PositionInputs205 position_inputs_205_data;
+    PositionInputs206 position_inputs_206_data;
+    PositionInputs207 position_inputs_207_data;
+    PositionInputs208 position_inputs_208_data;
+    PositionInputs209 position_inputs_209_data;
+    PositionInputs210 position_inputs_210_data;
+    PositionInputs211 position_inputs_211_data;
+    PositionInputs212 position_inputs_212_data;
+    PositionInputs213 position_inputs_213_data;
+    PositionInputs214 position_inputs_214_data;
+    PositionInputs215 position_inputs_215_data;
+    PositionInputs216 position_inputs_216_data;
+    PositionInputs217 position_inputs_217_data;
+    PositionInputs218 position_inputs_218_data;
+    PositionInputs219 position_inputs_219_data;
+    PositionInputs220 position_inputs_220_data;
+    PositionInputs221 position_inputs_221_data;
+    PositionInputs222 position_inputs_222_data;
+    PositionInputs223 position_inputs_223_data;
+    PositionInputs224 position_inputs_224_data;
+    PositionInputs225 position_inputs_225_data;
+    PositionInputs226 position_inputs_226_data;
+    PositionInputs227 position_inputs_227_data;
+    PositionInputs228 position_inputs_228_data;
+    PositionInputs229 position_inputs_229_data;
+    PositionInputs230 position_inputs_230_data;
+    PositionInputs231 position_inputs_231_data;
+    PositionInputs232 position_inputs_232_data;
+    PositionInputs233 position_inputs_233_data;
+    PositionInputs234 position_inputs_234_data;
+    PositionInputs235 position_inputs_235_data;
+    PositionInputs236 position_inputs_236_data;
+    PositionInputs237 position_inputs_237_data;
+    PositionInputs238 position_inputs_238_data;
+    PositionInputs239 position_inputs_239_data;
+    PositionInputs240 position_inputs_240_data;
+    PositionInputs241 position_inputs_241_data;
+    PositionInputs242 position_inputs_242_data;
+    PositionInputs243 position_inputs_243_data;
+    PositionInputs244 position_inputs_244_data;
+    PositionInputs245 position_inputs_245_data;
+    PositionInputs246 position_inputs_246_data;
+    PositionInputs247 position_inputs_247_data;
+    PositionInputs248 position_inputs_248_data;
+    PositionInputs249 position_inputs_249_data;
+    PositionInputs250 position_inputs_250_data;
+    PositionInputs251 position_inputs_251_data;
+    PositionInputs252 position_inputs_252_data;
+    PositionInputs253 position_inputs_253_data;
+    PositionInputs254 position_inputs_254_data;
+    PositionInputs255 position_inputs_255_data;
+    PositionInputs256 position_inputs_256_data;
+    PositionInputs257 position_inputs_257_data;
+    PositionInputs258 position_inputs_258_data;
+    PositionInputs259 position_inputs_259_data;
+    PositionInputs260 position_inputs_260_data;
+    PositionInputs261 position_inputs_261_data;
+    PositionInputs262 position_inputs_262_data;
+    PositionInputs263 position_inputs_263_data;
+    PositionInputs264 position_inputs_264_data;
+    PositionInputs265 position_inputs_265_data;
+    PositionInputs266 position_inputs_266_data;
+    PositionInputs267 position_inputs_267_data;
+    PositionInputs268 position_inputs_268_data;
+    PositionInputs269 position_inputs_269_data;
+    PositionInputs270 position_inputs_270_data;
+    PositionInputs271 position_inputs_271_data;
+    PositionInputs272 position_inputs_272_data;
+    PositionInputs273 position_inputs_273_data;
+    PositionInputs274 position_inputs_274_data;
+    PositionInputs275 position_inputs_275_data;
+    PositionInputs276 position_inputs_276_data;
+    PositionInputs277 position_inputs_277_data;
+    PositionInputs278 position_inputs_278_data;
+    PositionInputs279 position_inputs_279_data;
+    PositionInputs280 position_inputs_280_data;
+    PositionInputs281 position_inputs_281_data;
+    PositionInputs282 position_inputs_282_data;
+    PositionInputs283 position_inputs_283_data;
+    PositionInputs284 position_inputs_284_data;
+    PositionInputs285 position_inputs_285_data;
+    PositionInputs286 position_inputs_286_data;
+    PositionInputs287 position_inputs_287_data;
+    PositionInputs288 position_inputs_288_data;
+    PositionInputs289 position_inputs_289_data;
+    PositionInputs290 position_inputs_290_data;
+    PositionInputs291 position_inputs_291_data;
+    PositionInputs292 position_inputs_292_data;
+    PositionInputs293 position_inputs_293_data;
+    PositionInputs294 position_inputs_294_data;
+    PositionInputs295 position_inputs_295_data;
+    PositionInputs296 position_inputs_296_data;
+    PositionInputs297 position_inputs_297_data;
+    PositionInputs298 position_inputs_298_data;
+    PositionInputs299 position_inputs_299_data;
+    PositionInputs300 position_inputs_300_data;
+    PositionInputs301 position_inputs_301_data;
+    PositionInputs302 position_inputs_302_data;
+    PositionInputs303 position_inputs_303_data;
+    PositionInputs304 position_inputs_304_data;
+    PositionInputs305 position_inputs_305_data;
+    PositionInputs306 position_inputs_306_data;
+    PositionInputs307 position_inputs_307_data;
+    PositionInputs308 position_inputs_308_data;
+    PositionInputs309 position_inputs_309_data;
+    PositionInputs310 position_inputs_310_data;
+    PositionInputs311 position_inputs_311_data;
+    PositionInputs312 position_inputs_312_data;
+    PositionInputs313 position_inputs_313_data;
+    PositionInputs314 position_inputs_314_data;
+    PositionInputs315 position_inputs_315_data;
+    PositionInputs316 position_inputs_316_data;
+    PositionInputs317 position_inputs_317_data;
+    PositionInputs318 position_inputs_318_data;
+    PositionInputs319 position_inputs_319_data;
+    PositionInputs320 position_inputs_320_data;
+    PositionInputs321 position_inputs_321_data;
+    PositionInputs322 position_inputs_322_data;
+    PositionInputs323 position_inputs_323_data;
+    PositionInputs324 position_inputs_324_data;
+    PositionInputs325 position_inputs_325_data;
+    PositionInputs326 position_inputs_326_data;
+    PositionInputs327 position_inputs_327_data;
+    PositionInputs328 position_inputs_328_data;
+    PositionInputs329 position_inputs_329_data;
+    PositionInputs330 position_inputs_330_data;
+    PositionInputs331 position_inputs_331_data;
+    PositionInputs332 position_inputs_332_data;
+    PositionInputs333 position_inputs_333_data;
+    PositionInputs334 position_inputs_334_data;
+    PositionInputs335 position_inputs_335_data;
+    PositionInputs336 position_inputs_336_data;
+    PositionInputs337 position_inputs_337_data;
+    PositionInputs338 position_inputs_338_data;
+    PositionInputs339 position_inputs_339_data;
+    PositionInputs340 position_inputs_340_data;
+    PositionInputs341 position_inputs_341_data;
+    PositionInputs342 position_inputs_342_data;
+    PositionInputs343 position_inputs_343_data;
+    PositionInputs344 position_inputs_344_data;
+    PositionInputs345 position_inputs_345_data;
+    PositionInputs346 position_inputs_346_data;
+    PositionInputs347 position_inputs_347_data;
+    PositionInputs348 position_inputs_348_data;
+    PositionInputs349 position_inputs_349_data;
+    PositionInputs350 position_inputs_350_data;
+    PositionInputs351 position_inputs_351_data;
+    PositionInputs352 position_inputs_352_data;
+    PositionInputs353 position_inputs_353_data;
+    PositionInputs354 position_inputs_354_data;
+    PositionInputs355 position_inputs_355_data;
+    PositionInputs356 position_inputs_356_data;
+    PositionInputs357 position_inputs_357_data;
+    PositionInputs358 position_inputs_358_data;
+    PositionInputs359 position_inputs_359_data;
+    PositionInputs360 position_inputs_360_data;
+    PositionInputs361 position_inputs_361_data;
+    PositionInputs362 position_inputs_362_data;
+    PositionInputs363 position_inputs_363_data;
+    PositionInputs364 position_inputs_364_data;
+    PositionInputs365 position_inputs_365_data;
+    PositionInputs366 position_inputs_366_data;
+    PositionInputs367 position_inputs_367_data;
+    PositionInputs368 position_inputs_368_data;
+    PositionInputs369 position_inputs_369_data;
+    PositionInputs370 position_inputs_370_data;
+    PositionInputs371 position_inputs_371_data;
+    PositionInputs372 position_inputs_372_data;
+    PositionInputs373 position_inputs_373_data;
+    PositionInputs374 position_inputs_374_data;
+    PositionInputs375 position_inputs_375_data;
+    PositionInputs376 position_inputs_376_data;
+    PositionInputs377 position_inputs_377_data;
+    PositionInputs378 position_inputs_378_data;
+    PositionInputs379 position_inputs_379_data;
+    PositionInputs380 position_inputs_380_data;
+    PositionInputs381 position_inputs_381_data;
+    PositionInputs382 position_inputs_382_data;
+    PositionInputs383 position_inputs_383_data;
+    PositionInputs384 position_inputs_384_data;
+    PositionInputs385 position_inputs_385_data;
+    PositionInputs386 position_inputs_386_data;
+    PositionInputs387 position_inputs_387_data;
+    PositionInputs388 position_inputs_388_data;
+    PositionInputs389 position_inputs_389_data;
+    PositionInputs390 position_inputs_390_data;
+    PositionInputs391 position_inputs_391_data;
+    PositionInputs392 position_inputs_392_data;
+    PositionInputs393 position_inputs_393_data;
+    PositionInputs394 position_inputs_394_data;
+    PositionInputs395 position_inputs_395_data;
+    PositionInputs396 position_inputs_396_data;
+    PositionInputs397 position_inputs_397_data;
+    PositionInputs398 position_inputs_398_data;
+    PositionInputs399 position_inputs_399_data;
+    PositionConnSynapse0 position_conn_synapse0_data;
+    PositionConnSynapse1 position_conn_synapse1_data;
+    PositionConnSynapse2 position_conn_synapse2_data;
+    PositionConnSynapse3 position_conn_synapse3_data;
+    PositionConnSynapse4 position_conn_synapse4_data;
+    PositionConnSynapse5 position_conn_synapse5_data;
+    PositionConnSynapse6 position_conn_synapse6_data;
+    PositionConnSynapse7 position_conn_synapse7_data;
+    PositionConnSynapse8 position_conn_synapse8_data;
+    PositionConnSynapse9 position_conn_synapse9_data;
+    PositionConnSynapse10 position_conn_synapse10_data;
+    PositionConnSynapse11 position_conn_synapse11_data;
+    PositionConnSynapse12 position_conn_synapse12_data;
+    PositionConnSynapse13 position_conn_synapse13_data;
+    PositionConnSynapse14 position_conn_synapse14_data;
+    PositionConnSynapse15 position_conn_synapse15_data;
+    PositionConnSynapse16 position_conn_synapse16_data;
+    PositionConnSynapse17 position_conn_synapse17_data;
+    PositionConnSynapse18 position_conn_synapse18_data;
+    PositionConnSynapse19 position_conn_synapse19_data;
+    PositionConnSynapse20 position_conn_synapse20_data;
+    PositionConnSynapse21 position_conn_synapse21_data;
+    PositionConnSynapse22 position_conn_synapse22_data;
+    PositionConnSynapse23 position_conn_synapse23_data;
+    PositionConnSynapse24 position_conn_synapse24_data;
+    PositionConnSynapse25 position_conn_synapse25_data;
+    PositionConnSynapse26 position_conn_synapse26_data;
+    PositionConnSynapse27 position_conn_synapse27_data;
+    PositionConnSynapse28 position_conn_synapse28_data;
+    PositionConnSynapse29 position_conn_synapse29_data;
+    PositionConnSynapse30 position_conn_synapse30_data;
+    PositionConnSynapse31 position_conn_synapse31_data;
+    PositionConnSynapse32 position_conn_synapse32_data;
+    PositionConnSynapse33 position_conn_synapse33_data;
+    PositionConnSynapse34 position_conn_synapse34_data;
+    PositionConnSynapse35 position_conn_synapse35_data;
+    PositionConnSynapse36 position_conn_synapse36_data;
+    PositionConnSynapse37 position_conn_synapse37_data;
+    PositionConnSynapse38 position_conn_synapse38_data;
+    PositionConnSynapse39 position_conn_synapse39_data;
+    PositionConnSynapse40 position_conn_synapse40_data;
+    PositionConnSynapse41 position_conn_synapse41_data;
+    PositionConnSynapse42 position_conn_synapse42_data;
+    PositionConnSynapse43 position_conn_synapse43_data;
+    PositionConnSynapse44 position_conn_synapse44_data;
+    PositionConnSynapse45 position_conn_synapse45_data;
+    PositionConnSynapse46 position_conn_synapse46_data;
+    PositionConnSynapse47 position_conn_synapse47_data;
+    PositionConnSynapse48 position_conn_synapse48_data;
+    PositionConnSynapse49 position_conn_synapse49_data;
+    PositionConnSynapse50 position_conn_synapse50_data;
+    PositionConnSynapse51 position_conn_synapse51_data;
+    PositionConnSynapse52 position_conn_synapse52_data;
+    PositionConnSynapse53 position_conn_synapse53_data;
+    PositionConnSynapse54 position_conn_synapse54_data;
+    PositionConnSynapse55 position_conn_synapse55_data;
+    PositionConnSynapse56 position_conn_synapse56_data;
+    PositionConnSynapse57 position_conn_synapse57_data;
+    PositionConnSynapse58 position_conn_synapse58_data;
+    PositionConnSynapse59 position_conn_synapse59_data;
+    PositionConnSynapse60 position_conn_synapse60_data;
+    PositionConnSynapse61 position_conn_synapse61_data;
+    PositionConnSynapse62 position_conn_synapse62_data;
+    PositionConnSynapse63 position_conn_synapse63_data;
+    PositionConnSynapse64 position_conn_synapse64_data;
+    PositionConnSynapse65 position_conn_synapse65_data;
+    PositionConnSynapse66 position_conn_synapse66_data;
+    PositionConnSynapse67 position_conn_synapse67_data;
+    PositionConnSynapse68 position_conn_synapse68_data;
+    PositionConnSynapse69 position_conn_synapse69_data;
+    PositionConnSynapse70 position_conn_synapse70_data;
+    PositionConnSynapse71 position_conn_synapse71_data;
+    PositionConnSynapse72 position_conn_synapse72_data;
+    PositionConnSynapse73 position_conn_synapse73_data;
+    PositionConnSynapse74 position_conn_synapse74_data;
+    PositionConnSynapse75 position_conn_synapse75_data;
+    PositionConnSynapse76 position_conn_synapse76_data;
+    PositionConnSynapse77 position_conn_synapse77_data;
+    PositionConnSynapse78 position_conn_synapse78_data;
+    PositionConnSynapse79 position_conn_synapse79_data;
+    PositionConnSynapse80 position_conn_synapse80_data;
+    PositionConnSynapse81 position_conn_synapse81_data;
+    PositionConnSynapse82 position_conn_synapse82_data;
+    PositionConnSynapse83 position_conn_synapse83_data;
+    PositionConnSynapse84 position_conn_synapse84_data;
+    PositionConnSynapse85 position_conn_synapse85_data;
+    PositionConnSynapse86 position_conn_synapse86_data;
+    PositionConnSynapse87 position_conn_synapse87_data;
+    PositionConnSynapse88 position_conn_synapse88_data;
+    PositionConnSynapse89 position_conn_synapse89_data;
+    PositionConnSynapse90 position_conn_synapse90_data;
+    PositionConnSynapse91 position_conn_synapse91_data;
+    PositionConnSynapse92 position_conn_synapse92_data;
+    PositionConnSynapse93 position_conn_synapse93_data;
+    PositionConnSynapse94 position_conn_synapse94_data;
+    PositionConnSynapse95 position_conn_synapse95_data;
+    PositionConnSynapse96 position_conn_synapse96_data;
+    PositionConnSynapse97 position_conn_synapse97_data;
+    PositionConnSynapse98 position_conn_synapse98_data;
+    PositionConnSynapse99 position_conn_synapse99_data;
+    PositionConnSynapse100 position_conn_synapse100_data;
+    PositionConnSynapse101 position_conn_synapse101_data;
+    PositionConnSynapse102 position_conn_synapse102_data;
+    PositionConnSynapse103 position_conn_synapse103_data;
+    PositionConnSynapse104 position_conn_synapse104_data;
+    PositionConnSynapse105 position_conn_synapse105_data;
+    PositionConnSynapse106 position_conn_synapse106_data;
+    PositionConnSynapse107 position_conn_synapse107_data;
+    PositionConnSynapse108 position_conn_synapse108_data;
+    PositionConnSynapse109 position_conn_synapse109_data;
+    PositionConnSynapse110 position_conn_synapse110_data;
+    PositionConnSynapse111 position_conn_synapse111_data;
+    PositionConnSynapse112 position_conn_synapse112_data;
+    PositionConnSynapse113 position_conn_synapse113_data;
+    PositionConnSynapse114 position_conn_synapse114_data;
+    PositionConnSynapse115 position_conn_synapse115_data;
+    PositionConnSynapse116 position_conn_synapse116_data;
+    PositionConnSynapse117 position_conn_synapse117_data;
+    PositionConnSynapse118 position_conn_synapse118_data;
+    PositionConnSynapse119 position_conn_synapse119_data;
+    PositionConnSynapse120 position_conn_synapse120_data;
+    PositionConnSynapse121 position_conn_synapse121_data;
+    PositionConnSynapse122 position_conn_synapse122_data;
+    PositionConnSynapse123 position_conn_synapse123_data;
+    PositionConnSynapse124 position_conn_synapse124_data;
+    PositionConnSynapse125 position_conn_synapse125_data;
+    PositionConnSynapse126 position_conn_synapse126_data;
+    PositionConnSynapse127 position_conn_synapse127_data;
+    PositionConnSynapse128 position_conn_synapse128_data;
+    PositionConnSynapse129 position_conn_synapse129_data;
+    PositionConnSynapse130 position_conn_synapse130_data;
+    PositionConnSynapse131 position_conn_synapse131_data;
+    PositionConnSynapse132 position_conn_synapse132_data;
+    PositionConnSynapse133 position_conn_synapse133_data;
+    PositionConnSynapse134 position_conn_synapse134_data;
+    PositionConnSynapse135 position_conn_synapse135_data;
+    PositionConnSynapse136 position_conn_synapse136_data;
+    PositionConnSynapse137 position_conn_synapse137_data;
+    PositionConnSynapse138 position_conn_synapse138_data;
+    PositionConnSynapse139 position_conn_synapse139_data;
+    PositionConnSynapse140 position_conn_synapse140_data;
+    PositionConnSynapse141 position_conn_synapse141_data;
+    PositionConnSynapse142 position_conn_synapse142_data;
+    PositionConnSynapse143 position_conn_synapse143_data;
+    PositionConnSynapse144 position_conn_synapse144_data;
+    PositionConnSynapse145 position_conn_synapse145_data;
+    PositionConnSynapse146 position_conn_synapse146_data;
+    PositionConnSynapse147 position_conn_synapse147_data;
+    PositionConnSynapse148 position_conn_synapse148_data;
+    PositionConnSynapse149 position_conn_synapse149_data;
+    PositionConnSynapse150 position_conn_synapse150_data;
+    PositionConnSynapse151 position_conn_synapse151_data;
+    PositionConnSynapse152 position_conn_synapse152_data;
+    PositionConnSynapse153 position_conn_synapse153_data;
+    PositionConnSynapse154 position_conn_synapse154_data;
+    PositionConnSynapse155 position_conn_synapse155_data;
+    PositionConnSynapse156 position_conn_synapse156_data;
+    PositionConnSynapse157 position_conn_synapse157_data;
+    PositionConnSynapse158 position_conn_synapse158_data;
+    PositionConnSynapse159 position_conn_synapse159_data;
+    PositionConnSynapse160 position_conn_synapse160_data;
+    PositionConnSynapse161 position_conn_synapse161_data;
+    PositionConnSynapse162 position_conn_synapse162_data;
+    PositionConnSynapse163 position_conn_synapse163_data;
+    PositionConnSynapse164 position_conn_synapse164_data;
+    PositionConnSynapse165 position_conn_synapse165_data;
+    PositionConnSynapse166 position_conn_synapse166_data;
+    PositionConnSynapse167 position_conn_synapse167_data;
+    PositionConnSynapse168 position_conn_synapse168_data;
+    PositionConnSynapse169 position_conn_synapse169_data;
+    PositionConnSynapse170 position_conn_synapse170_data;
+    PositionConnSynapse171 position_conn_synapse171_data;
+    PositionConnSynapse172 position_conn_synapse172_data;
+    PositionConnSynapse173 position_conn_synapse173_data;
+    PositionConnSynapse174 position_conn_synapse174_data;
+    PositionConnSynapse175 position_conn_synapse175_data;
+    PositionConnSynapse176 position_conn_synapse176_data;
+    PositionConnSynapse177 position_conn_synapse177_data;
+    PositionConnSynapse178 position_conn_synapse178_data;
+    PositionConnSynapse179 position_conn_synapse179_data;
+    PositionConnSynapse180 position_conn_synapse180_data;
+    PositionConnSynapse181 position_conn_synapse181_data;
+    PositionConnSynapse182 position_conn_synapse182_data;
+    PositionConnSynapse183 position_conn_synapse183_data;
+    PositionConnSynapse184 position_conn_synapse184_data;
+    PositionConnSynapse185 position_conn_synapse185_data;
+    PositionConnSynapse186 position_conn_synapse186_data;
+    PositionConnSynapse187 position_conn_synapse187_data;
+    PositionConnSynapse188 position_conn_synapse188_data;
+    PositionConnSynapse189 position_conn_synapse189_data;
+    PositionConnSynapse190 position_conn_synapse190_data;
+    PositionConnSynapse191 position_conn_synapse191_data;
+    PositionConnSynapse192 position_conn_synapse192_data;
+    PositionConnSynapse193 position_conn_synapse193_data;
+    PositionConnSynapse194 position_conn_synapse194_data;
+    PositionConnSynapse195 position_conn_synapse195_data;
+    PositionConnSynapse196 position_conn_synapse196_data;
+    PositionConnSynapse197 position_conn_synapse197_data;
+    PositionConnSynapse198 position_conn_synapse198_data;
+    PositionConnSynapse199 position_conn_synapse199_data;
+    PositionConnSynapse200 position_conn_synapse200_data;
+    PositionConnSynapse201 position_conn_synapse201_data;
+    PositionConnSynapse202 position_conn_synapse202_data;
+    PositionConnSynapse203 position_conn_synapse203_data;
+    PositionConnSynapse204 position_conn_synapse204_data;
+    PositionConnSynapse205 position_conn_synapse205_data;
+    PositionConnSynapse206 position_conn_synapse206_data;
+    PositionConnSynapse207 position_conn_synapse207_data;
+    PositionConnSynapse208 position_conn_synapse208_data;
+    PositionConnSynapse209 position_conn_synapse209_data;
+    PositionConnSynapse210 position_conn_synapse210_data;
+    PositionConnSynapse211 position_conn_synapse211_data;
+    PositionConnSynapse212 position_conn_synapse212_data;
+    PositionConnSynapse213 position_conn_synapse213_data;
+    PositionConnSynapse214 position_conn_synapse214_data;
+    PositionConnSynapse215 position_conn_synapse215_data;
+    PositionConnSynapse216 position_conn_synapse216_data;
+    PositionConnSynapse217 position_conn_synapse217_data;
+    PositionConnSynapse218 position_conn_synapse218_data;
+    PositionConnSynapse219 position_conn_synapse219_data;
+    PositionConnSynapse220 position_conn_synapse220_data;
+    PositionConnSynapse221 position_conn_synapse221_data;
+    PositionConnSynapse222 position_conn_synapse222_data;
+    PositionConnSynapse223 position_conn_synapse223_data;
+    PositionConnSynapse224 position_conn_synapse224_data;
+    PositionConnSynapse225 position_conn_synapse225_data;
+    PositionConnSynapse226 position_conn_synapse226_data;
+    PositionConnSynapse227 position_conn_synapse227_data;
+    PositionConnSynapse228 position_conn_synapse228_data;
+    PositionConnSynapse229 position_conn_synapse229_data;
+    PositionConnSynapse230 position_conn_synapse230_data;
+    PositionConnSynapse231 position_conn_synapse231_data;
+    PositionConnSynapse232 position_conn_synapse232_data;
+    PositionConnSynapse233 position_conn_synapse233_data;
+    PositionConnSynapse234 position_conn_synapse234_data;
+    PositionConnSynapse235 position_conn_synapse235_data;
+    PositionConnSynapse236 position_conn_synapse236_data;
+    PositionConnSynapse237 position_conn_synapse237_data;
+    PositionConnSynapse238 position_conn_synapse238_data;
+    PositionConnSynapse239 position_conn_synapse239_data;
+    PositionConnSynapse240 position_conn_synapse240_data;
+    PositionConnSynapse241 position_conn_synapse241_data;
+    PositionConnSynapse242 position_conn_synapse242_data;
+    PositionConnSynapse243 position_conn_synapse243_data;
+    PositionConnSynapse244 position_conn_synapse244_data;
+    PositionConnSynapse245 position_conn_synapse245_data;
+    PositionConnSynapse246 position_conn_synapse246_data;
+    PositionConnSynapse247 position_conn_synapse247_data;
+    PositionConnSynapse248 position_conn_synapse248_data;
+    PositionConnSynapse249 position_conn_synapse249_data;
+    PositionConnSynapse250 position_conn_synapse250_data;
+    PositionConnSynapse251 position_conn_synapse251_data;
+    PositionConnSynapse252 position_conn_synapse252_data;
+    PositionConnSynapse253 position_conn_synapse253_data;
+    PositionConnSynapse254 position_conn_synapse254_data;
+    PositionConnSynapse255 position_conn_synapse255_data;
+    PositionConnSynapse256 position_conn_synapse256_data;
+    PositionConnSynapse257 position_conn_synapse257_data;
+    PositionConnSynapse258 position_conn_synapse258_data;
+    PositionConnSynapse259 position_conn_synapse259_data;
+    PositionConnSynapse260 position_conn_synapse260_data;
+    PositionConnSynapse261 position_conn_synapse261_data;
+    PositionConnSynapse262 position_conn_synapse262_data;
+    PositionConnSynapse263 position_conn_synapse263_data;
+    PositionConnSynapse264 position_conn_synapse264_data;
+    PositionConnSynapse265 position_conn_synapse265_data;
+    PositionConnSynapse266 position_conn_synapse266_data;
+    PositionConnSynapse267 position_conn_synapse267_data;
+    PositionConnSynapse268 position_conn_synapse268_data;
+    PositionConnSynapse269 position_conn_synapse269_data;
+    PositionConnSynapse270 position_conn_synapse270_data;
+    PositionConnSynapse271 position_conn_synapse271_data;
+    PositionConnSynapse272 position_conn_synapse272_data;
+    PositionConnSynapse273 position_conn_synapse273_data;
+    PositionConnSynapse274 position_conn_synapse274_data;
+    PositionConnSynapse275 position_conn_synapse275_data;
+    PositionConnSynapse276 position_conn_synapse276_data;
+    PositionConnSynapse277 position_conn_synapse277_data;
+    PositionConnSynapse278 position_conn_synapse278_data;
+    PositionConnSynapse279 position_conn_synapse279_data;
+    PositionConnSynapse280 position_conn_synapse280_data;
+    PositionConnSynapse281 position_conn_synapse281_data;
+    PositionConnSynapse282 position_conn_synapse282_data;
+    PositionConnSynapse283 position_conn_synapse283_data;
+    PositionConnSynapse284 position_conn_synapse284_data;
+    PositionConnSynapse285 position_conn_synapse285_data;
+    PositionConnSynapse286 position_conn_synapse286_data;
+    PositionConnSynapse287 position_conn_synapse287_data;
+    PositionConnSynapse288 position_conn_synapse288_data;
+    PositionConnSynapse289 position_conn_synapse289_data;
+    PositionConnSynapse290 position_conn_synapse290_data;
+    PositionConnSynapse291 position_conn_synapse291_data;
+    PositionConnSynapse292 position_conn_synapse292_data;
+    PositionConnSynapse293 position_conn_synapse293_data;
+    PositionConnSynapse294 position_conn_synapse294_data;
+    PositionConnSynapse295 position_conn_synapse295_data;
+    PositionConnSynapse296 position_conn_synapse296_data;
+    PositionConnSynapse297 position_conn_synapse297_data;
+    PositionConnSynapse298 position_conn_synapse298_data;
+    PositionConnSynapse299 position_conn_synapse299_data;
+    PositionConnSynapse300 position_conn_synapse300_data;
+    PositionConnSynapse301 position_conn_synapse301_data;
+    PositionConnSynapse302 position_conn_synapse302_data;
+    PositionConnSynapse303 position_conn_synapse303_data;
+    PositionConnSynapse304 position_conn_synapse304_data;
+    PositionConnSynapse305 position_conn_synapse305_data;
+    PositionConnSynapse306 position_conn_synapse306_data;
+    PositionConnSynapse307 position_conn_synapse307_data;
+    PositionConnSynapse308 position_conn_synapse308_data;
+    PositionConnSynapse309 position_conn_synapse309_data;
+    PositionConnSynapse310 position_conn_synapse310_data;
+    PositionConnSynapse311 position_conn_synapse311_data;
+    PositionConnSynapse312 position_conn_synapse312_data;
+    PositionConnSynapse313 position_conn_synapse313_data;
+    PositionConnSynapse314 position_conn_synapse314_data;
+    PositionConnSynapse315 position_conn_synapse315_data;
+    PositionConnSynapse316 position_conn_synapse316_data;
+    PositionConnSynapse317 position_conn_synapse317_data;
+    PositionConnSynapse318 position_conn_synapse318_data;
+    PositionConnSynapse319 position_conn_synapse319_data;
+    PositionConnSynapse320 position_conn_synapse320_data;
+    PositionConnSynapse321 position_conn_synapse321_data;
+    PositionConnSynapse322 position_conn_synapse322_data;
+    PositionConnSynapse323 position_conn_synapse323_data;
+    PositionConnSynapse324 position_conn_synapse324_data;
+    PositionConnSynapse325 position_conn_synapse325_data;
+    PositionConnSynapse326 position_conn_synapse326_data;
+    PositionConnSynapse327 position_conn_synapse327_data;
+    PositionConnSynapse328 position_conn_synapse328_data;
+    PositionConnSynapse329 position_conn_synapse329_data;
+    PositionConnSynapse330 position_conn_synapse330_data;
+    PositionConnSynapse331 position_conn_synapse331_data;
+    PositionConnSynapse332 position_conn_synapse332_data;
+    PositionConnSynapse333 position_conn_synapse333_data;
+    PositionConnSynapse334 position_conn_synapse334_data;
+    PositionConnSynapse335 position_conn_synapse335_data;
+    PositionConnSynapse336 position_conn_synapse336_data;
+    PositionConnSynapse337 position_conn_synapse337_data;
+    PositionConnSynapse338 position_conn_synapse338_data;
+    PositionConnSynapse339 position_conn_synapse339_data;
+    PositionConnSynapse340 position_conn_synapse340_data;
+    PositionConnSynapse341 position_conn_synapse341_data;
+    PositionConnSynapse342 position_conn_synapse342_data;
+    PositionConnSynapse343 position_conn_synapse343_data;
+    PositionConnSynapse344 position_conn_synapse344_data;
+    PositionConnSynapse345 position_conn_synapse345_data;
+    PositionConnSynapse346 position_conn_synapse346_data;
+    PositionConnSynapse347 position_conn_synapse347_data;
+    PositionConnSynapse348 position_conn_synapse348_data;
+    PositionConnSynapse349 position_conn_synapse349_data;
+    PositionConnSynapse350 position_conn_synapse350_data;
+    PositionConnSynapse351 position_conn_synapse351_data;
+    PositionConnSynapse352 position_conn_synapse352_data;
+    PositionConnSynapse353 position_conn_synapse353_data;
+    PositionConnSynapse354 position_conn_synapse354_data;
+    PositionConnSynapse355 position_conn_synapse355_data;
+    PositionConnSynapse356 position_conn_synapse356_data;
+    PositionConnSynapse357 position_conn_synapse357_data;
+    PositionConnSynapse358 position_conn_synapse358_data;
+    PositionConnSynapse359 position_conn_synapse359_data;
+    PositionConnSynapse360 position_conn_synapse360_data;
+    PositionConnSynapse361 position_conn_synapse361_data;
+    PositionConnSynapse362 position_conn_synapse362_data;
+    PositionConnSynapse363 position_conn_synapse363_data;
+    PositionConnSynapse364 position_conn_synapse364_data;
+    PositionConnSynapse365 position_conn_synapse365_data;
+    PositionConnSynapse366 position_conn_synapse366_data;
+    PositionConnSynapse367 position_conn_synapse367_data;
+    PositionConnSynapse368 position_conn_synapse368_data;
+    PositionConnSynapse369 position_conn_synapse369_data;
+    PositionConnSynapse370 position_conn_synapse370_data;
+    PositionConnSynapse371 position_conn_synapse371_data;
+    PositionConnSynapse372 position_conn_synapse372_data;
+    PositionConnSynapse373 position_conn_synapse373_data;
+    PositionConnSynapse374 position_conn_synapse374_data;
+    PositionConnSynapse375 position_conn_synapse375_data;
+    PositionConnSynapse376 position_conn_synapse376_data;
+    PositionConnSynapse377 position_conn_synapse377_data;
+    PositionConnSynapse378 position_conn_synapse378_data;
+    PositionConnSynapse379 position_conn_synapse379_data;
+    PositionConnSynapse380 position_conn_synapse380_data;
+    PositionConnSynapse381 position_conn_synapse381_data;
+    PositionConnSynapse382 position_conn_synapse382_data;
+    PositionConnSynapse383 position_conn_synapse383_data;
+    PositionConnSynapse384 position_conn_synapse384_data;
+    PositionConnSynapse385 position_conn_synapse385_data;
+    PositionConnSynapse386 position_conn_synapse386_data;
+    PositionConnSynapse387 position_conn_synapse387_data;
+    PositionConnSynapse388 position_conn_synapse388_data;
+    PositionConnSynapse389 position_conn_synapse389_data;
+    PositionConnSynapse390 position_conn_synapse390_data;
+    PositionConnSynapse391 position_conn_synapse391_data;
+    PositionConnSynapse392 position_conn_synapse392_data;
+    PositionConnSynapse393 position_conn_synapse393_data;
+    PositionConnSynapse394 position_conn_synapse394_data;
+    PositionConnSynapse395 position_conn_synapse395_data;
+    PositionConnSynapse396 position_conn_synapse396_data;
+    PositionConnSynapse397 position_conn_synapse397_data;
+    PositionConnSynapse398 position_conn_synapse398_data;
+    PositionConnSynapse399 position_conn_synapse399_data;
+} RollingCylinderStrings;
+
+// rolling_cylinder_strings Initialisation function
+void RollingCylinderStringsInit(RollingCylinderStrings* me);
+
+// rolling_cylinder_strings Execution function
+void RollingCylinderStringsRun(RollingCylinderStrings* me);
+
+#endif // ROLLING_CYLINDER_STRINGS_H_

@@ -62,6 +62,8 @@ void NengoController::onSetup(TensegrityModel& subject)
 
   CylinderStringsInit(&cylinder_strings_data);
 
+  RollingCylinderStringsInit(&rolling_cylinder_strings_data);
+
   initscr();
   noecho();
   nodelay(stdscr, TRUE);
@@ -72,6 +74,7 @@ void NengoController::onSetup(TensegrityModel& subject)
   prev_orientation = 0;
   prev_distance = 0;
   cycles = 0;
+  mode = 0;
 }
 
 void NengoController::onStep(TensegrityModel& subject, double dt)
@@ -86,6 +89,9 @@ void NengoController::onStep(TensegrityModel& subject, double dt)
 		}
 		else if(ch >= '0' && ch <= '9') {
 			setpoint = (ch - '0');
+		}
+		else if(ch == 'm') {
+			mode = (mode + 1) % 3;
 		}
 	}
 
@@ -117,25 +123,54 @@ void NengoController::onStep(TensegrityModel& subject, double dt)
 
   RollingCylinderRun(&rolling_cylinder_data);
 
+  double desired_angle = rolling_cylinder_data.control_out * M_PI_2;
+  Position desired_position = {4 * sin(desired_angle), 4 * -1 * cos(desired_angle), -0.1};
+
   cylinder_strings_data.setpoint_in = rolling_cylinder_data.control_out;
   cylinder_strings_data.orientation_in = orientation;
 
   CylinderStringsRun(&cylinder_strings_data);
 
+  rolling_cylinder_strings_data.setpoint_0_in = desired_position.x;
+  rolling_cylinder_strings_data.setpoint_1_in = desired_position.y;
+//   rolling_cylinder_strings_data.orientation_in = orientation;
+
+  RollingCylinderStringsRun(&rolling_cylinder_strings_data);
+
   output_timer -= dt;
   if(output_timer <= 0) {
-	  std::cout << setpoint << " / " << speed << " / " << orientation;
-	  std::cout << " / " << (setpoint - speed) << " / " << rolling_cylinder_data.control_out << "\r\n";
+	std::cout << mode << " / " << setpoint << " / " << speed << " / ";
+	std::cout << " / " << (setpoint - speed) << " / " << rolling_cylinder_data.control_out << "\r\n";
 
-	  output_timer = OUTPUT_PERIOD;
+	output_timer = OUTPUT_PERIOD;
   }
 
-  setActuator(subject, "left_a", cylinder_strings_data.strings_0_out, dt);
-  setActuator(subject, "left_b", cylinder_strings_data.strings_1_out, dt);
-  setActuator(subject, "left_c", cylinder_strings_data.strings_2_out, dt);
-  setActuator(subject, "right_a", cylinder_strings_data.strings_0_out, dt);
-  setActuator(subject, "right_b", cylinder_strings_data.strings_1_out, dt);
-  setActuator(subject, "right_c", cylinder_strings_data.strings_2_out, dt);
+  double* rest_lengths = convertPositionToRestLengths(desired_position, orientation);
+
+  if(mode == 0) {
+	setActuator(subject, "left_a", rest_lengths[0], dt);
+	setActuator(subject, "left_b", rest_lengths[1], dt);
+	setActuator(subject, "left_c", rest_lengths[2], dt);
+	setActuator(subject, "right_a", rest_lengths[0], dt);
+	setActuator(subject, "right_b", rest_lengths[1], dt);
+	setActuator(subject, "right_c", rest_lengths[2], dt);
+  }
+  else if(mode == 1) {
+	setActuator(subject, "left_a", cylinder_strings_data.strings_0_out, dt);
+	setActuator(subject, "left_b", cylinder_strings_data.strings_1_out, dt);
+	setActuator(subject, "left_c", cylinder_strings_data.strings_2_out, dt);
+	setActuator(subject, "right_a", cylinder_strings_data.strings_0_out, dt);
+	setActuator(subject, "right_b", cylinder_strings_data.strings_1_out, dt);
+	setActuator(subject, "right_c", cylinder_strings_data.strings_2_out, dt);
+  }
+  else if(mode == 2) {
+	setActuator(subject, "left_a", rolling_cylinder_strings_data.strings_0_out, dt);
+	setActuator(subject, "left_b", rolling_cylinder_strings_data.strings_1_out, dt);
+	setActuator(subject, "left_c", rolling_cylinder_strings_data.strings_2_out, dt);
+	setActuator(subject, "right_a", rolling_cylinder_strings_data.strings_0_out, dt);
+	setActuator(subject, "right_b", rolling_cylinder_strings_data.strings_1_out, dt);
+	setActuator(subject, "right_c", rolling_cylinder_strings_data.strings_2_out, dt);
+  }
 }
 
 void NengoController::setActuator(TensegrityModel& subject, std::string name, double length, double dt) {
@@ -148,4 +183,99 @@ void NengoController::setActuator(TensegrityModel& subject, std::string name, do
       actuators[i]->setControlInput(length, dt);
     }
   } 
+}
+	
+Position endpoints[] = {
+		{0, TRIANGLE_SIDE_LENGTH / (2 * cos(30 * M_PI / 180)), 0},
+		{TRIANGLE_SIDE_LENGTH / 2, -tan(30 * M_PI / 180) * TRIANGLE_SIDE_LENGTH / 2, 0},
+		{-TRIANGLE_SIDE_LENGTH / 2, -tan(30 * M_PI / 180) * TRIANGLE_SIDE_LENGTH / 2, 0},
+};
+
+double* NengoController::convertPositionToRestLengths(Position position, double orientation) {
+	static double rest_lengths[3];
+
+	// Three equations in three dimensions
+	Equation equ1[] = {
+		{ { 0, 0, 0 }, 0 },           // (X)
+	  { { 0, 0, 0 }, BAR_WEIGHT },  // (Y)
+	  { { 0, 0, 0 }, CROSS_FORCE }, // (Z)
+	};
+
+	int i = 0;
+	for(i=0; i<3; i++) {
+		// Rotate endpoint positions
+		Position endpoint;
+		endpoint.x = (endpoints[i].x * cos(orientation)) + (endpoints[i].y * sin(orientation));
+		endpoint.y = (endpoints[i].y * cos(orientation)) - (endpoints[i].x * sin(orientation));
+		endpoint.z = endpoints[i].z;
+
+    double angle = atan2(endpoint.y, endpoint.x);
+    Position offset = {0.925*cos(angle), 0.925*sin(angle), 0};
+
+		// Get difference vector
+		Position difference;
+		difference.x = endpoint.x - position.x - offset.x;
+		difference.y = endpoint.y - position.y - offset.y;
+		difference.z = endpoint.z - position.z - offset.z;
+
+		// Calculate the total length
+		double sum = 0;
+		sum += pow(difference.x, 2);
+		sum += pow(difference.y, 2);
+		sum += pow(difference.z, 2);
+		double length = sqrt(sum);
+
+		// Update the equations
+		equ1[0].weights[i] = difference.x / length;
+		equ1[1].weights[i] = difference.y / length;
+		equ1[2].weights[i] = difference.z / length;
+
+		// And set the initial length
+		rest_lengths[i] = length;
+	}
+
+	// Temporary equations
+	Equation equ2[2], equ3[1];
+
+  // First step, populate equ2 based on removing c from equ
+
+	// A - B
+	equ2[0].result = equ1[0].result * equ1[1].weights[2] - equ1[1].result * equ1[0].weights[2];
+	equ2[0].weights[0] = equ1[0].weights[0] * equ1[1].weights[2] - equ1[1].weights[0] * equ1[0].weights[2];
+	equ2[0].weights[1] = equ1[0].weights[1] * equ1[1].weights[2] - equ1[1].weights[1] * equ1[0].weights[2];
+	equ2[0].weights[2] = 0;
+
+	// B - C
+	equ2[1].result = equ1[1].result * equ1[2].weights[2] - equ1[2].result * equ1[1].weights[2];
+	equ2[1].weights[0] = equ1[1].weights[0] * equ1[2].weights[2] - equ1[2].weights[0] * equ1[1].weights[2];
+	equ2[1].weights[1] = equ1[1].weights[1] * equ1[2].weights[2] - equ1[2].weights[1] * equ1[1].weights[2];
+	equ2[1].weights[2] = 0;
+
+	// Next step, populate equ3 based on removing b from equ2
+
+	// D - E
+	equ3[0].result = equ2[0].result * equ2[1].weights[1] - equ2[1].result * equ2[0].weights[1];
+	equ3[0].weights[0] = equ2[0].weights[0] * equ2[1].weights[1] - equ2[1].weights[0] * equ2[0].weights[1];
+	equ3[0].weights[1] = 0;
+	equ3[0].weights[2] = 0;
+
+	// Finally, substitute values back into equations to create result
+  double result[3];
+	result[0] = equ3[0].result / equ3[0].weights[0];
+	result[1] = (equ2[0].result - equ2[0].weights[0] * result[0]) / equ2[0].weights[1];
+	result[2] = (equ1[0].result - equ1[0].weights[0] * result[0] - equ1[0].weights[1] * result[1]) / equ1[0].weights[2];
+
+  // Now map the forces to reductions in rest length
+	for(i=0; i<3; i++) {
+		if(result[i] > SPRING_F0) {
+			// if(result[i] >= SPRING_FMAX) {
+			// 	rest_lengths[i] -= (SPRING_FMAX - SPRING_F0) / SPRING_K;
+			// }
+			// else {
+				rest_lengths[i] -= (result[i] - SPRING_F0) / SPRING_K;
+			// }
+		}
+	}
+
+	return rest_lengths;
 }
