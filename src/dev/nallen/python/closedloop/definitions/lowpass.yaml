@@ -14,4 +14,4 @@ initialisation:
   state: l
   valuations:
     out: 0
-    alpha: 0.001 / (tau + 0.001)
+    alpha: STEP_SIZE / (tau + STEP_SIZE)
