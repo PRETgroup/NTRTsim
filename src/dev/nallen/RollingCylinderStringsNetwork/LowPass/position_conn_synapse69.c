@@ -9,7 +9,7 @@ void PositionConnSynapse69Init(PositionConnSynapse69* me) {
     me->out = 0.0;
 
     // Initialise Internal Variables
-    me->alpha = 0.001 / (0.1 + 0.001);
+    me->alpha = STEP_SIZE / (0.1 + STEP_SIZE);
 }
 
 // position_conn_synapse69 Execution function

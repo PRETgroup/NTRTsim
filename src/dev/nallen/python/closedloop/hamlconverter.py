@@ -466,30 +466,30 @@ class HamlConverter:
         
         elif isinstance(conn.post_obj, nengo.Ensemble):
             # Ensembles
-            weights = self.get_weights(weights, conn.post_obj.size_in, len(synapsed))
+            weights = self.get_weights(weights, len(post_indices), len(synapsed))
             encoders =  self.sim.signals[self.sim.model.sig[conn.post_obj]["encoders"]]
 
             for n in range(0, len(signal_map[conn.post_obj]["inputs"])):
                 for i in range(0, len(synapsed)):
                     weight = 0
-                    for j in post_indices:
-                        weight += weights[j][i] * encoders[n][j]
+                    for j in range(0, len(post_indices)):
+                        weight += weights[j][i] * encoders[n][post_indices[j]]
                     
                     if weight != 0:
                         haml["system"]["mappings"][signal_map[conn.post_obj]["inputs"][n]] += " + " + synapsed[i] + " * " + str(weight)
         
         elif isinstance(conn.post_obj, nengo.ensemble.Neurons):
             # Neurons of an ensemble
-            weights = self.get_weights(weights, conn.post_obj.size_in, len(synapsed))
+            weights = self.get_weights(weights, len(post_indices), len(synapsed))
             gains = self.sim.data[conn.post_obj.ensemble].gain
 
-            for n in post_indices:
+            for j in range(0, len(post_indices)):
                 for i in range(0, len(synapsed)):
-                    haml["system"]["mappings"][signal_map[conn.post_obj.ensemble]["inputs"][n]] += " + " + synapsed[i] + " * " + str(weights[n][i] * gains[i])
+                    haml["system"]["mappings"][signal_map[conn.post_obj.ensemble]["inputs"][post_indices[j]]] += " + " + synapsed[i] + " * " + str(weights[j][i] * gains[i])
 
         elif isinstance(conn.post_obj, nengo.Probe):
             # Probes
-            weights = self.get_weights(weights, conn.post_obj.size_in, len(synapsed))
+            weights = self.get_weights(weights, len(post_indices), len(synapsed))
 
             if isinstance(conn.pre_obj, nengo.ensemble.Neurons):
                 # Probe captures neurons
@@ -498,9 +498,9 @@ class HamlConverter:
 
             else:
                 # Probe captures decoded output
-                for j in post_indices:
+                for j in range(0, len(post_indices)):
                     for i in range(0, len(synapsed)):
-                        haml["system"]["mappings"][signal_map[conn.post_obj]["inputs"][j]] += " + " + synapsed[i] + " * " + str(weights[j][i])
+                        haml["system"]["mappings"][signal_map[conn.post_obj]["inputs"][post_indices[j]]] += " + " + synapsed[i] + " * " + str(weights[j][i])
         
         else:
             # Otherwise we don't handle this output type, so error out

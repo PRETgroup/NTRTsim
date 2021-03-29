@@ -9,7 +9,7 @@ void PositionConnSynapse28Init(PositionConnSynapse28* me) {
     me->out = 0.0;
 
     // Initialise Internal Variables
-    me->alpha = 0.001 / (0.1 + 0.001);
+    me->alpha = STEP_SIZE / (0.1 + STEP_SIZE);
 }
 
 // position_conn_synapse28 Execution function
