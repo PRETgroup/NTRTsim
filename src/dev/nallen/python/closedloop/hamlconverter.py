@@ -392,7 +392,12 @@ class HamlConverter:
             exit()
 
         if len(original.shape) == 0:
-            return np.ones((width, height))
+            if width == height:
+                return np.identity(width)
+        
+            else:
+                print("Unexpected type while parsing weights")
+                exit()
         
         elif len(original) == width and len(original[0]) == height:
             return original
@@ -466,8 +471,12 @@ class HamlConverter:
 
             for n in range(0, len(signal_map[conn.post_obj]["inputs"])):
                 for i in range(0, len(synapsed)):
+                    weight = 0
                     for j in post_indices:
-                        haml["system"]["mappings"][signal_map[conn.post_obj]["inputs"][n]] += " + " + synapsed[i] + " * " + str(weights[j][i] * encoders[n][j])
+                        weight += weights[j][i] * encoders[n][j]
+                    
+                    if weight != 0:
+                        haml["system"]["mappings"][signal_map[conn.post_obj]["inputs"][n]] += " + " + synapsed[i] + " * " + str(weight)
         
         elif isinstance(conn.post_obj, nengo.ensemble.Neurons):
             # Neurons of an ensemble
@@ -476,7 +485,7 @@ class HamlConverter:
 
             for n in post_indices:
                 for i in range(0, len(synapsed)):
-                    haml["system"]["mappings"][signal_map[conn.post_obj.ensemble]["inputs"][n]] += " + " + synapsed[i] + " * " + str(weights[n][i] * gains[j])
+                    haml["system"]["mappings"][signal_map[conn.post_obj.ensemble]["inputs"][n]] += " + " + synapsed[i] + " * " + str(weights[n][i] * gains[i])
 
         elif isinstance(conn.post_obj, nengo.Probe):
             # Probes
