@@ -12,6 +12,8 @@ import nengo_ocl
 import pyopencl
 
 from hamlconverter import HamlConverter
+from nengonifconverter import NengoNifConverter
+from nifhamlconverter import NifHamlConverter
 
 # Connect to the simulator over ZMQ
 client = ZmqClient()
@@ -39,16 +41,20 @@ prev_bar_position = [[0, 0, 0]] * orientation_smoothing
 
 # Nengo settings
 use_opencl = False
-learning_time = 4000
-simulation_time = learning_time + 100
-learning_rate = 1e-5
-num_neurons = 200
+learning_time = 10
+simulation_time = learning_time + 0
+learning_rate = 5e-3
+num_neurons = 500
 probe_sample_every = 0.01
+
+rmse_history = 10000
 
 # Setpoint
 setpoint = np.array([0.0, 0.0])
 
 min_string_length = 3
+
+bar_weight = 490.473208739
 
 # Reached thresholds
 reached_threshold = 0.1
@@ -198,10 +204,21 @@ def relative_bar_position_func(t):
     global robot_position, bar_position
     return bar_position - robot_position
 
+def orientation_func(t):
+    # orientation = (((t * 2 * math.pi / 27) - math.pi) % (2 * math.pi)) - math.pi
+    # return orientation, math.sin(orientation), math.cos(orientation)
+
+    orientation = math.pi * math.sin(t * 2 * math.pi / 27)
+    return orientation
+
+def control_func(t):
+    control = 1.2 * math.sin(t * (2 * math.pi) / 100)
+    return control
+
 def setpoint_func(t):
     global setpoint
 
-    angle = (math.pi / 2) * 1.2 * math.sin(t * (2 * math.pi) / 10)
+    angle = (math.pi / 2) * control_func(t)
 
     setpoint[0] = 4 * math.sin(angle)
     setpoint[1] = 4 * -1 * math.cos(angle)
@@ -218,7 +235,7 @@ def relative_error_func(t, data):
     global current_guess
     global setpoint, within_range_time, trial
 
-    relative_pos = bar_position - robot_position
+    # relative_pos = bar_position - robot_position
 
     error = current_guess - setpoint
 
@@ -237,8 +254,13 @@ def relative_error_func(t, data):
 
     # Generate the string errors
     out = []
+    orientation = orientation_func(t)
     for i in range(len(sides[0]["actuators"])):
-        position = sides[0]["actuators"][i]["position"]
+        original = sides[0]["actuators"][i]["position"]
+        position = [
+            original[0] * math.cos(orientation) - original[1] * math.sin(orientation),
+            original[0] * math.sin(orientation) + original[1] * math.cos(orientation)
+        ]
 
         # Calculate error in direction of actuator
         string_error = np.dot(error, position) / np.linalg.norm(position)
@@ -263,10 +285,16 @@ current_guess = np.array([0, 0])
 def calculate_position_func(t, data):
     global current_guess
 
+    orientation = orientation_func(t)
     for run in range(10):
-        net_force = np.array([0.0, -490.473208739])
+        net_force = np.array([0.0, -bar_weight])
         for i in range(len(sides[0]["actuators"])):
-            position = sides[0]["actuators"][i]["position"]
+            original = sides[0]["actuators"][i]["position"]
+            position = [
+                original[0] * math.cos(orientation) - original[1] * math.sin(orientation),
+                original[0] * math.sin(orientation) + original[1] * math.cos(orientation)
+            ]
+
             string_vector = position - current_guess
 
             distance = np.linalg.norm(string_vector)
@@ -285,29 +313,28 @@ with model:
     # SNN Nodes
     strings_node = nengo.Node(size_in=3, label="strings")
 
-    error_node = nengo.Node(size_in=3, output=lambda t, e: e)
-    learn_error_node = nengo.Node(size_in=3, output=lambda t, e: e * (1-stop_learning_func(t)))
+    error_node = nengo.Node(size_in=3, output=lambda t, e: e, label="error")
+    learn_error_node = nengo.Node(size_in=3, output=lambda t, e: e * (1-stop_learning_func(t)), label="learn_error")
 
     # SNN Ensembles
-    inputs_ens = nengo.Ensemble(n_neurons=num_neurons, dimensions=2, radius=10, label="position_inputs")
+    inputs_ens = nengo.Ensemble(n_neurons=num_neurons, dimensions=3, radius=10, label="position_inputs")
 
     # SNN Connections
-    conn1 = nengo.Connection(inputs_ens, strings_node, synapse=0.1, function=lambda x: np.ones(3), label="position_conn")
-    # conn1 = nengo.Connection(inputs_ens.neurons, strings_node, synapse=0.1, transform=0 * np.ones((3, inputs_ens.n_neurons)), label="position_conn")
+    conn1 = nengo.Connection(inputs_ens, strings_node, synapse=0.03, function=lambda x: np.ones(3), label="position_conn")
+    # conn1 = nengo.Connection(inputs_ens.neurons, strings_node, synapse=0.03, transform=0 * np.ones((3, inputs_ens.n_neurons)), label="position_conn")
 
     nengo.Connection(error_node, learn_error_node, synapse=None)
 
     # SNN Learning
-    conn1.learning_rule_type = nengo.PES(learning_rate=learning_rate)
+    conn1.learning_rule_type = nengo.RLS(learning_rate=learning_rate)
     nengo.Connection(learn_error_node, conn1.learning_rule, synapse=None)
 
     # External Nodes
+    orientation_node = nengo.Node(output=orientation_func, size_in=0, label="orientation")
+    control_node = nengo.Node(output=control_func, size_in=0, label="control")
     setpoint_node = nengo.Node(output=setpoint_func, size_in=0, label="setpoint")
-    bar_position_node = nengo.Node(output=relative_bar_position_func, size_in=0, label="bar_position")
-
+    
     relative_error_node = nengo.Node(output=relative_error_func, size_in=3, label="relative_error")
-
-    # output_node = nengo.Node(output=output_func, size_in=3, label="output")
 
     calculate_position_node = nengo.Node(size_in=3, output=calculate_position_func, label="calculate_position")
 
@@ -315,18 +342,18 @@ with model:
     nengo.Connection(strings_node, relative_error_node, synapse=None)
     nengo.Connection(relative_error_node, error_node, synapse=None)
 
-    nengo.Connection(setpoint_node, inputs_ens, synapse=None)
-
-    # nengo.Connection(strings_node, output_node, synapse=None)
+    nengo.Connection(setpoint_node, inputs_ens[:2], synapse=None)
+    nengo.Connection(orientation_node, inputs_ens[2], synapse=None)
 
     nengo.Connection(strings_node, calculate_position_node, synapse=None)
 
     # Probes
+    orientation_p = nengo.Probe(orientation_node, sample_every=probe_sample_every, synapse=None, label="orientation_p")
+    control_p = nengo.Probe(control_node, sample_every=probe_sample_every, synapse=None, label="control_p")
     setpoint_p = nengo.Probe(setpoint_node, sample_every=probe_sample_every, synapse=None, label="setpoint_p")
-    inputs_p = nengo.Probe(inputs_ens, sample_every=probe_sample_every, synapse=0.1, label="inputs_p")
-    bar_position_p = nengo.Probe(bar_position_node, sample_every=probe_sample_every, synapse=None, label="bar_position_p")
+    inputs_p = nengo.Probe(inputs_ens, sample_every=probe_sample_every, synapse=0.03, label="inputs_p")
     
-    error_p = nengo.Probe(error_node, sample_every=probe_sample_every, synapse=None, label="error_p")
+    error_p = nengo.Probe(error_node[0], sample_every=probe_sample_every, synapse=None, label="error_p")
     learn_error_p = nengo.Probe(learn_error_node, sample_every=probe_sample_every, synapse=None, label="learn_error_p")
     strings_p = nengo.Probe(strings_node, sample_every=probe_sample_every, synapse=None, label="strings_p")
 
@@ -367,22 +394,57 @@ with sim_class(model, **sim_kwargs) as sim:
         else:
             print("Stopping simulation at time %.3f, showing results." % sim.trange()[-1])
 
-    HamlConverter(sim).convert("out-strings-test.yaml", [strings_node])
+    # HamlConverter(sim).convert("out-strings-test.yaml", [strings_node])
 
-print("Showing figure")
+    nif_model = NengoNifConverter(sim).create()
+    nif_model.to_yaml("test.yaml")
+    # print()
+    # print(nif_model.to_yaml())
+    # print()
 
-plt.figure()
-plt.subplot(3, 1, 1)
-plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[setpoint_p], label='Setpoint')
-# plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[inputs_p], label='Ensemble')
-# plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[bar_position_p][:,2:0:-1], label='Position')
-plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[calculate_position_p], label='Calculated')
-plt.legend(loc='best')
-plt.subplot(3, 1, 2)
-plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[strings_p], label='Strings')
-plt.legend(loc='best')
-plt.subplot(3, 1, 3)
-plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[error_p], label='Error')
-plt.legend(loc='best')
+    haml_model = NifHamlConverter(nif_model).create()
+    # print(haml_model)
 
-plt.show()
+# print("Generating RMSE data")
+
+# rmse = []
+# sums = [0]*len(sim.data[error_p][0])
+# for i in range(len(sim.data[error_p])):
+#     if i < rmse_history:
+#         sums += np.square(sim.data[error_p][i])
+#     else:
+#         sums -= np.square(sim.data[error_p][i-rmse_history])
+#         sums += np.square(sim.data[error_p][i])
+
+#     rmse.append(np.sqrt(sums / rmse_history))
+
+# print("Showing figure")
+
+# plt.figure()
+# plt.subplot(6, 1, 1)
+# plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[orientation_p], label='Orientation')
+# plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[inputs_p][:,2], label='Ensemble')
+# plt.legend(loc='best')
+
+# plt.subplot(6, 1, 2)
+# plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[control_p], label='Control')
+# plt.legend(loc='best')
+
+# plt.subplot(6, 1, 3)
+# plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[setpoint_p], label='Setpoint')
+# plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[calculate_position_p], label='Calculated')
+# plt.legend(loc='best')
+
+# plt.subplot(6, 1, 4)
+# plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[strings_p], label='Strings')
+# plt.legend(loc='best')
+
+# plt.subplot(6, 1, 5)
+# plt.plot(sim.trange(sample_every=probe_sample_every), sim.data[error_p], label='Error')
+# plt.legend(loc='best')
+
+# plt.subplot(6, 1, 6)
+# plt.plot(sim.trange(sample_every=probe_sample_every), rmse, label='RMSE')
+# plt.legend(loc='best')
+
+# plt.show()
