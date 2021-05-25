@@ -306,18 +306,24 @@ class NifHamlConverter:
                 if not post_item in signal_map:
                     raise ValueError("C")
                 
-                if not post_property in signal_map[post_item]["inputs"]:
-                    if isinstance(post_item, nif.Nif.Ensemble) and post_property == "value":
-                        post_property = "neurons"
-                        post_slice = slice(None)
+                if isinstance(post_item, nif.Nif.Ensemble) and post_property == "value":
+                    post_property = "neurons"
+                    post_slice = slice(None)
 
-                        padding = np.array([0, 0])
-                        weights = np.vstack((weights, padding))
-                        
-                        weights = np.dot(post_item.encoders, weights)
-                    
-                    else:
-                        raise ValueError("D")
+                    missing_rows = post_item.encoders.shape[1] - weights.shape[1]
+                    columns = weights.shape[0]
+
+                    padding = np.zeros((missing_rows, columns))
+                    weights = np.vstack((weights, padding))
+
+                    weights = np.dot(post_item.encoders, weights)
+
+                if isinstance(post_item, nif.Nif.Ensemble) and post_property == "neurons":
+                    weights = (weights.T * post_item.gain).T
+                    weights = weights / post_item.radius
+
+                if not post_property in signal_map[post_item]["inputs"]:
+                    raise ValueError("D")
 
                 pre_signals = signal_map[pre_item]["outputs"][pre_property]
                 post_signals = signal_map[post_item]["inputs"][post_property][post_slice]
@@ -328,10 +334,18 @@ class NifHamlConverter:
                 
                 for i, post_signal in enumerate(post_signals):
                     for j, synapsed_signal in enumerate(synapsed_signals):
-                        if weights[i][j] != 1.0:
-                            self.haml["system"]["mappings"][post_signal] += " + " + str(weights[i][j]) + " * " + synapsed_signal
-                        else:
+                        if weights[i][j] == 0.0:
+                            continue
+
+                        elif weights[i][j] == 1.0:
                             self.haml["system"]["mappings"][post_signal] += " + " + synapsed_signal
+                        
+                        else:
+                            self.haml["system"]["mappings"][post_signal] += " + " + str(weights[i][j]) + " * " + synapsed_signal
+        
+        for key in self.haml["system"]["mappings"]:
+            if self.haml["system"]["mappings"][key].startswith("0 + "):
+                self.haml["system"]["mappings"][key] = self.haml["system"]["mappings"][key][4:]
 
         yaml = ruamel.yaml.YAML()
         # yaml.dump(haml, sys.stdout)

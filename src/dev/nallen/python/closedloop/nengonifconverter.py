@@ -26,7 +26,7 @@ class NengoNifConverter:
             positions_map[e] = len(model.items)
             model.items.append(nif_ensemble)
 
-            # Scaled encoder = encoder * gain / 10
+            # Scaled encoder = encoder * gain / radius
 
             try:
                 # Get the encoders for the ensemble
